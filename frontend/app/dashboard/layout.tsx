@@ -48,30 +48,113 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Top Navigation */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900">WorkZen HRMS</h1>
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <p className="text-sm font-medium text-gray-900">{user?.email}</p>
-              <p className="text-xs text-gray-500">{user?.role}</p>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium"
-            >
-              Logout
-            </button>
-          </div>
+    <div className="min-h-screen bg-gray-100 flex">
+      {/* Sidebar Navigation */}
+      <aside className="w-64 bg-gray-900 text-white flex flex-col">
+        {/* Company Name / Logo */}
+        <div className="p-6 border-b border-gray-800">
+          <h1 className="text-xl font-bold">Company Name</h1>
+          <p className="text-xs text-gray-400 mt-1">HRMS</p>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
+        {/* Navigation Links */}
+        <nav className="flex-1 px-4 py-6 space-y-2">
+          <a
+            href="/dashboard/employees"
+            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <span>👥</span>
+            <span>Employees</span>
+          </a>
+          <a
+            href="/dashboard/attendance"
+            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <span>📅</span>
+            <span>Attendance</span>
+          </a>
+          <a
+            href="/dashboard/leave"
+            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <span>🏖️</span>
+            <span>Time Off</span>
+          </a>
+          <a
+            href="/dashboard/payroll"
+            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <span>💰</span>
+            <span>Payroll</span>
+          </a>
+          <a
+            href="/dashboard/reports"
+            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <span>📊</span>
+            <span>Reports</span>
+          </a>
+          <a
+            href="/dashboard/settings"
+            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <span>⚙️</span>
+            <span>Settings</span>
+          </a>
+        </nav>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Navigation Bar */}
+        <header className="bg-white shadow-sm border-b border-gray-200">
+          <div className="px-6 py-4 flex justify-between items-center">
+            <div className="flex-1">
+              {/* Search or breadcrumb can go here */}
+            </div>
+            
+            {/* User Profile Dropdown */}
+            <div className="flex items-center space-x-4">
+              {/* User Avatar and Menu */}
+              <div className="relative group">
+                <button className="flex items-center space-x-3 hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                    <span className="text-white font-semibold text-sm">
+                      {user?.email?.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-medium text-gray-900">{user?.email?.split('@')[0]}</p>
+                    <p className="text-xs text-gray-500">{user?.role}</p>
+                  </div>
+                  <span className="text-gray-400">▼</span>
+                </button>
+
+                {/* Dropdown Menu */}
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                  <a
+                    href="/dashboard/profile"
+                    className="block px-4 py-3 hover:bg-gray-50 text-gray-700 border-b border-gray-100"
+                  >
+                    👤 My Profile
+                  </a>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-3 hover:bg-gray-50 text-red-600"
+                  >
+                    🚪 Log Out
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Page Content */}
+        <main className="flex-1 p-8 overflow-auto">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
