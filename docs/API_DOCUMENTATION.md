@@ -15,13 +15,14 @@ Authorization: Bearer <your-jwt-token>
 
 ---
 
-## ✅ **IMPLEMENTED APIs** (21 endpoints)
+## ✅ **IMPLEMENTED APIs** (28 endpoints)
 
 ### Summary:
 - **Authentication**: 5 endpoints
 - **User Management**: 3 endpoints
 - **Employee Management**: 5 endpoints
-- **Attendance Management**: 8 endpoints ✨ NEW!
+- **Attendance Management**: 8 endpoints
+- **Leave Management**: 7 endpoints ✨ NEW!
 
 ### 🔑 Authentication Routes (`/api/auth`)
 
@@ -896,6 +897,287 @@ Authorization: Bearer <token>
 
 ---
 
-**Last Updated**: November 8, 2025  
+## 🏖️ Leave Management Routes (`/api/leaves`)
+
+### 1. **Apply for Leave**
+```http
+POST /api/leaves
+Authorization: Bearer <token>
+Content-Type: application/json
+
+Body:
+{
+  "leaveType": "SICK",           // SICK, CASUAL, PAID, UNPAID, MATERNITY, PATERNITY
+  "startDate": "2025-11-10",     // YYYY-MM-DD format
+  "endDate": "2025-11-12",       // YYYY-MM-DD format
+  "reason": "Medical appointment",
+  "isHalfDay": false             // Optional, for half-day leaves
+}
+```
+
+**Response** (201):
+```json
+{
+  "message": "Leave request submitted successfully",
+  "data": {
+    "id": "uuid",
+    "employeeId": "uuid",
+    "leaveType": "SICK",
+    "startDate": "2025-11-10T00:00:00.000Z",
+    "endDate": "2025-11-12T00:00:00.000Z",
+    "totalDays": 2,
+    "reason": "Medical appointment",
+    "status": "PENDING",
+    "approvedBy": null,
+    "approvedAt": null,
+    "rejectedBy": null,
+    "rejectedAt": null,
+    "cancelledAt": null,
+    "createdAt": "2025-11-08T10:00:00.000Z",
+    "updatedAt": "2025-11-08T10:00:00.000Z",
+    "employee": {
+      "id": "uuid",
+      "employeeId": "OIALSM20210002",
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "user": {
+        "email": "alice@workzen.com",
+        "loginId": "OIALSM20210002"
+      }
+    }
+  }
+}
+```
+
+**Features**:
+- ✅ Validates leave type and dates
+- ✅ Calculates working days (excludes weekends)
+- ✅ Supports half-day leaves (0.5 days)
+- ✅ Checks for overlapping leave requests
+- ✅ Validates leave balance before submission
+- ✅ Prevents duplicate applications
+
+---
+
+### 2. **List Leaves**
+```http
+GET /api/leaves?page=1&limit=20&status=PENDING&leaveType=SICK&month=11&year=2025
+Authorization: Bearer <token>
+```
+
+**Query Parameters**:
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Items per page (default: 20)
+- `status` (optional): Filter by status (PENDING, APPROVED, REJECTED, CANCELLED)
+- `leaveType` (optional): Filter by type (SICK, CASUAL, PAID, UNPAID, MATERNITY, PATERNITY)
+- `employeeId` (optional): Filter by employee (HR/Admin only)
+- `department` (optional): Filter by department (HR/Admin only)
+- `startDate` (optional): Filter from date
+- `endDate` (optional): Filter to date
+- `month` (optional): Filter by month (1-12)
+- `year` (optional): Filter by year
+
+**Response** (200):
+```json
+{
+  "data": [
+    {
+      "id": "uuid",
+      "employeeId": "uuid",
+      "leaveType": "SICK",
+      "startDate": "2025-11-10T00:00:00.000Z",
+      "endDate": "2025-11-12T00:00:00.000Z",
+      "totalDays": 2,
+      "reason": "Medical appointment",
+      "status": "PENDING",
+      "employee": {
+        "firstName": "Alice",
+        "lastName": "Smith",
+        "department": "Engineering",
+        "user": {
+          "email": "alice@workzen.com",
+          "role": "EMPLOYEE"
+        }
+      }
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 15,
+    "totalPages": 1
+  }
+}
+```
+
+**Access Control**:
+- Employees: See only their own leaves
+- HR/Admin: See all leaves with additional filters
+
+---
+
+### 3. **Get Leave Balance**
+```http
+GET /api/leaves/balance/:employeeId
+Authorization: Bearer <token>
+```
+
+**Response** (200):
+```json
+{
+  "employee": {
+    "id": "uuid",
+    "employeeId": "OIALSM20210002",
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "email": "alice@workzen.com"
+  },
+  "balance": {
+    "SICK": {
+      "total": 12,
+      "used": 2,
+      "remaining": 10
+    },
+    "CASUAL": {
+      "total": 12,
+      "used": 3,
+      "remaining": 9
+    },
+    "PAID": {
+      "total": 18,
+      "used": 5,
+      "remaining": 13
+    },
+    "UNPAID": {
+      "total": 365,
+      "used": 0,
+      "remaining": 365
+    },
+    "MATERNITY": {
+      "total": 180,
+      "used": 0,
+      "remaining": 180
+    },
+    "PATERNITY": {
+      "total": 7,
+      "used": 0,
+      "remaining": 7
+    }
+  },
+  "year": 2025
+}
+```
+
+**Leave Allowances** (Annual):
+- SICK: 12 days
+- CASUAL: 12 days
+- PAID: 18 days
+- UNPAID: Unlimited
+- MATERNITY: 180 days
+- PATERNITY: 7 days
+
+---
+
+### 4. **Get Leave Details**
+```http
+GET /api/leaves/:id
+Authorization: Bearer <token>
+```
+
+**Response** (200):
+```json
+{
+  "data": {
+    "id": "uuid",
+    "employeeId": "uuid",
+    "leaveType": "SICK",
+    "startDate": "2025-11-10T00:00:00.000Z",
+    "endDate": "2025-11-12T00:00:00.000Z",
+    "totalDays": 2,
+    "reason": "Medical appointment",
+    "status": "APPROVED",
+    "approvedBy": "hr-user-id",
+    "approvedAt": "2025-11-08T12:00:00.000Z",
+    "employee": {
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "department": "Engineering"
+    }
+  }
+}
+```
+
+---
+
+### 5. **Approve Leave** (HR/Admin Only)
+```http
+PUT /api/leaves/:id/approve
+Authorization: Bearer <token>
+```
+
+**Response** (200):
+```json
+{
+  "message": "Leave approved successfully",
+  "data": {
+    "id": "uuid",
+    "status": "APPROVED",
+    "approvedBy": "hr-user-id",
+    "approvedAt": "2025-11-08T12:00:00.000Z"
+  },
+  "attendanceRecordsCreated": 2
+}
+```
+
+**Features**:
+- ✅ Updates leave status to APPROVED
+- ✅ Records approver ID and timestamp
+- ✅ **Automatically creates attendance records** marked as "LEAVE" for all working days
+- ✅ Prevents approval of already processed leaves
+
+---
+
+### 6. **Reject Leave** (HR/Admin Only)
+```http
+PUT /api/leaves/:id/reject
+Authorization: Bearer <token>
+```
+
+**Response** (200):
+```json
+{
+  "message": "Leave rejected successfully",
+  "data": {
+    "id": "uuid",
+    "status": "REJECTED",
+    "rejectedBy": "hr-user-id",
+    "rejectedAt": "2025-11-08T12:00:00.000Z"
+  }
+}
+```
+
+---
+
+### 7. **Cancel/Delete Leave**
+```http
+DELETE /api/leaves/:id
+Authorization: Bearer <token>
+```
+
+**Response** (200):
+```json
+{
+  "message": "Leave request cancelled successfully"
+}
+```
+
+**Access Control**:
+- **Employees**: Can cancel only their own PENDING leaves
+- **HR/Admin**: Can delete any leave
+- **Feature**: If approved leave is deleted, automatically removes associated attendance records
+
+---
+
+**Last Updated**: November 8, 2025 - 19:00  
 **Backend Status**: Development Phase  
 **Server**: Running at `http://localhost:5000`

@@ -9,10 +9,10 @@
 ### **Project State**
 - ✅ Backend server running at `http://localhost:5000`
 - ✅ Database setup complete with seed data
-- ✅ 21 APIs implemented (Auth + User + Employee + Attendance) ✨ NEW!
+- ✅ 28 APIs implemented (Auth + User + Employee + Attendance + Leave) ✨ NEW!
 - ✅ Git repository initialized and synced with GitHub
 - 🚧 Frontend Next.js project initialized with dashboard & login pages
-- 📊 **Overall Progress**: ~35% complete
+- 📊 **Overall Progress**: ~47% complete
 
 ---
 
@@ -52,7 +52,7 @@ Amalthea-c3e1/
 
 ### **Backend (Agent 1)**
 
-#### **Implemented APIs** (21 endpoints):
+#### **Implemented APIs** (28 endpoints):
 
 **Authentication** (`/api/auth`):
 1. `POST /api/auth/login` - User login with JWT
@@ -73,7 +73,7 @@ Amalthea-c3e1/
 12. `PUT /api/employees/:id` - Update employee (Admin/HR only)
 13. `DELETE /api/employees/:id` - Delete employee (Admin only)
 
-**Attendance Management** (`/api/attendance`) ✨ NEW!:
+**Attendance Management** (`/api/attendance`):
 14. `POST /api/attendance/check-in` - Record employee check-in
 15. `POST /api/attendance/check-out` - Record employee check-out
 16. `GET /api/attendance` - List attendance records with filters
@@ -82,6 +82,15 @@ Amalthea-c3e1/
 19. `PUT /api/attendance/:id` - Update attendance record (HR/Admin only)
 20. `DELETE /api/attendance/:id` - Delete attendance record (Admin only)
 21. `GET /api/attendance/report` - Generate attendance report (HR/Admin only)
+
+**Leave Management** (`/api/leaves`) ✨ NEW!:
+22. `POST /api/leaves` - Apply for leave
+23. `GET /api/leaves` - List leaves with filters
+24. `GET /api/leaves/balance/:employeeId` - Get leave balance
+25. `GET /api/leaves/:id` - Get leave details
+26. `PUT /api/leaves/:id/approve` - Approve leave (HR/Admin)
+27. `PUT /api/leaves/:id/reject` - Reject leave (HR/Admin)
+28. `DELETE /api/leaves/:id` - Cancel/delete leave
 
 #### **Infrastructure**:
 - ✅ Express server with TypeScript
@@ -134,20 +143,51 @@ Employee: OIALSM20210002 / Password123!
 ✅ GET    /api/attendance/report             # Generate report (HR/Admin)
 ```
 
-#### **Priority 3: Leave Management APIs** 🔥 CURRENT
+#### **Priority 3: Leave Management APIs** ✅ COMPLETED!
 **Branch**: `feature/backend-leave-apis`  
 **File**: `backend/src/routes/leaves.ts`
+**Status**: ✅ Done - 7 endpoints implemented and tested
 
-**Endpoints**:
+**Completed Endpoints**:
 ```
-POST   /api/leaves                    # Apply for leave
-GET    /api/leaves                    # List leaves with filters
-GET    /api/leaves/:id                # Get leave details
-PUT    /api/leaves/:id/approve        # Approve leave (HR/Admin)
-PUT    /api/leaves/:id/reject         # Reject leave (HR/Admin)
-DELETE /api/leaves/:id                # Delete leave request
-GET    /api/leaves/balance/:employeeId # Get leave balance
+✅ POST   /api/leaves                    # Apply for leave
+✅ GET    /api/leaves                    # List leaves with filters
+✅ GET    /api/leaves/balance/:employeeId # Get leave balance
+✅ GET    /api/leaves/:id                # Get leave details
+✅ PUT    /api/leaves/:id/approve        # Approve leave (HR/Admin)
+✅ PUT    /api/leaves/:id/reject         # Reject leave (HR/Admin)
+✅ DELETE /api/leaves/:id                # Cancel/delete leave
 ```
+
+**Key Features**:
+- ✅ Working days calculation (excludes weekends)
+- ✅ Half-day leave support
+- ✅ Leave balance validation
+- ✅ Overlap detection
+- ✅ Auto-creates attendance records when approved
+- ✅ Auto-deletes attendance records when cancelled
+- ✅ Year-wise balance tracking
+
+#### **Priority 4: Payroll/Salary Management APIs** 🔥 CURRENT
+**Branch**: `feature/backend-payroll-apis`  
+**File**: `backend/src/routes/payroll.ts`
+
+**Planned Endpoints**:
+```
+POST   /api/payroll/salary-structure        # Create salary structure
+GET    /api/payroll/salary-structure        # List salary structures
+PUT    /api/payroll/salary-structure/:id    # Update structure
+POST   /api/payroll/payslip                 # Generate payslip
+GET    /api/payroll/payslip                 # List payslips
+GET    /api/payroll/payslip/:id             # Get payslip details
+POST   /api/payroll/payrun                  # Run payroll for period
+GET    /api/payroll/payrun/:id              # Get payrun details
+```
+
+**Integration Requirements**:
+- Must integrate with attendance data (working days)
+- Must integrate with leave data (paid/unpaid leaves)
+- Calculate payable days based on attendance + leaves
 
 ---
 

@@ -380,12 +380,14 @@ Track your progress here:
 
 ## ⚡ **Quick Reference**
 
-### **Available Backend APIs** (Ready to Use - 21 endpoints) ✨ UPDATED!
+### **Available Backend APIs** (Ready to Use - 28 endpoints) ✨ UPDATED!
 ```
-✅ Authentication (3 endpoints)
+✅ Authentication (5 endpoints)
 POST   /api/auth/login             # Login
 GET    /api/auth/me                # Get current user
 POST   /api/auth/change-password   # Change password
+GET    /api/auth/roles             # Get available roles
+POST   /api/auth/register          # Disabled (returns 403)
 
 ✅ User Management (3 endpoints)
 POST   /api/users                  # Create user (Admin/HR)
@@ -396,10 +398,11 @@ GET    /api/users/:id              # Get user details (Admin/HR)
 POST   /api/employees              # Create employee
 GET    /api/employees              # List employees with pagination
 GET    /api/employees/:id          # Get employee details
+GET    /api/employees/:id/profile  # Get full profile (salary, attendance, leaves)
 PUT    /api/employees/:id          # Update employee
 DELETE /api/employees/:id          # Delete employee
 
-✨ NEW! Attendance Management (8 endpoints) - TESTED & WORKING!
+✅ Attendance Management (8 endpoints) - TESTED & WORKING!
 POST   /api/attendance/check-in            # Employee check-in
 POST   /api/attendance/check-out           # Employee check-out
 GET    /api/attendance                     # List all attendance (with filters)
@@ -408,6 +411,15 @@ POST   /api/attendance/manual              # Manual entry (HR/Admin)
 PUT    /api/attendance/:id                 # Update attendance (HR/Admin)
 DELETE /api/attendance/:id                 # Delete attendance (Admin)
 GET    /api/attendance/report              # Generate report (HR/Admin)
+
+✨ NEW! Leave Management (7 endpoints) - TESTED & WORKING!
+POST   /api/leaves                         # Apply for leave
+GET    /api/leaves                         # List leaves with filters
+GET    /api/leaves/balance/:employeeId     # Get leave balance
+GET    /api/leaves/:id                     # Get leave details
+PUT    /api/leaves/:id/approve             # Approve leave (HR/Admin)
+PUT    /api/leaves/:id/reject              # Reject leave (HR/Admin)
+DELETE /api/leaves/:id                     # Cancel/delete leave
 ```
 
 ### **Attendance API Features** ✨ NEW!
@@ -437,6 +449,63 @@ GET    /api/attendance/report              # Generate report (HR/Admin)
 - `status` - Filter by status (PRESENT, ABSENT, HALF_DAY, LEAVE)
 - `startDate` & `endDate` - Date range filter
 - `month` & `year` - Month filter (recommended for default view)
+
+### **Leave Management API Features** ✨ NEW!
+
+**Key Features Tested & Working:**
+- ✅ Leave application with balance validation
+- ✅ Working days calculation (excludes weekends automatically)
+- ✅ Half-day leave support (0.5 days)
+- ✅ Overlap detection (prevents duplicate leave requests)
+- ✅ Year-wise leave balance tracking
+- ✅ Leave approval workflow (HR/Admin only)
+- ✅ **Auto-creates attendance records** when leave is approved (status: LEAVE)
+- ✅ **Auto-deletes attendance records** when leave is cancelled
+- ✅ Role-based access: Employees see own, HR/Admin see all
+
+**Leave Types & Annual Allowances:**
+- SICK: 12 days/year
+- CASUAL: 12 days/year
+- PAID: 18 days/year
+- UNPAID: Unlimited
+- MATERNITY: 180 days
+- PATERNITY: 7 days
+
+**Important for Frontend:**
+
+1. **Apply for Leave**: POST `/api/leaves`
+   ```json
+   {
+     "leaveType": "SICK",
+     "startDate": "2025-11-10",
+     "endDate": "2025-11-12",
+     "reason": "Medical appointment",
+     "isHalfDay": false
+   }
+   ```
+
+2. **List Leaves**: GET `/api/leaves?status=PENDING&month=11&year=2025`
+   - Query params: `status`, `leaveType`, `employeeId`, `department`, `month`, `year`, `page`, `limit`
+   - Returns pagination metadata
+
+3. **Leave Balance**: GET `/api/leaves/balance/:employeeId`
+   - Shows total/used/remaining for each leave type
+   - Year-wise tracking
+
+4. **Approve/Reject**: PUT `/api/leaves/:id/approve` or `/api/leaves/:id/reject`
+   - HR/Admin only
+   - Approval creates attendance records automatically
+
+5. **Cancel Leave**: DELETE `/api/leaves/:id`
+   - Employees can cancel own PENDING leaves
+   - HR/Admin can delete any leave
+
+**UI Component Suggestions:**
+- Leave request form (with date picker, leave type selector)
+- Leave balance widget (pie chart showing available days)
+- Leave approval dashboard (for HR/Admin)
+- Leave calendar view (monthly view with color-coded leaves)
+- Leave history table (with filters and pagination)
 
 See `docs/API_DOCUMENTATION.md` for complete request/response examples!
 
