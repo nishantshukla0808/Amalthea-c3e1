@@ -35,8 +35,26 @@ export default function DashboardLayout({
   }, [router]);
 
   const handleLogout = () => {
+    console.log('🚪 Logging out...');
+    
+    // Clear auth state
     authAPI.logout();
+    
+    // Force clear any cached data
+    if (typeof window !== 'undefined') {
+      localStorage.clear(); // Clear all localStorage
+      sessionStorage.clear(); // Clear sessionStorage too
+    }
+    
+    console.log('✅ Logged out, redirecting to login...');
+    
+    // Redirect to login
     router.push('/login');
+    
+    // Force reload to clear any React state
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 100);
   };
 
   if (loading) {
@@ -59,13 +77,16 @@ export default function DashboardLayout({
 
         {/* Navigation Links */}
         <nav className="flex-1 px-4 py-6 space-y-2">
-          <a
-            href="/dashboard/employees"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            <span>👥</span>
-            <span>Employees</span>
-          </a>
+          {/* Show Employees only for ADMIN and HR_OFFICER */}
+          {(user?.role === 'ADMIN' || user?.role === 'HR_OFFICER') && (
+            <a
+              href="/dashboard/employees"
+              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              <span>👥</span>
+              <span>Employees</span>
+            </a>
+          )}
           <a
             href="/dashboard/attendance"
             className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"

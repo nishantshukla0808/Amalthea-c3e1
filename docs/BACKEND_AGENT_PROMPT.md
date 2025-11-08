@@ -20,18 +20,21 @@ You are the **Backend Developer** for WorkZen HRMS project. Another agent is wor
 ## 📍 **Current Status**
 
 ### ✅ **What's Done (YOUR WORK)**
-- ✅ Authentication APIs (login, logout, change password) - 5 endpoints
+- ✅ Authentication APIs (login, logout, change password, roles) - 5 endpoints
 - ✅ User Management APIs (create user, list users, get user details) - 3 endpoints
+- ✅ Employee Management APIs (list, get, get profile, update, delete) - 5 endpoints
 - ✅ Database schema and seeding completed
 - ✅ JWT authentication middleware working
 - ✅ Role-based access control (ADMIN, HR_OFFICER, PAYROLL_OFFICER, EMPLOYEE)
+- ✅ CORS configuration updated for multiple origins
+- ✅ Cache control headers to prevent authentication caching issues
 - ✅ Server running at `http://localhost:5000`
 
 ### 🚧 **What's Next (YOUR WORK)**
-- Employee Management APIs (CRUD operations)
-- Attendance APIs (check-in/out, reports)
-- Leave Management APIs (apply, approve, reject)
-- Payroll APIs (payruns, payslips)
+- Attendance APIs (check-in/out, reports) - ~8 endpoints
+- Leave Management APIs (apply, approve, reject) - ~8 endpoints
+- Payroll APIs (payruns, payslips, salary structures) - ~17 endpoints
+- **RECOMMENDED**: Add `/api/employees/me` endpoint for current user's employee profile
 
 ### 🎨 **What Other Agent is Doing (Frontend)**
 Building the Next.js UI that will consume your APIs. They need:
@@ -54,81 +57,137 @@ Building the Next.js UI that will consume your APIs. They need:
 
 ## 🎯 **Your Priority Tasks**
 
-### **Phase 1: Employee Management APIs (START HERE)**
+### **Recent Updates (November 8, 2025)**
 
-#### **Task 1.1: Create Employee Routes**
-**File**: `backend/src/routes/employees.ts`  
-**Branch**: `feature/backend-employee-apis`
+#### **✅ Completed Employee Management APIs**
+All 5 employee endpoints have been implemented and tested:
+- `GET /api/employees` - List with pagination, search, filters (ADMIN, HR_OFFICER only)
+- `GET /api/employees/:id` - Get employee details
+- `GET /api/employees/:id/profile` - Full profile with relations (attendances, leaves, payslips)
+- `PUT /api/employees/:id` - Update employee information
+- `DELETE /api/employees/:id` - Delete employee (cascades to user)
+
+#### **🔧 Backend Improvements**
+1. **CORS Configuration Enhanced**:
+   - Now supports multiple origins: `localhost:3000` and `localhost:3001`
+   - Added explicit methods and headers configuration
+   
+2. **Cache Control Headers Added**:
+   - Prevents browser caching of API responses
+   - Fixes login/logout issues where stale data was being used
+   - Headers: `Cache-Control: no-store, no-cache, must-revalidate, private`
+
+3. **Authentication Flow Improved**:
+   - Better token validation
+   - Clearer error messages for auth failures
+   - Proper CORS preflight handling
+
+#### **⚠️ Known Issues & Recommendations**
+1. **Missing Endpoint**: Consider adding `/api/employees/me` endpoint
+   - Purpose: Get current user's employee profile without admin access
+   - Current workaround: Frontend iterates through employee IDs (inefficient)
+   - Suggested implementation:
+   ```typescript
+   router.get('/me', verifyTokenMiddleware, async (req, res) => {
+     const employee = await prisma.employee.findFirst({
+       where: { userId: req.user.userId },
+       include: { user: true, salaryStructure: true }
+     });
+     res.json({ data: employee });
+   });
+   ```
+
+---
+
+### **Phase 1: Attendance Management APIs (START HERE - NEXT PRIORITY)**
+
+#### **Task 1.1: Create Attendance Routes**
+**File**: `backend/src/routes/attendance.ts`  
+**Branch**: `feature/backend-attendance-apis`
 
 **Endpoints to Implement**:
 
-1. **GET /api/employees** - List all employees
+1. **POST /api/attendance/check-in** - Employee check-in
    ```typescript
-   // Query params: ?department=IT&role=EMPLOYEE&page=1&limit=10
-   // Returns: paginated list of employees
-   // Access: ADMIN, HR_OFFICER
+   // Body: { employeeId: string, checkInTime?: Date }
+   // Returns: attendance record with check-in time
+   // Access: All authenticated users (for self), ADMIN/HR (for others)
    ```
 
-2. **GET /api/employees/:id** - Get employee details
+2. **POST /api/attendance/check-out** - Employee check-out
    ```typescript
-   // Returns: full employee profile with salary, attendance summary
+   // Body: { attendanceId: string, checkOutTime?: Date }
+   // Returns: attendance record with check-out time and duration
+   // Access: All authenticated users (for self), ADMIN/HR (for others)
+   ```
+
+3. **GET /api/attendance** - List attendance records
+   ```typescript
+   // Query: ?employeeId=X&startDate=YYYY-MM-DD&endDate=YYYY-MM-DD&page=1&limit=50
+   // Returns: paginated attendance records
+   // Access: ADMIN, HR_OFFICER (all), Employees (self only)
+   ```
+
+4. **GET /api/attendance/:id** - Get specific attendance record
+   ```typescript
+   // Returns: detailed attendance record
    // Access: ADMIN, HR_OFFICER, or self
    ```
 
-3. **PUT /api/employees/:id** - Update employee
+5. **POST /api/attendance/manual** - Manual attendance entry
    ```typescript
-   // Body: firstName, lastName, department, designation, etc.
-   // Returns: updated employee
-   // Access: ADMIN, HR_OFFICER
+   // Body: { employeeId, date, checkIn, checkOut, notes }
+   // Returns: created attendance record
+   // Access: ADMIN, HR_OFFICER only
    ```
 
-4. **DELETE /api/employees/:id** - Delete employee
+6. **PUT /api/attendance/:id** - Update attendance
    ```typescript
-   // Soft delete (set isActive = false)
+   // Body: { checkIn?, checkOut?, notes? }
+   // Returns: updated attendance record
+   // Access: ADMIN, HR_OFFICER only
+   ```
+
+7. **DELETE /api/attendance/:id** - Delete attendance
+   ```typescript
    // Returns: success message
    // Access: ADMIN only
    ```
 
-5. **GET /api/employees/:id/profile** - Get full profile
+8. **GET /api/attendance/report** - Generate attendance report
    ```typescript
-   // Returns: employee + salary + recent attendance + leave balance
-   // Access: ADMIN, HR_OFFICER, or self
+   // Query: ?employeeId=X&month=11&year=2025
+   // Returns: summary report with total days, present, absent, late
+   // Access: ADMIN, HR_OFFICER (all), Employees (self only)
    ```
 
 #### **Task 1.2: Register Routes**
 Update `backend/src/index.ts`:
 ```typescript
-import employeeRoutes from './routes/employees';
-app.use('/api/employees', employeeRoutes);
+import attendanceRoutes from './routes/attendance';
+app.use('/api/attendance', attendanceRoutes);
 ```
 
-#### **Task 1.3: Test APIs**
-Use curl or Postman:
-```bash
-# Get auth token first
-curl -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"loginId":"OIADUS20200001","password":"Password123!"}'
+#### **Task 1.3: Implement Business Logic**
+Key features to implement:
+- Prevent duplicate check-ins for same day
+- Calculate work duration on check-out
+- Validate check-out time > check-in time
+- Auto-mark absent for missing check-ins
+- Support timezone handling
 
-# Use token in subsequent requests
-curl http://localhost:5000/api/employees \
-  -H "Authorization: Bearer <your-token>"
-```
-
-#### **Task 1.4: Update Documentation**
-Add your new APIs to `docs/API_DOCUMENTATION.md`:
-- Mark as ✅ Implemented
-- Add request/response examples
-- Document error codes
-- Add any special requirements
+#### **Task 1.4: Test & Document**
+- Test all endpoints with different roles
+- Update `docs/API_DOCUMENTATION.md`
+- Add example requests/responses
 
 ---
 
-### **Phase 2: Attendance Management APIs (AFTER Phase 1)**
+### **Phase 2: Leave Management APIs (AFTER Attendance)**
 
-#### **Task 2.1: Create Attendance Routes**
-**File**: `backend/src/routes/attendance.ts`  
-**Branch**: `feature/backend-attendance-apis`
+#### **Task 2.1: Create Leave Routes**
+**File**: `backend/src/routes/leaves.ts`  
+**Branch**: `feature/backend-leave-apis`
 
 **Endpoints**:
 ```
@@ -150,15 +209,16 @@ GET    /api/attendance/report          # Generate report
 **Branch**: `feature/backend-leave-apis`
 
 **Endpoints**:
-```
-POST   /api/leaves                     # Apply for leave
-GET    /api/leaves                     # List leaves (role-based)
-GET    /api/leaves/:id                 # Get leave details
-PUT    /api/leaves/:id/approve         # Approve leave (HR/Admin)
-PUT    /api/leaves/:id/reject          # Reject leave (HR/Admin)
-DELETE /api/leaves/:id/cancel          # Cancel leave
-GET    /api/leaves/pending             # Get pending leaves
-```
+1. **POST /api/leaves** - Apply for leave
+2. **GET /api/leaves** - List leaves (role-based filtering)
+3. **GET /api/leaves/:id** - Get leave details
+4. **PUT /api/leaves/:id/approve** - Approve leave (HR/Admin only)
+5. **PUT /api/leaves/:id/reject** - Reject leave (HR/Admin only)
+6. **DELETE /api/leaves/:id** - Cancel leave application
+7. **GET /api/leaves/pending** - Get pending approvals (HR/Admin)
+8. **GET /api/leaves/balance/:employeeId** - Get leave balance
+
+See detailed specifications in the Phase 2 section above.
 
 ---
 
@@ -391,13 +451,16 @@ Track your progress:
   - [x] Authentication APIs (5 endpoints)
   - [x] User Management APIs (3 endpoints)
   - [x] Database & seeding
+  - [x] CORS & Cache control configuration
 
-- [ ] **Phase B: Core Features**
-  - [ ] Employee Management APIs (5 endpoints)
+- [x] **Phase B: Employee Management (Complete)**
+  - [x] Employee Management APIs (5 endpoints)
+
+- [ ] **Phase C: Attendance & Leave**
   - [ ] Attendance APIs (8 endpoints)
   - [ ] Leave Management APIs (8 endpoints)
 
-- [ ] **Phase C: Payroll**
+- [ ] **Phase D: Payroll**
   - [ ] Salary Structure APIs (5 endpoints)
   - [ ] Payroll Processing APIs (6 endpoints)
   - [ ] Payslip APIs (6 endpoints)
@@ -407,10 +470,10 @@ Track your progress:
 ## ⚡ **Quick Reference**
 
 ### **Current API Count**
-- ✅ Implemented: 8 APIs
+- ✅ Implemented: 13 APIs (5 Auth + 3 User + 5 Employee)
 - 🚧 In Progress: 0 APIs
-- ⏳ Planned: ~42 APIs
-- 📊 Progress: 16%
+- ⏳ Planned: ~37 APIs (8 Attendance + 8 Leave + 17 Payroll + 4 Others)
+- 📊 Progress: 26% Complete
 
 ### **Database Models Available**
 ```
@@ -456,4 +519,18 @@ The backend infrastructure is solid. Now just add more API endpoints following t
 
 ---
 
-**Last Updated**: November 8, 2025
+---
+
+## 🆕 **Changelog**
+
+### **November 8, 2025**
+- ✅ Completed Employee Management APIs (5 endpoints)
+- ✅ Enhanced CORS configuration for multiple origins
+- ✅ Added cache control headers to prevent auth caching
+- ✅ Frontend integration tested and working
+- 📝 Updated progress: 26% complete (13/50 APIs)
+- 🎯 Next priority: Attendance Management APIs
+
+---
+
+**Last Updated**: November 8, 2025 - 10:45 PM IST

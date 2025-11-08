@@ -155,16 +155,16 @@ export default function EmployeesPage() {
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  // Open profile
+                  router.push(`/dashboard/employees/${employee.id}`);
                 }}
-                className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
+                className="text-xs px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-white"
               >
                 View
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  // Edit employee
+                  router.push(`/dashboard/employees/${employee.id}/edit`);
                 }}
                 className="text-xs px-3 py-1 bg-blue-100 hover:bg-blue-200 rounded text-blue-700"
               >

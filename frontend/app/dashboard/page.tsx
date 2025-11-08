@@ -10,11 +10,21 @@ export default function DashboardPage() {
   useEffect(() => {
     const userData = localStorage.getItem('user');
     if (userData) {
-      setUser(JSON.parse(userData));
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+      
+      // Redirect based on role
+      if (parsedUser.role === 'ADMIN' || parsedUser.role === 'HR_OFFICER') {
+        // Admins and HR Officers go to employees page
+        router.push('/dashboard/employees');
+      } else {
+        // Regular employees go to their profile
+        router.push('/dashboard/profile');
+      }
+    } else {
+      // Default to profile if no user data
+      router.push('/dashboard/profile');
     }
-    
-    // Redirect to employees page
-    router.push('/dashboard/employees');
   }, [router]);
 
   return (

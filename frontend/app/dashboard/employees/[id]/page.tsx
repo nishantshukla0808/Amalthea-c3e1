@@ -302,17 +302,17 @@ export default function EmployeeProfilePage() {
 
               {activeTab === 'salary' && canViewSalary() && (
                 <div className="space-y-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="bg-white border border-gray-200 p-4 rounded-lg">
                     <h3 className="font-semibold text-gray-900 mb-4">Salary Information</h3>
                     {employee.salaryStructure ? (
                       <div className="space-y-3">
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Month Wage</span>
-                          <span className="font-medium">₹{employee.salaryStructure.basicSalary}</span>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-700 font-medium">Month Wage</span>
+                          <span className="font-bold text-gray-900 text-lg">₹{employee.salaryStructure.basicSalary}</span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-gray-600">Yearly Wage</span>
-                          <span className="font-medium">₹{employee.salaryStructure.basicSalary * 12}</span>
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-700 font-medium">Yearly Wage</span>
+                          <span className="font-bold text-gray-900 text-lg">₹{employee.salaryStructure.basicSalary * 12}</span>
                         </div>
                       </div>
                     ) : (

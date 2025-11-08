@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { authAPI } from '@/lib/api';
 
@@ -13,6 +13,17 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Check if already logged in on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        console.log('⚠️ Found existing token, redirecting to dashboard...');
+        router.push('/dashboard');
+      }
+    }
+  }, [router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -22,8 +33,14 @@ export default function LoginPage() {
 
     try {
       console.log('📡 Calling API...');
+      console.log('🌐 API URL:', process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api');
+      
       const response = await authAPI.login(formData.loginId, formData.password);
       console.log('✅ Login response:', response);
+      
+      // Clear any existing data first
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       
       // Store token and user data
       localStorage.setItem('token', response.token);
@@ -35,7 +52,18 @@ export default function LoginPage() {
       router.push('/dashboard');
     } catch (err: any) {
       console.error('❌ Login error:', err);
-      setError(err.message || 'Login failed');
+      console.error('❌ Error details:', {
+        message: err.message,
+        name: err.name,
+        stack: err.stack
+      });
+      
+      // Provide more helpful error messages
+      let errorMessage = err.message || 'Login failed';
+      if (err.message === 'Failed to fetch') {
+        errorMessage = 'Cannot connect to server. Please make sure the backend is running on port 5000.';
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
