@@ -86,6 +86,10 @@ export const employeeAPI = {
   },
   getById: (id: string) => apiRequest(`/employees/${id}`),
   getProfile: (id: string) => apiRequest(`/employees/${id}/profile`),
+  create: (data: any) => apiRequest('/employees', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
   update: (id: string, data: any) => apiRequest(`/employees/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),

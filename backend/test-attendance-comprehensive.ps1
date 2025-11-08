@@ -14,7 +14,7 @@ Write-Host "`n[TEST 1] Login as Admin..." -ForegroundColor Yellow
 try {
     $loginBody = @{
         loginId = "OIADUS20200001"
-        password = "NewPassword123!"
+        password = "Password123!"
     } | ConvertTo-Json
     
     $loginResponse = Invoke-RestMethod -Uri "$baseUrl/api/auth/login" `
@@ -72,7 +72,17 @@ try {
     $testsPassed++
     $attendanceId = $checkInResponse.data.id
 } catch {
-    $errorMsg = ($_.ErrorDetails.Message | ConvertFrom-Json).message
+    $errorMsg = ""
+    if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
+        try {
+            $errorMsg = ($_.ErrorDetails.Message | ConvertFrom-Json).message
+        } catch {
+            $errorMsg = $_.Exception.Message
+        }
+    } else {
+        $errorMsg = $_.Exception.Message
+    }
+    
     if ($errorMsg -like "*already marked*") {
         Write-Host "  PASS - Duplicate prevention working (already checked in)" -ForegroundColor Green
         $testsPassed++
@@ -98,7 +108,17 @@ try {
     Write-Host "  FAIL - Duplicate check-in should have been prevented!" -ForegroundColor Red
     $testsFailed++
 } catch {
-    $errorMsg = ($_.ErrorDetails.Message | ConvertFrom-Json).message
+    $errorMsg = ""
+    if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
+        try {
+            $errorMsg = ($_.ErrorDetails.Message | ConvertFrom-Json).message
+        } catch {
+            $errorMsg = $_.Exception.Message
+        }
+    } else {
+        $errorMsg = $_.Exception.Message
+    }
+    
     if ($errorMsg -like "*already marked*") {
         Write-Host "  PASS - Duplicate prevention working correctly" -ForegroundColor Green
         $testsPassed++
@@ -119,10 +139,10 @@ try {
         -Headers $headers
     
     Write-Host "  PASS - Retrieved attendance records" -ForegroundColor Green
-    Write-Host "  Total records: $($attendanceResponse.data.attendances.Count)" -ForegroundColor Gray
-    Write-Host "  Total hours: $([math]::Round($attendanceResponse.data.statistics.totalHours, 2))" -ForegroundColor Gray
-    Write-Host "  Present days: $($attendanceResponse.data.statistics.present)" -ForegroundColor Gray
-    Write-Host "  Absent days: $($attendanceResponse.data.statistics.absent)" -ForegroundColor Gray
+    Write-Host "  Total records: $($attendanceResponse.data.Count)" -ForegroundColor Gray
+    Write-Host "  Total hours: $([math]::Round($attendanceResponse.statistics.totalHours, 2))" -ForegroundColor Gray
+    Write-Host "  Present days: $($attendanceResponse.statistics.present)" -ForegroundColor Gray
+    Write-Host "  Absent days: $($attendanceResponse.statistics.absent)" -ForegroundColor Gray
     $testsPassed++
 } catch {
     Write-Host "  FAIL - $($_.Exception.Message)" -ForegroundColor Red
@@ -177,12 +197,19 @@ try {
         -Headers $headers
     
     Write-Host "  PASS - Report generated successfully" -ForegroundColor Green
-    Write-Host "  Total records: $($report.data.statistics.totalRecords)" -ForegroundColor Gray
-    Write-Host "  Total hours: $([math]::Round($report.data.statistics.totalHours, 2))" -ForegroundColor Gray
-    Write-Host "  Present: $($report.data.statistics.present)" -ForegroundColor Gray
-    Write-Host "  Absent: $($report.data.statistics.absent)" -ForegroundColor Gray
-    Write-Host "  Half Day: $($report.data.statistics.halfDay)" -ForegroundColor Gray
-    Write-Host "  Leave: $($report.data.statistics.leave)" -ForegroundColor Gray
+    Write-Host "  Total records: $($report.data.summary.totalRecords)" -ForegroundColor Gray
+    Write-Host "  Total hours: $([math]::Round($report.data.summary.totalHours, 2))" -ForegroundColor Gray
+    
+    # Status breakdown
+    $presentCount = ($report.data.statusBreakdown | Where-Object { $_.status -eq 'PRESENT' }).count
+    $absentCount = ($report.data.statusBreakdown | Where-Object { $_.status -eq 'ABSENT' }).count
+    $halfDayCount = ($report.data.statusBreakdown | Where-Object { $_.status -eq 'HALF_DAY' }).count
+    $leaveCount = ($report.data.statusBreakdown | Where-Object { $_.status -eq 'LEAVE' }).count
+    
+    Write-Host "  Present: $presentCount" -ForegroundColor Gray
+    Write-Host "  Absent: $absentCount" -ForegroundColor Gray
+    Write-Host "  Half Day: $halfDayCount" -ForegroundColor Gray
+    Write-Host "  Leave: $leaveCount" -ForegroundColor Gray
     
     if ($report.data.departmentBreakdown.Count -gt 0) {
         Write-Host "  Department breakdown:" -ForegroundColor Gray
@@ -222,7 +249,17 @@ try {
     Write-Host "  Is manual: $($manualResponse.data.isManual)" -ForegroundColor Gray
     $testsPassed++
 } catch {
-    $errorMsg = ($_.ErrorDetails.Message | ConvertFrom-Json).message
+    $errorMsg = ""
+    if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
+        try {
+            $errorMsg = ($_.ErrorDetails.Message | ConvertFrom-Json).message
+        } catch {
+            $errorMsg = $_.Exception.Message
+        }
+    } else {
+        $errorMsg = $_.Exception.Message
+    }
+    
     if ($errorMsg -like "*already exists*") {
         Write-Host "  PASS - Entry already exists (expected on re-run)" -ForegroundColor Green
         $testsPassed++
@@ -250,13 +287,24 @@ try {
     Write-Host "  Working hours: $([math]::Round($checkOutResponse.data.workingHours, 2))" -ForegroundColor Gray
     $testsPassed++
 } catch {
-    $errorMsg = ($_.ErrorDetails.Message | ConvertFrom-Json).message
+    $errorMsg = ""
+    if ($_.ErrorDetails -and $_.ErrorDetails.Message) {
+        try {
+            $errorMsg = ($_.ErrorDetails.Message | ConvertFrom-Json).message
+        } catch {
+            $errorMsg = $_.Exception.Message
+        }
+    } else {
+        $errorMsg = $_.Exception.Message
+    }
+    
     Write-Host "  INFO - $errorMsg" -ForegroundColor Yellow
-    if ($errorMsg -like "*already checked out*" -or $errorMsg -like "*not found*") {
-        Write-Host "  PASS - Endpoint working (already checked out)" -ForegroundColor Green
+    if ($errorMsg -like "*already checked out*" -or $errorMsg -like "*No active check-in*" -or $errorMsg -like "*not found*") {
+        Write-Host "  PASS - Endpoint working (already checked out or no active check-in)" -ForegroundColor Green
         $testsPassed++
     } else {
-        $testsPassed++
+        Write-Host "  FAIL - Unexpected error: $errorMsg" -ForegroundColor Red
+        $testsFailed++
     }
 }
 

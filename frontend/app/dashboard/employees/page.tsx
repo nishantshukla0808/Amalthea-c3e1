@@ -85,7 +85,10 @@ export default function EmployeesPage() {
         
         {/* VIEW Toggle - can add later */}
         <div className="flex items-center space-x-4">
-          <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors">
+          <button 
+            onClick={() => router.push('/dashboard/employees/add')}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+          >
             + Add Employee
           </button>
         </div>

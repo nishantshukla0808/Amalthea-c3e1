@@ -88,6 +88,138 @@ router.get(
 );
 
 // ============================================
+// POST /api/employees - Create new employee
+// ============================================
+router.post(
+  '/',
+  verifyTokenMiddleware,
+  requireRole(Role.ADMIN, Role.HR_OFFICER),
+  async (req: Request, res: Response) => {
+    const {
+      // User fields
+      loginId,
+      email,
+      password,
+      role,
+      
+      // Employee fields
+      firstName,
+      lastName,
+      phoneNumber,
+      department,
+      designation,
+      dateOfBirth,
+      dateOfJoining,
+      address,
+      emergencyContactName,
+      emergencyContactPhone,
+      basicSalary,
+      
+      // Optional fields
+      bankAccountNo,
+      ifscCode,
+      panNumber,
+      aadharNumber,
+    } = req.body;
+
+    // Validation
+    if (!loginId || !email || !password || !firstName || !lastName) {
+      throw new AppError(400, 'Missing required fields: loginId, email, password, firstName, lastName');
+    }
+
+    // Check if user with this loginId or email already exists
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { loginId },
+          { email },
+        ],
+      },
+    });
+
+    if (existingUser) {
+      throw new AppError(400, 'User with this login ID or email already exists');
+    }
+
+    // Hash the password
+    const bcrypt = await import('bcryptjs');
+    const hashedPassword = await bcrypt.default.hash(password, 10);
+
+    // Create user and employee in a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Create user
+      const user = await tx.user.create({
+        data: {
+          loginId,
+          email,
+          password: hashedPassword,
+          role: role || Role.EMPLOYEE,
+          isActive: true,
+          mustChangePassword: false,
+        },
+      });
+
+      // Generate employee ID if not provided
+      const employeeId = loginId;
+
+      // Create employee
+      const employee = await tx.employee.create({
+        data: {
+          userId: user.id,
+          employeeId,
+          firstName,
+          lastName,
+          phoneNumber,
+          department: department || null,
+          designation: designation || null,
+          dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : null,
+          dateOfJoining: dateOfJoining ? new Date(dateOfJoining) : new Date(),
+          joiningYear: dateOfJoining ? new Date(dateOfJoining).getFullYear() : new Date().getFullYear(),
+          address: address || null,
+          emergencyContact: emergencyContactName && emergencyContactPhone 
+            ? `${emergencyContactName} - ${emergencyContactPhone}` 
+            : emergencyContactName || emergencyContactPhone || null,
+          bankAccountNo: bankAccountNo || null,
+          ifscCode: ifscCode || null,
+          panNumber: panNumber || null,
+          aadharNumber: aadharNumber || null,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              loginId: true,
+              email: true,
+              role: true,
+              isActive: true,
+            },
+          },
+        },
+      });
+
+      // Create salary structure if basicSalary is provided
+      if (basicSalary) {
+        await tx.salaryStructure.create({
+          data: {
+            employeeId: employee.id,
+            basicSalary: parseFloat(basicSalary),
+            effectiveFrom: dateOfJoining ? new Date(dateOfJoining) : new Date(),
+          },
+        });
+      }
+
+      return employee;
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Employee created successfully',
+      data: result,
+    });
+  }
+);
+
+// ============================================
 // GET /api/employees/:id - Get employee details
 // ============================================
 router.get(
