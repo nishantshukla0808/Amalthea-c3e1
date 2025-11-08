@@ -243,4 +243,82 @@ router.get(
   }
 );
 
+/**
+ * PUT /api/users/:id/role
+ * Update user role (Admin only)
+ */
+router.put(
+  '/:id/role',
+  verifyTokenMiddleware,
+  requireRole('ADMIN'),
+  async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const { role } = req.body;
+
+      if (!role) {
+        return res.status(400).json({
+          success: false,
+          message: 'Role is required',
+        });
+      }
+
+      // Validate role
+      const validRoles = ['EMPLOYEE', 'HR_OFFICER', 'PAYROLL_OFFICER', 'ADMIN'];
+      if (!validRoles.includes(role)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid role. Must be one of: ' + validRoles.join(', '),
+        });
+      }
+
+      // Check if user exists
+      const existingUser = await prisma.user.findUnique({
+        where: { id },
+      });
+
+      if (!existingUser) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found',
+        });
+      }
+
+      // Update user role
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: { role },
+        select: {
+          id: true,
+          loginId: true,
+          email: true,
+          role: true,
+          employee: {
+            select: {
+              employeeId: true,
+              firstName: true,
+              lastName: true,
+            },
+          },
+        },
+      });
+
+      logger.info(`User role updated: ${updatedUser.loginId} to ${role} by ${req.user?.email}`);
+
+      return res.json({
+        success: true,
+        message: 'User role updated successfully',
+        data: updatedUser,
+      });
+    } catch (error: any) {
+      logger.error('Error updating user role:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to update user role',
+        error: error.message,
+      });
+    }
+  }
+);
+
 export default router;

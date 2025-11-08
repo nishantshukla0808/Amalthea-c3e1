@@ -70,6 +70,10 @@ export const userAPI = {
     method: 'POST',
     body: JSON.stringify(userData),
   }),
+  updateRole: (id: string, role: string) => apiRequest(`/users/${id}/role`, {
+    method: 'PUT',
+    body: JSON.stringify({ role }),
+  }),
 };
 
 // Employee API functions
