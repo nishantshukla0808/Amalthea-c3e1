@@ -191,3 +191,69 @@ export const attendanceAPI = {
     return apiRequest(`/attendance/report?${queryParams.toString()}`);
   },
 };
+
+// Leave API
+export const leaveAPI = {
+  // Apply for leave
+  apply: (data: {
+    leaveType: string;
+    startDate: string;
+    endDate: string;
+    reason: string;
+    isHalfDay?: boolean;
+  }) => apiRequest('/leaves', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+
+  // Get all leaves with filters
+  getAll: (params?: {
+    page?: number;
+    limit?: number;
+    status?: string;
+    leaveType?: string;
+    employeeId?: string;
+    department?: string;
+    startDate?: string;
+    endDate?: string;
+    month?: number;
+    year?: number;
+  }) => {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.status) queryParams.append('status', params.status);
+    if (params?.leaveType) queryParams.append('leaveType', params.leaveType);
+    if (params?.employeeId) queryParams.append('employeeId', params.employeeId);
+    if (params?.department) queryParams.append('department', params.department);
+    if (params?.startDate) queryParams.append('startDate', params.startDate);
+    if (params?.endDate) queryParams.append('endDate', params.endDate);
+    if (params?.month) queryParams.append('month', params.month.toString());
+    if (params?.year) queryParams.append('year', params.year.toString());
+    
+    return apiRequest(`/leaves?${queryParams.toString()}`);
+  },
+
+  // Get leave balance for an employee
+  getBalance: (employeeId: string) => apiRequest(`/leaves/balance/${employeeId}`),
+
+  // Get specific leave by ID
+  getById: (id: string) => apiRequest(`/leaves/${id}`),
+
+  // Approve leave
+  approve: (id: string, approverComments?: string) => apiRequest(`/leaves/${id}/approve`, {
+    method: 'PUT',
+    body: JSON.stringify({ approverComments }),
+  }),
+
+  // Reject leave
+  reject: (id: string, approverComments: string) => apiRequest(`/leaves/${id}/reject`, {
+    method: 'PUT',
+    body: JSON.stringify({ approverComments }),
+  }),
+
+  // Cancel leave
+  cancel: (id: string) => apiRequest(`/leaves/${id}/cancel`, {
+    method: 'PUT',
+  }),
+};
