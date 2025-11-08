@@ -49,7 +49,7 @@ export default function MyProfilePage() {
     try {
       setLoading(true);
       
-      // Get current user info - API returns { user: {...}, token: ... } directly
+      // Get current user info
       const response = await authAPI.getCurrentUser();
       console.log('🔍 Current user response:', response);
       
@@ -61,54 +61,24 @@ export default function MyProfilePage() {
       setCurrentUser(response.user);
       console.log('👤 User data:', response.user);
 
-      // Get the user ID from current user
-      const userId = response.user?.id;
+      // Get current user's employee profile using the new /me endpoint
+      console.log('� Fetching employee profile...');
+      const profileResponse = await employeeAPI.getMe();
       
-      if (!userId) {
-        setError('User ID not found. Please login again.');
-        return;
-      }
-      
-      console.log('🔑 Looking for employee with user ID:', userId);
-      
-      // For admin users, they might not have an employee record
-      // Show a message instead of searching
-      if (response.user.role === 'ADMIN') {
-        console.log('⚠️ Admin user detected - may not have employee record');
-        setError('Admin users do not have employee profiles. This page is for employees only.');
-        return;
-      }
-      
-      // Try to fetch employee profiles until we find the one that matches this user
-      // Limit to 5 attempts to avoid hanging
-      const possibleIds = ['1', '2', '3', '4', '5'];
-      let found = false;
-      
-      for (const id of possibleIds) {
-        try {
-          const profileData = await employeeAPI.getProfile(id);
-          console.log(`📋 Employee ${id} user ID:`, profileData?.user?.id);
-          
-          // Check if this employee belongs to the current user
-          if (profileData?.user?.id === userId) {
-            console.log('✅ Found matching employee profile!');
-            setEmployee(profileData);
-            found = true;
-            return;
-          }
-        } catch (err: any) {
-          // Continue to next ID if this one fails
-          console.log(`❌ Employee ${id}: ${err.message || 'not found'}`);
-          continue;
-        }
-      }
-      
-      if (!found) {
-        setError('Employee record not found for your account. Please contact HR to set up your employee profile.');
+      if (profileResponse && profileResponse.data) {
+        console.log('✅ Employee profile loaded:', profileResponse.data);
+        setEmployee(profileResponse.data);
+      } else {
+        setError('Employee profile not found');
       }
     } catch (err: any) {
       console.error('❌ Profile fetch error:', err);
-      setError(err.message || 'Failed to load your profile');
+      // Check if it's the "employee not found" error
+      if (err.message?.includes('Employee record not found')) {
+        setError('Your user account is not linked to an employee record yet. Please contact your administrator to complete your employee profile setup.');
+      } else {
+        setError(err.message || 'Failed to load your profile');
+      }
     } finally {
       setLoading(false);
     }

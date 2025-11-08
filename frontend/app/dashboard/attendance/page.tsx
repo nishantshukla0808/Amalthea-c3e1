@@ -100,7 +100,12 @@ export default function AttendancePage() {
       }
     } catch (err: any) {
       console.error('Failed to fetch attendance:', err);
-      setError(err.message || 'Failed to load attendance records');
+      // Check if it's an employee not found error
+      if (err.message?.includes('Employee record not found') || err.message?.includes('Employee not found')) {
+        setError('Your user account is not linked to an employee record yet. Please contact your administrator to complete your employee profile setup.');
+      } else {
+        setError(err.message || 'Failed to load attendance records');
+      }
     } finally {
       setLoading(false);
     }
@@ -135,7 +140,12 @@ export default function AttendancePage() {
         fetchAttendance(currentUser.role);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to check in');
+      // Check if it's an employee not found error
+      if (err.message?.includes('Employee record not found') || err.message?.includes('Employee not found')) {
+        setError('Your user account is not linked to an employee record yet. Please contact your administrator to complete your employee profile setup.');
+      } else {
+        setError(err.message || 'Failed to check in');
+      }
     } finally {
       setCheckInOutLoading(false);
     }
@@ -156,7 +166,12 @@ export default function AttendancePage() {
         fetchAttendance(currentUser.role);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to check out');
+      // Check if it's an employee not found error
+      if (err.message?.includes('Employee record not found') || err.message?.includes('Employee not found')) {
+        setError('Your user account is not linked to an employee record yet. Please contact your administrator to complete your employee profile setup.');
+      } else {
+        setError(err.message || 'Failed to check out');
+      }
     } finally {
       setCheckInOutLoading(false);
     }

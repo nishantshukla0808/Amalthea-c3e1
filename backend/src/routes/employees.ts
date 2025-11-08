@@ -10,6 +10,61 @@ import { Role } from '@prisma/client';
 const router = Router();
 
 // ============================================
+// GET /api/employees/me - Get current user's employee profile
+// ============================================
+router.get(
+  '/me',
+  verifyTokenMiddleware,
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      throw new AppError(401, 'User not authenticated');
+    }
+
+    // Find employee by userId
+    const employee = await prisma.employee.findFirst({
+      where: { userId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            role: true,
+            isActive: true,
+            loginId: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        },
+        salaryStructure: true,
+        attendances: {
+          take: 10,
+          orderBy: { checkIn: 'desc' },
+        },
+        leaves: {
+          take: 10,
+          orderBy: { startDate: 'desc' },
+        },
+        payslips: {
+          take: 5,
+          orderBy: { createdAt: 'desc' },
+        },
+      },
+    });
+
+    if (!employee) {
+      throw new AppError(404, 'Employee record not found. Please contact your administrator to complete your employee profile setup.');
+    }
+
+    res.status(200).json({
+      success: true,
+      data: employee,
+    });
+  }
+);
+
+// ============================================
 // GET /api/employees - List all employees
 // ============================================
 router.get(

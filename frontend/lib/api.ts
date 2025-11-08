@@ -85,6 +85,7 @@ export const employeeAPI = {
     return apiRequest(`/employees?${queryParams.toString()}`);
   },
   getById: (id: string) => apiRequest(`/employees/${id}`),
+  getMe: () => apiRequest('/employees/me'),
   getProfile: (id: string) => apiRequest(`/employees/${id}/profile`),
   create: (data: any) => apiRequest('/employees', {
     method: 'POST',
