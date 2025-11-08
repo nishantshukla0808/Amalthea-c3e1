@@ -18,6 +18,9 @@ interface LeaveRecord {
     lastName: string;
     department: string;
     employeeId: string;
+    user?: {
+      role: string;
+    };
   };
   createdAt: string;
 }
@@ -78,8 +81,8 @@ export default function LeavePage() {
           if (empResponse && empResponse.data) {
             setCurrentEmployee(empResponse.data);
             
-            // Fetch leave balance for employees
-            if (user.role === 'EMPLOYEE') {
+            // Fetch leave balance for employees and HR
+            if (user.role === 'EMPLOYEE' || user.role === 'HR_OFFICER') {
               await fetchLeaveBalance(empResponse.data.id);
             }
           }
@@ -340,16 +343,16 @@ export default function LeavePage() {
       {canApplyForLeave && showApplyForm && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Apply for Leave</h2>
-          <form onSubmit={handleApplyLeave} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+          <form onSubmit={handleApplyLeave} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="md:col-span-1">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Leave Type <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData.leaveType}
                   onChange={(e) => setFormData({ ...formData, leaveType: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                   required
                 >
                   <option value="PAID">Paid Time Off</option>
@@ -361,7 +364,7 @@ export default function LeavePage() {
                 </select>
               </div>
 
-              <div className="flex items-center">
+              <div className="md:col-span-1 flex items-end pb-1">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
@@ -374,7 +377,7 @@ export default function LeavePage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Start Date <span className="text-red-500">*</span>
@@ -383,7 +386,8 @@ export default function LeavePage() {
                   type="date"
                   value={formData.startDate}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  placeholder="dd-mm-yyyy"
                   required
                 />
               </div>
@@ -396,7 +400,8 @@ export default function LeavePage() {
                   type="date"
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  placeholder="dd-mm-yyyy"
                   required
                   min={formData.startDate}
                 />
@@ -410,25 +415,25 @@ export default function LeavePage() {
               <textarea
                 value={formData.reason}
                 onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                rows={3}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 resize-none"
+                rows={4}
                 placeholder="Please provide a reason for your leave..."
                 required
               />
             </div>
 
-            <div className="flex gap-3 justify-end">
+            <div className="flex gap-4 justify-end pt-2">
               <button
                 type="button"
                 onClick={() => setShowApplyForm(false)}
-                className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                className="px-8 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={actionLoading === 'apply'}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+                className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
               >
                 {actionLoading === 'apply' ? 'Submitting...' : 'Submit Request'}
               </button>
@@ -566,22 +571,27 @@ export default function LeavePage() {
                     {canApprove && (
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {record.status === 'PENDING' ? (
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => handleApprove(record.id)}
-                              disabled={actionLoading === record.id}
-                              className="text-green-600 hover:text-green-800 font-medium disabled:opacity-50"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() => handleReject(record.id)}
-                              disabled={actionLoading === record.id}
-                              className="text-red-600 hover:text-red-800 font-medium disabled:opacity-50"
-                            >
-                              Reject
-                            </button>
-                          </div>
+                          // HR can only approve/reject non-HR employees' leaves, Admin can approve all
+                          (currentUser?.role === 'ADMIN' || record.employee?.user?.role !== 'HR_OFFICER') ? (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => handleApprove(record.id)}
+                                disabled={actionLoading === record.id}
+                                className="text-green-600 hover:text-green-800 font-medium disabled:opacity-50"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() => handleReject(record.id)}
+                                disabled={actionLoading === record.id}
+                                className="text-red-600 hover:text-red-800 font-medium disabled:opacity-50"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-amber-600 italic">Admin Only</span>
+                          )
                         ) : (
                           <span className="text-gray-400">-</span>
                         )}

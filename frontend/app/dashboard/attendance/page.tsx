@@ -68,8 +68,8 @@ export default function AttendancePage() {
 
       setAttendanceRecords(response.data || []);
       
-      // For employees only, check if checked in/out today
-      if (userRole === 'EMPLOYEE') {
+      // For employees and HR, check if checked in/out today
+      if (userRole === 'EMPLOYEE' || userRole === 'HR_OFFICER') {
         const today = new Date().toISOString().split('T')[0];
         const todayRecord = response.data?.find((record: AttendanceRecord) => {
           const recordDate = new Date(record.date).toISOString().split('T')[0];
@@ -221,6 +221,8 @@ export default function AttendancePage() {
   }
 
   const isEmployee = currentUser?.role === 'EMPLOYEE';
+  const isHR = currentUser?.role === 'HR_OFFICER';
+  const canMarkAttendance = isEmployee || isHR;
   const monthName = selectedDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   return (
@@ -234,6 +236,8 @@ export default function AttendancePage() {
           <p className="text-sm text-gray-600 mt-1">
             {isEmployee 
               ? `View your attendance records for ${monthName}` 
+              : isHR
+              ? `Mark your attendance and view all employees' records for ${monthName}`
               : `View all employees' attendance for ${monthName}`
             }
           </p>
@@ -259,8 +263,8 @@ export default function AttendancePage() {
         </div>
       )}
 
-      {/* Check-in/Check-out Buttons - Only for Employees */}
-      {isEmployee && (
+      {/* Check-in/Check-out Buttons - For Employees and HR */}
+      {canMarkAttendance && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Time Off</h2>
           <div className="flex gap-4">

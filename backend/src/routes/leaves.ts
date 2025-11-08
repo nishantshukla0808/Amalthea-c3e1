@@ -510,7 +510,15 @@ router.put('/:id/approve', verifyTokenMiddleware, async (req: Request, res: Resp
     const leave = await prisma.leave.findUnique({
       where: { id },
       include: {
-        employee: true,
+        employee: {
+          include: {
+            user: {
+              select: {
+                role: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -522,6 +530,13 @@ router.put('/:id/approve', verifyTokenMiddleware, async (req: Request, res: Resp
     if (leave.status !== 'PENDING') {
       return res.status(400).json({ 
         error: `Leave is already ${leave.status.toLowerCase()}` 
+      });
+    }
+
+    // HR Officers cannot approve leaves of other HR Officers, only Admin can
+    if (userRole === 'HR_OFFICER' && leave.employee.user?.role === 'HR_OFFICER') {
+      return res.status(403).json({ 
+        error: 'HR Officers cannot approve leaves from other HR Officers. Only Admin can approve HR leaves.' 
       });
     }
 
@@ -622,6 +637,17 @@ router.put('/:id/reject', verifyTokenMiddleware, async (req: Request, res: Respo
     // Get leave
     const leave = await prisma.leave.findUnique({
       where: { id },
+      include: {
+        employee: {
+          include: {
+            user: {
+              select: {
+                role: true,
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!leave) {
@@ -632,6 +658,13 @@ router.put('/:id/reject', verifyTokenMiddleware, async (req: Request, res: Respo
     if (leave.status !== 'PENDING') {
       return res.status(400).json({ 
         error: `Leave is already ${leave.status.toLowerCase()}` 
+      });
+    }
+
+    // HR Officers cannot reject leaves of other HR Officers, only Admin can
+    if (userRole === 'HR_OFFICER' && leave.employee.user?.role === 'HR_OFFICER') {
+      return res.status(403).json({ 
+        error: 'HR Officers cannot reject leaves from other HR Officers. Only Admin can reject HR leaves.' 
       });
     }
 
