@@ -7,10 +7,13 @@ export async function apiRequest(
 ) {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
   
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options.headers,
   };
+  
+  if (options.headers) {
+    Object.assign(headers, options.headers);
+  }
   
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;

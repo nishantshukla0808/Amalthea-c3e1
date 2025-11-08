@@ -938,8 +938,14 @@ router.get('/payruns/:id', verifyTokenMiddleware, async (req: Request, res: Resp
       return res.status(404).json({ error: 'Payrun not found' });
     }
     
-    // Parse warnings
-    const warnings = payrun.warnings ? JSON.parse(payrun.warnings) : [];
+    // Parse warnings safely
+    let warnings: string[] = [];
+    try {
+      warnings = payrun.warnings ? JSON.parse(payrun.warnings) : [];
+    } catch (e) {
+      console.error('Error parsing warnings:', e);
+      warnings = [];
+    }
     
     return res.json({
       data: {

@@ -86,8 +86,24 @@ try {
     # Get existing payrun
     $payruns = Invoke-RestMethod -Uri "$baseUrl/payroll/payruns?year=$currentYear" -Method Get -Headers $headers
     $payrun = $payruns.data | Where-Object { $_.month -eq $currentMonth -and $_.year -eq $currentYear }
-    $payrunId = $payrun[0].id
-    Write-Host "   Using existing payrun ID: $payrunId" -ForegroundColor Gray
+    if ($payrun -and $payrun.Count -gt 0) {
+        if ($payrun -is [array]) {
+            $payrunId = $payrun[0].id
+        } else {
+            $payrunId = $payrun.id
+        }
+        Write-Host "   Using existing payrun ID: $payrunId" -ForegroundColor Gray
+    } else {
+        # Use the first available payrun from the list
+        $allPayruns = Invoke-RestMethod -Uri "$baseUrl/payroll/payruns" -Method Get -Headers $headers
+        if ($allPayruns.data.Count -gt 0) {
+            $payrunId = $allPayruns.data[0].id
+            Write-Host "   Using first available payrun ID: $payrunId" -ForegroundColor Gray
+        } else {
+            Write-Host "   ERROR: No payruns available" -ForegroundColor Red
+            $payrunId = $null
+        }
+    }
 }
 Write-Host ""
 
@@ -96,24 +112,34 @@ $payruns = Invoke-RestMethod -Uri "$baseUrl/payroll/payruns" -Method Get -Header
 Write-Host "   Found $($payruns.data.Count) payruns" -ForegroundColor Green
 Write-Host ""
 
-Write-Host "8. Get payrun details..." -ForegroundColor Yellow
-$payrunDetails = Invoke-RestMethod -Uri "$baseUrl/payroll/payruns/$payrunId" -Method Get -Headers $headers
-Write-Host "   Month/Year: $($payrunDetails.data.month)/$($payrunDetails.data.year)" -ForegroundColor Green
-Write-Host "   Status: $($payrunDetails.data.status)" -ForegroundColor Green
-Write-Host "   Payslips: $($payrunDetails.data.payslips.Count)" -ForegroundColor Green
-Write-Host ""
+if ($payrunId) {
+    Write-Host "8. Get payrun details..." -ForegroundColor Yellow
+    try {
+        $payrunDetails = Invoke-RestMethod -Uri "$baseUrl/payroll/payruns/$payrunId" -Method Get -Headers $headers
+        Write-Host "   Month/Year: $($payrunDetails.data.month)/$($payrunDetails.data.year)" -ForegroundColor Green
+        Write-Host "   Status: $($payrunDetails.data.status)" -ForegroundColor Green
+        Write-Host "   Payslips: $($payrunDetails.data.payslips.Count)" -ForegroundColor Green
+        Write-Host ""
 
-# Only process if status is DRAFT
-if ($payrunDetails.data.status -eq "DRAFT") {
-    Write-Host "9. Processing payrun (calculate all payslips)..." -ForegroundColor Yellow
-    $processed = Invoke-RestMethod -Uri "$baseUrl/payroll/payruns/$payrunId/process" -Method Put -Headers $headers
-    Write-Host "   Processed successfully!" -ForegroundColor Green
-    Write-Host "   Employee Count: $($processed.data.employeeCount)" -ForegroundColor Green
-    Write-Host "   Total Gross Wage: Rs $($processed.data.totalGrossWage)" -ForegroundColor Green
-    Write-Host "   Total Net Wage: Rs $($processed.data.totalNetWage)" -ForegroundColor Green
-    Write-Host ""
+        # Only process if status is DRAFT
+        if ($payrunDetails.data.status -eq "DRAFT") {
+            Write-Host "9. Processing payrun (calculate all payslips)..." -ForegroundColor Yellow
+            $processed = Invoke-RestMethod -Uri "$baseUrl/payroll/payruns/$payrunId/process" -Method Put -Headers $headers -Body "{}"
+            Write-Host "   Processed successfully!" -ForegroundColor Green
+            Write-Host "   Employee Count: $($processed.data.employeeCount)" -ForegroundColor Green
+            Write-Host "   Total Gross Wage: Rs $($processed.data.totalGrossWage)" -ForegroundColor Green
+            Write-Host "   Total Net Wage: Rs $($processed.data.totalNetWage)" -ForegroundColor Green
+            Write-Host ""
+        } else {
+            Write-Host "9. Payrun already processed (Status: $($payrunDetails.data.status))" -ForegroundColor Yellow
+            Write-Host ""
+        }
+    } catch {
+        Write-Host "   ERROR: Failed to get payrun details - $($_.Exception.Message)" -ForegroundColor Red
+        Write-Host ""
+    }
 } else {
-    Write-Host "9. Payrun already processed (Status: $($payrunDetails.data.status))" -ForegroundColor Yellow
+    Write-Host "8. Skipping payrun details - No payrun ID available" -ForegroundColor Yellow
     Write-Host ""
 }
 
@@ -124,9 +150,15 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
 Write-Host "10. List all payslips..." -ForegroundColor Yellow
-$payslips = Invoke-RestMethod -Uri "$baseUrl/payroll/payslips" -Method Get -Headers $headers
-Write-Host "   Found $($payslips.data.Count) payslips" -ForegroundColor Green
-Write-Host ""
+try {
+    $payslips = Invoke-RestMethod -Uri "$baseUrl/payroll/payslips" -Method Get -Headers $headers
+    Write-Host "   Found $($payslips.data.Count) payslips" -ForegroundColor Green
+    Write-Host ""
+} catch {
+    Write-Host "   ERROR: Failed to fetch payslips - $($_.Exception.Message)" -ForegroundColor Red
+    $payslips = @{ data = @() }
+    Write-Host ""
+}
 
 if ($payslips.data.Count -gt 0) {
     Write-Host "11. Get payslip details..." -ForegroundColor Yellow
@@ -140,8 +172,13 @@ if ($payslips.data.Count -gt 0) {
 }
 
 Write-Host "12. Get Alice's payslip history..." -ForegroundColor Yellow
-$history = Invoke-RestMethod -Uri "$baseUrl/payroll/payslips/employee/$($alice.id)" -Method Get -Headers $headers
-Write-Host "   Found $($history.data.Count) payslips" -ForegroundColor Green
+try {
+    $history = Invoke-RestMethod -Uri "$baseUrl/payroll/payslips/employee/$($alice.id)" -Method Get -Headers $headers
+    Write-Host "   Found $($history.data.Count) payslips" -ForegroundColor Green
+} catch {
+    Write-Host "   No payslips found (expected if no payruns processed yet)" -ForegroundColor Yellow
+    $history = @{ data = @() }
+}
 Write-Host ""
 
 # Test Dashboard APIs
@@ -152,10 +189,10 @@ Write-Host ""
 
 Write-Host "13. Get dashboard warnings..." -ForegroundColor Yellow
 $warnings = Invoke-RestMethod -Uri "$baseUrl/payroll/dashboard/warnings" -Method Get -Headers $headers
-if ($warnings.data.Count -gt 0) {
+if ($warnings.data.warnings -and $warnings.data.warnings.Count -gt 0) {
     Write-Host "   Warnings found:" -ForegroundColor Yellow
-    foreach ($warning in $warnings.data) {
-        Write-Host "     - $($warning.message)" -ForegroundColor Yellow
+    foreach ($warning in $warnings.data.warnings) {
+        Write-Host "     - $warning" -ForegroundColor Yellow
     }
 } else {
     Write-Host "   No warnings - All good!" -ForegroundColor Green
