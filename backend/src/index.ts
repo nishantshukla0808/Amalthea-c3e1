@@ -25,9 +25,9 @@ const PORT = process.env.PORT || 5000;
 // Security headers
 app.use(helmet());
 
-// CORS
+// CORS - Allow both port 3000 and 3001 for frontend
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: ['http://localhost:3000', 'http://localhost:3001'],
   credentials: true,
 }));
 

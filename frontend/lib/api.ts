@@ -24,8 +24,7 @@ export async function apiRequest(
     headers,
   });
   
-  console.log(`📥 API Response: ${response.status} ${response.statusText}`);git status
-
+  console.log(`📥 API Response: ${response.status} ${response.statusText}`);
   
   const data = await response.json();
   console.log('📦 Response data:', data);
