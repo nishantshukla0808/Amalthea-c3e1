@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { employeeAPI } from '@/lib/api';
 
@@ -10,6 +10,21 @@ export default function AddEmployeePage() {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [currentUserRole, setCurrentUserRole] = useState<string>('');
+  
+  // Generate serial number once and keep it stable
+  const [serialNumber] = useState(() => 
+    Math.floor(1000 + Math.random() * 9000).toString().padStart(4, '0')
+  );
+
+  // Get current user's role
+  useEffect(() => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      setCurrentUserRole(user.role);
+    }
+  }, []);
 
   const [formData, setFormData] = useState({
     companyName: 'Odeon Institute',
@@ -51,12 +66,10 @@ export default function AddEmployeePage() {
     // Get year from joining date (YYYY format)
     const year = formData.dateOfJoining.split('-')[0];
 
-    // Generate serial number (for demo, using random 4 digits)
-    const serial = Math.floor(1000 + Math.random() * 9000).toString().padStart(4, '0');
-
+    // Use the stable serial number from state
     // Format: OI + Name Initials + Year + Serial
     // Example: OIJODO20220001
-    return `${companyInitials}${nameInitials}${year}${serial}`;
+    return `${companyInitials}${nameInitials}${year}${serialNumber}`;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -330,9 +343,19 @@ export default function AddEmployeePage() {
                   required
                 >
                   <option value="EMPLOYEE">Employee</option>
-                  <option value="HR_OFFICER">HR Officer</option>
-                  <option value="PAYROLL_OFFICER">Payroll Officer</option>
-                  <option value="ADMIN">Admin</option>
+                  {currentUserRole === 'ADMIN' && (
+                    <>
+                      <option value="HR_OFFICER">HR Officer</option>
+                      <option value="PAYROLL_OFFICER">Payroll Officer</option>
+                      <option value="ADMIN">Admin</option>
+                    </>
+                  )}
+                  {currentUserRole === 'HR_OFFICER' && (
+                    <>
+                      <option value="HR_OFFICER">HR Officer</option>
+                      <option value="PAYROLL_OFFICER">Payroll Officer</option>
+                    </>
+                  )}
                 </select>
               </div>
 

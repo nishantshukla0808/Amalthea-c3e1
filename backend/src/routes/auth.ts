@@ -95,8 +95,10 @@ router.get(
       select: {
         id: true,
         email: true,
+        loginId: true,
         role: true,
         isActive: true,
+        mustChangePassword: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -124,10 +126,12 @@ router.post(
       throw new AppError(401, 'Authentication required');
     }
 
-    const { currentPassword, newPassword } = req.body;
+    // Support both field names for backward compatibility
+    const { currentPassword, oldPassword, newPassword } = req.body;
+    const oldPass = currentPassword || oldPassword;
 
     // Validate required fields
-    if (!currentPassword || !newPassword) {
+    if (!oldPass || !newPassword) {
       throw new AppError(400, 'Current password and new password are required');
     }
 
@@ -147,7 +151,7 @@ router.post(
     }
 
     // Verify current password
-    const isPasswordValid = await comparePassword(currentPassword, user.password);
+    const isPasswordValid = await comparePassword(oldPass, user.password);
 
     if (!isPasswordValid) {
       throw new AppError(401, 'Current password is incorrect');

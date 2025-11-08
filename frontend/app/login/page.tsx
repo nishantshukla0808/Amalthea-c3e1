@@ -47,9 +47,15 @@ export default function LoginPage() {
       localStorage.setItem('user', JSON.stringify(response.user));
       console.log('💾 Token and user data stored');
       
-      // Redirect to dashboard
-      console.log('🚀 Redirecting to dashboard...');
-      router.push('/dashboard');
+      // Check if user needs to change password
+      if (response.user.mustChangePassword) {
+        console.log('🔑 User must change password, redirecting to password change page...');
+        router.push('/change-password-first-time');
+      } else {
+        // Redirect to dashboard
+        console.log('🚀 Redirecting to dashboard...');
+        router.push('/dashboard');
+      }
     } catch (err: any) {
       console.error('❌ Login error:', err);
       console.error('❌ Error details:', {

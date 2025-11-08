@@ -21,9 +21,24 @@ export default function DashboardLayout({
       return;
     }
 
+    // Check if user needs to change password
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      const userData = JSON.parse(userStr);
+      if (userData.mustChangePassword) {
+        router.push('/change-password-first-time');
+        return;
+      }
+    }
+
     // Verify token and get user
     authAPI.getCurrentUser()
       .then((response) => {
+        // Double check mustChangePassword from server response
+        if (response.user.mustChangePassword) {
+          router.push('/change-password-first-time');
+          return;
+        }
         setUser(response.user);
         setLoading(false);
       })
