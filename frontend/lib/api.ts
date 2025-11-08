@@ -98,3 +98,95 @@ export const employeeAPI = {
     method: 'DELETE',
   }),
 };
+
+// Attendance API functions
+export const attendanceAPI = {
+  checkIn: (remarks?: string) => apiRequest('/attendance/check-in', {
+    method: 'POST',
+    body: JSON.stringify({ remarks }),
+  }),
+  
+  checkOut: (remarks?: string) => apiRequest('/attendance/check-out', {
+    method: 'POST',
+    body: JSON.stringify({ remarks }),
+  }),
+  
+  getAll: (params?: {
+    page?: number;
+    limit?: number;
+    department?: string;
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+    month?: number;
+    year?: number;
+  }) => {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.department) queryParams.append('department', params.department);
+    if (params?.status) queryParams.append('status', params.status);
+    if (params?.startDate) queryParams.append('startDate', params.startDate);
+    if (params?.endDate) queryParams.append('endDate', params.endDate);
+    if (params?.month) queryParams.append('month', params.month.toString());
+    if (params?.year) queryParams.append('year', params.year.toString());
+    
+    return apiRequest(`/attendance?${queryParams.toString()}`);
+  },
+  
+  getByEmployee: (employeeId: string, params?: {
+    startDate?: string;
+    endDate?: string;
+    month?: number;
+    year?: number;
+  }) => {
+    const queryParams = new URLSearchParams();
+    if (params?.startDate) queryParams.append('startDate', params.startDate);
+    if (params?.endDate) queryParams.append('endDate', params.endDate);
+    if (params?.month) queryParams.append('month', params.month.toString());
+    if (params?.year) queryParams.append('year', params.year.toString());
+    
+    return apiRequest(`/attendance/employee/${employeeId}?${queryParams.toString()}`);
+  },
+  
+  createManual: (data: {
+    employeeId: string;
+    date: string;
+    status: string;
+    checkIn?: string;
+    checkOut?: string;
+    workingHours?: number;
+    remarks?: string;
+  }) => apiRequest('/attendance/manual', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  }),
+  
+  update: (id: string, data: {
+    status?: string;
+    checkIn?: string;
+    checkOut?: string;
+    workingHours?: number;
+    remarks?: string;
+  }) => apiRequest(`/attendance/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  
+  delete: (id: string) => apiRequest(`/attendance/${id}`, {
+    method: 'DELETE',
+  }),
+  
+  getReport: (params?: {
+    department?: string;
+    month?: number;
+    year?: number;
+  }) => {
+    const queryParams = new URLSearchParams();
+    if (params?.department) queryParams.append('department', params.department);
+    if (params?.month) queryParams.append('month', params.month.toString());
+    if (params?.year) queryParams.append('year', params.year.toString());
+    
+    return apiRequest(`/attendance/report?${queryParams.toString()}`);
+  },
+};
