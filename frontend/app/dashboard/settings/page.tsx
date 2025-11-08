@@ -198,6 +198,15 @@ export default function SettingsPage() {
     return descriptions[role] || '';
   };
 
+  const filteredUsers = users.filter(user => {
+    const query = searchQuery.toLowerCase();
+    const userName = user.employee ? `${user.employee.firstName} ${user.employee.lastName}`.toLowerCase() : user.email.split('@')[0].toLowerCase();
+    const loginId = user.loginId.toLowerCase();
+    const email = user.email.toLowerCase();
+    
+    return userName.includes(query) || loginId.includes(query) || email.includes(query);
+  });
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -289,6 +298,17 @@ export default function SettingsPage() {
               </div>
             </div>
 
+            {/* Search Bar */}
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search by name, email, or login ID..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
+              />
+            </div>
+
             {/* User Access Rights Table */}
             <div className="overflow-x-auto">
               <table className="min-w-full border-collapse border border-gray-300">
@@ -315,7 +335,7 @@ export default function SettingsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => (
+                  {filteredUsers.map((user) => (
                     <>
                       {/* User Info Row */}
                       <tr key={user.id} className="bg-gray-800">
@@ -356,8 +376,8 @@ export default function SettingsPage() {
                         </td>
                       </tr>
 
-                      {/* Module Access Rights Rows */}
-                      {(Object.keys(user.accessRights) as Array<keyof AccessRights>).map((module) => (
+                      {/* Module Access Rights Rows - Only show when Custom mode is selected */}
+                      {user.accessMode === 'custom' && (Object.keys(user.accessRights) as Array<keyof AccessRights>).map((module) => (
                         <tr key={`${user.id}-${module}`} className="hover:bg-gray-50">
                           <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
                             {getModuleLabel(module)}
@@ -370,8 +390,7 @@ export default function SettingsPage() {
                               type="checkbox"
                               checked={user.accessRights[module]}
                               onChange={(e) => handleAccessRightChange(user.id, module, e.target.checked)}
-                              disabled={user.accessMode === 'role-based'}
-                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                             />
                           </td>
                         </tr>
