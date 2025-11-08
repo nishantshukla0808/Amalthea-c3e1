@@ -35,8 +35,8 @@ Write-Host "3. Fetching employees..." -ForegroundColor Yellow
 $headers = @{ Authorization = "Bearer $adminToken" }
 $employees = Invoke-RestMethod -Uri "$baseUrl/employees" -Method Get -Headers $headers
 
-$alice = $employees.data | Where-Object { $_.employeeId -eq "EMP001" }
-$bob = $employees.data | Where-Object { $_.employeeId -eq "EMP002" }
+$alice = $employees.data | Where-Object { $_.employeeId -eq "OIALSM20210002" }
+$bob = $employees.data | Where-Object { $_.employeeId -eq "OIBOWI20220001" }
 
 Write-Host "   Alice ID: $($alice.id)" -ForegroundColor Gray
 Write-Host "   Bob ID: $($bob.id)" -ForegroundColor Gray

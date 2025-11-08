@@ -60,7 +60,7 @@ async function calculatePayslip(employeeId: string, payrunId: string, month: num
   }) as any;
   
   // Calculate worked days breakdown
-  const daysBreakdown = await calculateWorkedDaysBreakdown(employeeId, month, year);
+  const daysBreakdown = await calculateWorkedDays(employeeId, month, year);
   
   // Calculate rate (pro-rata for partial month)
   const rate = daysBreakdown.workedDays / daysBreakdown.totalDaysInMonth;
@@ -390,7 +390,15 @@ async function calculateWorkedDays(employeeId: string, month: number, year: numb
   });
   
   // Calculate worked days and payable days
-  const workedDays = attendanceDays + paidLeaveDays + holidayDays;
+  let workedDays = attendanceDays + paidLeaveDays + holidayDays;
+  
+  // If no attendance records exist for this month, assume full attendance
+  // (This handles the case where attendance tracking hasn't started yet)
+  if (attendanceRecords.length === 0 && leaveRecords.length === 0) {
+    workedDays = workingDaysInMonth;
+    attendanceDays = workingDaysInMonth;
+  }
+  
   const payableDays = workedDays;
   
   return {
@@ -1581,51 +1589,9 @@ router.put('/payslips/:id/compute', verifyTokenMiddleware, async (req: Request, 
   }
 });
 
-/**
- * Get employee's all payslips
- * GET /api/payroll/payslips/employee/:employeeId
- * Access: Admin, HR_OFFICER, PAYROLL_OFFICER (all), EMPLOYEE (own only)
- */
-router.get('/payslips/employee/:employeeId', verifyTokenMiddleware, async (req: Request, res: Response) => {
-  try {
-    const user = (req as any).user;
-    const { employeeId } = req.params;
-    
-    // Check permission
-    if (user.role === Role.EMPLOYEE) {
-      const employee = await prisma.employee.findFirst({
-        where: { userId: user.userId },
-      });
-      
-      if (!employee || employee.id !== employeeId) {
-        return res.status(403).json({ error: 'Access denied' });
-      }
-    } else if (![Role.ADMIN, Role.HR_OFFICER, Role.PAYROLL_OFFICER].includes(user.role)) {
-      return res.status(403).json({ error: 'Access denied' });
-    }
-    
-    const payslips = await prisma.payslip.findMany({
-      where: { employeeId },
-      include: {
-        payrun: {
-          select: {
-            id: true,
-            month: true,
-            year: true,
-            status: true,
-            payDate: true,
-          },
-        },
-      },
-      orderBy: [{ year: 'desc' }, { month: 'desc' }],
-    });
-    
-    return res.json({ data: payslips });
-  } catch (error: any) {
-    console.error('Error fetching employee payslips:', error);
-    return res.status(500).json({ error: 'Failed to fetch employee payslips' });
-  }
-});
+// ============================================
+// DASHBOARD APIs
+// ============================================
 
 /**
  * Dashboard warnings
