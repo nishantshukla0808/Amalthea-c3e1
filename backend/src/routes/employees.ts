@@ -147,7 +147,7 @@ router.post(
 
     // Create user and employee in a transaction
     const result = await prisma.$transaction(async (tx) => {
-      // Create user
+      // Create user (mustChangePassword defaults to true from schema)
       const user = await tx.user.create({
         data: {
           loginId,
@@ -155,7 +155,7 @@ router.post(
           password: hashedPassword,
           role: role || Role.EMPLOYEE,
           isActive: true,
-          mustChangePassword: false,
+          // mustChangePassword: true is the default from schema, so new users must change password on first login
         },
       });
 

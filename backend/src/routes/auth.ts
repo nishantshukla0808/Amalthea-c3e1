@@ -65,14 +65,14 @@ router.post(
     // Generate JWT token
     const token = generateToken(user);
 
-    // Return user without password
+    // Return user without password (mustChangePassword is already in user object)
     const { password: _, ...userWithoutPassword } = user;
 
     res.json({
+      success: true,
       message: 'Login successful',
       token,
       user: userWithoutPassword,
-      mustChangePassword: user.mustChangePassword,
     });
   })
 );

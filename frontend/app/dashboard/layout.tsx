@@ -17,6 +17,7 @@ export default function DashboardLayout({
     // Check authentication
     const token = localStorage.getItem('token');
     if (!token) {
+      console.log('🔒 No token found, redirecting to login...');
       router.push('/login');
       return;
     }
@@ -25,7 +26,11 @@ export default function DashboardLayout({
     const userStr = localStorage.getItem('user');
     if (userStr) {
       const userData = JSON.parse(userStr);
-      if (userData.mustChangePassword) {
+      console.log('🔍 Dashboard: Checking user data:', userData);
+      console.log('🔍 Dashboard: mustChangePassword =', userData.mustChangePassword);
+      
+      if (userData.mustChangePassword === true) {
+        console.log('🔑 Dashboard: User must change password, redirecting...');
         router.push('/change-password-first-time');
         return;
       }
@@ -34,16 +39,20 @@ export default function DashboardLayout({
     // Verify token and get user
     authAPI.getCurrentUser()
       .then((response) => {
+        console.log('✅ Dashboard: Got current user:', response.user);
         // Double check mustChangePassword from server response
-        if (response.user.mustChangePassword) {
+        if (response.user.mustChangePassword === true) {
+          console.log('🔑 Dashboard: Server says must change password, redirecting...');
           router.push('/change-password-first-time');
           return;
         }
+        console.log('✅ Dashboard: User can access dashboard');
         setUser(response.user);
         setLoading(false);
       })
       .catch(() => {
         // Token invalid, redirect to login
+        console.log('❌ Dashboard: Token invalid, redirecting to login...');
         localStorage.removeItem('token');
         router.push('/login');
       });

@@ -46,14 +46,16 @@ export default function LoginPage() {
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
       console.log('💾 Token and user data stored');
+      console.log('🔍 User data:', response.user);
+      console.log('🔍 mustChangePassword flag:', response.user.mustChangePassword);
       
       // Check if user needs to change password
-      if (response.user.mustChangePassword) {
+      if (response.user.mustChangePassword === true) {
         console.log('🔑 User must change password, redirecting to password change page...');
         router.push('/change-password-first-time');
       } else {
         // Redirect to dashboard
-        console.log('🚀 Redirecting to dashboard...');
+        console.log('🚀 Redirecting to dashboard... (mustChangePassword is false or undefined)');
         router.push('/dashboard');
       }
     } catch (err: any) {

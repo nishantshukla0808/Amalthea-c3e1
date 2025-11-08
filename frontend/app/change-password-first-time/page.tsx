@@ -23,15 +23,24 @@ export default function FirstTimePasswordChangePage() {
   useEffect(() => {
     // Get user info
     const userStr = localStorage.getItem('user');
+    console.log('🔍 Password Change Page: Checking user...');
+    
     if (userStr) {
       const user = JSON.parse(userStr);
+      console.log('🔍 Password Change Page: User data:', user);
+      console.log('🔍 Password Change Page: mustChangePassword =', user.mustChangePassword);
+      
       setUserName(`${user.firstName || ''} ${user.lastName || ''}`);
       
       // If user doesn't need to change password, redirect to dashboard
-      if (!user.mustChangePassword) {
+      if (user.mustChangePassword === false) {
+        console.log('✅ Password already changed, redirecting to dashboard...');
         router.push('/dashboard');
+      } else {
+        console.log('🔑 User must change password, staying on this page');
       }
     } else {
+      console.log('❌ No user data found, redirecting to login...');
       router.push('/login');
     }
   }, [router]);
@@ -80,13 +89,13 @@ export default function FirstTimePasswordChangePage() {
 
     try {
       setLoading(true);
+      console.log('🔄 Changing password...');
 
-      const response = await authAPI.changePassword({
-        oldPassword: formData.oldPassword,
-        newPassword: formData.newPassword,
-      });
+      const response = await authAPI.changePassword(formData.oldPassword, formData.newPassword);
 
-      if (response.success) {
+      console.log('✅ Password change response:', response);
+      
+      if (response.success || response.message === 'Password changed successfully') {
         setSuccess('Password changed successfully! Redirecting to dashboard...');
         
         // Update user object in localStorage to remove mustChangePassword flag
@@ -95,14 +104,17 @@ export default function FirstTimePasswordChangePage() {
           const user = JSON.parse(userStr);
           user.mustChangePassword = false;
           localStorage.setItem('user', JSON.stringify(user));
+          console.log('💾 Updated user in localStorage, mustChangePassword = false');
         }
 
         // Redirect to dashboard after 2 seconds
         setTimeout(() => {
+          console.log('🚀 Redirecting to dashboard...');
           router.push('/dashboard');
         }, 2000);
       }
     } catch (err: any) {
+      console.error('❌ Password change error:', err);
       setError(err.message || 'Failed to change password. Please try again.');
     } finally {
       setLoading(false);
