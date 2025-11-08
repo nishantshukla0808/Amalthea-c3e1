@@ -9,6 +9,7 @@ import { testDatabaseConnection, checkDatabaseHealth, disconnectDatabase } from 
 import { requestLogger } from './middleware/requestLogger';
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
+import authRoutes from './routes/auth';
 
 // Load environment variables
 dotenv.config();
@@ -58,6 +59,13 @@ app.get('/api/health', async (_req: Request, res: Response) => {
 });
 
 // ============================================
+// API ROUTES
+// ============================================
+
+// Auth routes
+app.use('/api/auth', authRoutes);
+
+// ============================================
 // ROOT ENDPOINT
 // ============================================
 
@@ -67,6 +75,12 @@ app.get('/', (_req: Request, res: Response) => {
     version: '1.0.0',
     endpoints: {
       health: '/api/health',
+      auth: {
+        register: 'POST /api/auth/register',
+        login: 'POST /api/auth/login',
+        me: 'GET /api/auth/me',
+        roles: 'GET /api/auth/roles',
+      },
       docs: '/api/docs (coming soon)',
     },
   });
