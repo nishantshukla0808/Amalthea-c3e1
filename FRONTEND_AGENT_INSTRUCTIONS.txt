@@ -1,0 +1,146 @@
+===============================================================================
+  📢 PROMPT FOR FRONTEND AGENT - COPY & PASTE THIS TO OTHER AGENT
+===============================================================================
+
+Hello! I'm the Backend Developer working on WorkZen HRMS. I've set up comprehensive documentation for you to start working on the frontend.
+
+PROJECT CONTEXT:
+- We're building a Human Resource Management System (HRMS)
+- Backend: Node.js + Express + TypeScript + Prisma + MySQL (my work, ✅ 15% done)
+- Frontend: Next.js 15 + TypeScript + Tailwind + shadcn/ui (your work, 🔴 0% done)
+- We're using Git for coordination with separate /backend/ and /frontend/ directories
+
+WHAT I'VE COMPLETED:
+✅ Backend server running at http://localhost:5000
+✅ Database setup with seed data
+✅ 8 APIs working (Authentication + User Management)
+✅ JWT authentication with role-based access control
+✅ Complete documentation for you
+
+YOUR TASK:
+Build the Next.js frontend that consumes the backend APIs I've created.
+
+CRITICAL DOCUMENTS TO READ (in order):
+1. docs/FRONTEND_AGENT_PROMPT.md  ← START HERE! Complete instructions
+2. docs/API_DOCUMENTATION.md       ← All APIs with examples
+3. docs/TEAM_COORDINATION.md       ← Git workflow to avoid conflicts
+4. docs/PROJECT_STATUS.md          ← Current project status
+
+QUICK START GUIDE:
+
+Step 1: Read the documentation
+→ Open: docs/FRONTEND_AGENT_PROMPT.md
+→ This has EVERYTHING you need to know
+
+Step 2: Create your first feature branch
+git checkout main
+git pull origin main
+git checkout -b feature/frontend-auth-pages
+
+Step 3: Start with API client
+→ Create: frontend/lib/api.ts
+→ This will handle all API calls to my backend
+
+Step 4: Build login page
+→ Create: frontend/app/login/page.tsx
+→ Use my login API: POST /api/auth/login
+
+Step 5: Test it!
+→ Backend is already running at http://localhost:5000
+→ Use test credentials:
+   - Admin: OIADUS20200001 / Password123!
+   - HR: OIHERO20200002 / Password123!
+   - Employee: OIALSM20210002 / Password123!
+
+GIT WORKFLOW (IMPORTANT TO AVOID CONFLICTS):
+✅ Work ONLY in /frontend/ directory
+✅ I work ONLY in /backend/ directory
+✅ Always use feature branches (never commit to main)
+✅ Create Pull Requests for everything
+✅ Pull latest main before starting work
+❌ Don't edit /backend/ files
+❌ Don't merge without PR review
+
+YOUR FIRST TASKS (Priority Order):
+1. Create API client (frontend/lib/api.ts)
+2. Create login page (frontend/app/login/page.tsx)
+3. Create dashboard layout (frontend/app/dashboard/layout.tsx)
+4. Create dashboard home (frontend/app/dashboard/page.tsx)
+5. Test authentication flow
+
+WHAT APIS ARE AVAILABLE RIGHT NOW:
+✅ POST /api/auth/login - User login
+✅ GET /api/auth/me - Get current user
+✅ POST /api/auth/change-password - Change password
+✅ GET /api/auth/roles - Get roles
+✅ POST /api/users - Create user (Admin/HR only)
+✅ GET /api/users - List users (Admin/HR only)
+✅ GET /api/users/:id - Get user details (Admin/HR only)
+
+Full documentation with examples: docs/API_DOCUMENTATION.md
+
+ENVIRONMENT SETUP:
+Create frontend/.env.local:
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+
+TEST CREDENTIALS (use these to test):
+Admin:    OIADUS20200001 / Password123!
+HR:       OIHERO20200002 / Password123!
+Employee: OIALSM20210002 / Password123!
+
+WHAT I'M WORKING ON NEXT:
+🚧 Employee Management APIs
+🚧 Attendance APIs  
+🚧 Leave Management APIs
+
+You can start with authentication UI while I build more APIs.
+
+COMMUNICATION:
+- Questions about APIs? → Check docs/API_DOCUMENTATION.md
+- Need a new API? → Create GitHub Issue and tag me
+- Git questions? → See docs/TEAM_COORDINATION.md
+- Code review? → Tag me in PR comments
+
+DIRECTORY STRUCTURE:
+frontend/
+├── app/              ← Your pages (login, dashboard, etc.)
+├── components/       ← Reusable UI components
+├── lib/
+│   └── api.ts       ← Create this first! API client
+└── .env.local       ← Environment variables
+
+YOUR SUCCESS CRITERIA:
+✅ Login page works with backend API
+✅ JWT token stored in localStorage
+✅ Protected routes redirect to login if not authenticated
+✅ Dashboard shows user info from API
+✅ Role-based UI elements work correctly
+✅ Clean code following Next.js best practices
+
+COMPLETE STEP-BY-STEP GUIDE:
+Everything is documented in: docs/FRONTEND_AGENT_PROMPT.md
+That file has:
+- Detailed task breakdown
+- Code examples
+- API integration guide
+- UI/UX guidelines
+- Testing instructions
+- Git workflow
+- Everything you need!
+
+READY TO START?
+1. Read docs/FRONTEND_AGENT_PROMPT.md (5 mins)
+2. Scan docs/API_DOCUMENTATION.md (3 mins)
+3. Create feature branch
+4. Start coding!
+
+The backend is ready and waiting for your frontend. Let's build something great! 🚀
+
+Questions? → Create a GitHub Issue or comment on PRs
+Conflicts? → Follow docs/TEAM_COORDINATION.md
+
+Good luck! The documentation is comprehensive, just follow it step by step.
+
+- Backend Agent
+
+===============================================================================
