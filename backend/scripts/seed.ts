@@ -196,6 +196,8 @@ async function main() {
         ifscCode: 'BANK0001237',
         panNumber: 'DEFGH4567I',
         aadharNumber: '456789012345',
+        uanNumber: '100123456789',
+        location: 'Mumbai Office',
       },
       {
         id: FIXTURES.empB,
@@ -214,6 +216,8 @@ async function main() {
         ifscCode: 'BANK0001238',
         panNumber: 'EFGHI5678J',
         aadharNumber: '567890123456',
+        uanNumber: '100234567890',
+        location: 'Mumbai Office',
       },
       {
         id: FIXTURES.empC,
@@ -232,6 +236,8 @@ async function main() {
         ifscCode: 'BANK0001239',
         panNumber: 'FGHIJ6789K',
         aadharNumber: '678901234567',
+        uanNumber: '100345678901',
+        location: 'Delhi Office',
       },
     ],
   });
@@ -246,31 +252,61 @@ async function main() {
       {
         id: FIXTURES.salaryA,
         employeeId: FIXTURES.empA,
-        basicSalary: 50000,
-        hra: 20000,
-        allowances: 10000,
-        deductions: 0,
-        pfContribution: 6000, // 12% of 50000
+        monthlyWage: 50000,
+        basicSalary: 25000,          // 50% of wage
+        basicPercentage: 50.0,
+        hra: 12500,                  // 50% of basic
+        hraPercentage: 50.0,
+        standardAllowance: 4167,     // Fixed
+        performanceBonus: 2082.50,   // 8.33% of basic
+        performanceBonusPercent: 8.33,
+        leaveTravelAllowance: 2082.50, // 8.33% of basic
+        ltaPercentage: 8.33,
+        fixedAllowance: 4168,        // Balance to reach wage
+        pfPercentage: 12.0,
+        professionalTax: 200.0,
+        workingDaysPerWeek: 5,
+        workingHoursPerDay: 8.0,
         effectiveFrom: new Date('2021-03-01'),
       },
       {
         id: FIXTURES.salaryB,
         employeeId: FIXTURES.empB,
-        basicSalary: 30000,
-        hra: 12000,
-        allowances: 5000,
-        deductions: 0,
-        pfContribution: 3600, // 12% of 30000
+        monthlyWage: 30000,
+        basicSalary: 15000,          // 50% of wage
+        basicPercentage: 50.0,
+        hra: 7500,                   // 50% of basic
+        hraPercentage: 50.0,
+        standardAllowance: 4167,     // Fixed
+        performanceBonus: 1249.50,   // 8.33% of basic
+        performanceBonusPercent: 8.33,
+        leaveTravelAllowance: 1249.50, // 8.33% of basic
+        ltaPercentage: 8.33,
+        fixedAllowance: 834,         // Balance
+        pfPercentage: 12.0,
+        professionalTax: 200.0,
+        workingDaysPerWeek: 5,
+        workingHoursPerDay: 8.0,
         effectiveFrom: new Date('2022-01-10'),
       },
       {
         id: FIXTURES.salaryC,
         employeeId: FIXTURES.empC,
-        basicSalary: 45000,
-        hra: 18000,
-        allowances: 8000,
-        deductions: 0,
-        pfContribution: 5400, // 12% of 45000
+        monthlyWage: 45000,
+        basicSalary: 22500,          // 50% of wage
+        basicPercentage: 50.0,
+        hra: 11250,                  // 50% of basic
+        hraPercentage: 50.0,
+        standardAllowance: 4167,     // Fixed
+        performanceBonus: 1874.25,   // 8.33% of basic
+        performanceBonusPercent: 8.33,
+        leaveTravelAllowance: 1874.25, // 8.33% of basic
+        ltaPercentage: 8.33,
+        fixedAllowance: 3334.50,     // Balance
+        pfPercentage: 12.0,
+        professionalTax: 200.0,
+        workingDaysPerWeek: 5,
+        workingHoursPerDay: 8.0,
         effectiveFrom: new Date('2021-08-20'),
       },
     ],
@@ -384,17 +420,27 @@ async function main() {
         id: FIXTURES.payrun202401,
         month: 1,
         year: 2024,
+        payPeriodStart: new Date('2024-01-01'),
+        payPeriodEnd: new Date('2024-01-31'),
         status: PayrunStatus.DRAFT,
-        totalGross: 0,
-        totalNet: 0,
+        employeeCount: 0,
+        totalEmployerCost: 0,
+        totalBasicWage: 0,
+        totalGrossWage: 0,
+        totalNetWage: 0,
       },
       {
         id: FIXTURES.payrun202402,
         month: 2,
         year: 2024,
+        payPeriodStart: new Date('2024-02-01'),
+        payPeriodEnd: new Date('2024-02-29'),
         status: PayrunStatus.DRAFT,
-        totalGross: 0,
-        totalNet: 0,
+        employeeCount: 0,
+        totalEmployerCost: 0,
+        totalBasicWage: 0,
+        totalGrossWage: 0,
+        totalNetWage: 0,
       },
     ],
   });

@@ -14,6 +14,7 @@ import usersRoutes from './routes/users';
 import employeesRoutes from './routes/employees';
 import attendanceRoutes from './routes/attendance';
 import leavesRoutes from './routes/leaves';
+import payrollRoutes from './routes/payroll';
 
 // Load environment variables
 dotenv.config();
@@ -94,6 +95,9 @@ app.use('/api/attendance', attendanceRoutes);
 
 // Leaves routes (Admin/HR/Employee)
 app.use('/api/leaves', leavesRoutes);
+
+// Payroll routes (Admin/HR/Payroll Officer/Employee)
+app.use('/api/payroll', payrollRoutes);
 
 // ============================================
 // ROOT ENDPOINT
