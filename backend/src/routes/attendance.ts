@@ -42,11 +42,15 @@ router.post(
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
     const existingAttendance = await prisma.attendance.findFirst({
       where: {
         employeeId: employee.id,
         date: {
           gte: today,
+          lt: tomorrow,
         },
       },
     });
@@ -55,11 +59,14 @@ router.post(
       throw new AppError(400, 'Attendance already marked for today');
     }
 
-    // Create attendance record
+    // Create attendance record with date set to today at 00:00:00
+    const attendanceDate = new Date();
+    attendanceDate.setHours(0, 0, 0, 0);
+    
     const attendance = await prisma.attendance.create({
       data: {
         employeeId: employee.id,
-        date: new Date(),
+        date: attendanceDate,
         checkIn: new Date(),
         remarks: remarks || null,
         status: 'PRESENT',
@@ -109,22 +116,20 @@ router.post(
       throw new AppError(404, 'Employee record not found');
     }
 
-    // Find today's check-in record
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
+    // Find the most recent check-in without a check-out
+    // Allow checking out even if the check-in was from a previous day
     const attendance = await prisma.attendance.findFirst({
       where: {
         employeeId: employee.id,
-        date: {
-          gte: today,
-        },
         checkOut: null,
+      },
+      orderBy: {
+        checkIn: 'desc',
       },
     });
 
     if (!attendance) {
-      throw new AppError(400, 'No active check-in found for today');
+      throw new AppError(400, 'No active check-in found. Please check in first.');
     }
 
     // Calculate work hours

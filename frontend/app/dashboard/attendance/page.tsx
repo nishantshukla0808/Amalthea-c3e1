@@ -40,7 +40,7 @@ export default function AttendancePage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Get current month and year
+  // Get current month and year from selectedDate
   const currentMonth = selectedDate.getMonth() + 1;
   const currentYear = selectedDate.getFullYear();
 
@@ -51,25 +51,25 @@ export default function AttendancePage() {
       setCurrentUser(user);
       fetchAttendance(user.role);
     }
-  }, [selectedDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDate, currentMonth, currentYear]);
 
   const fetchAttendance = async (userRole: string) => {
     try {
       setLoading(true);
       setError('');
 
-      // For employees, get their own attendance for the selected month
-      // For HR/Admin, get all employees' attendance for today
-      if (userRole === 'EMPLOYEE') {
-        const response = await attendanceAPI.getAll({
-          month: currentMonth,
-          year: currentYear,
-          limit: 100,
-        });
+      // Get attendance for the selected month for all users
+      const response = await attendanceAPI.getAll({
+        month: currentMonth,
+        year: currentYear,
+        limit: 1000, // Higher limit for admin/HR to see all employees
+      });
 
-        setAttendanceRecords(response.data || []);
-        
-        // Check if checked in/out today
+      setAttendanceRecords(response.data || []);
+      
+      // For employees only, check if checked in/out today
+      if (userRole === 'EMPLOYEE') {
         const today = new Date().toISOString().split('T')[0];
         const todayRecord = response.data?.find((record: AttendanceRecord) => {
           const recordDate = new Date(record.date).toISOString().split('T')[0];
@@ -83,21 +83,10 @@ export default function AttendancePage() {
           setHasCheckedInToday(false);
           setHasCheckedOutToday(false);
         }
-
-        // Calculate statistics
-        calculateStatistics(response.data || []);
-      } else {
-        // HR/Admin view - current day attendance
-        const today = new Date().toISOString().split('T')[0];
-        const response = await attendanceAPI.getAll({
-          startDate: today,
-          endDate: today,
-          limit: 100,
-        });
-
-        setAttendanceRecords(response.data || []);
-        calculateStatistics(response.data || []);
       }
+
+      // Calculate statistics
+      calculateStatistics(response.data || []);
     } catch (err: any) {
       console.error('Failed to fetch attendance:', err);
       // Check if it's an employee not found error
@@ -178,11 +167,15 @@ export default function AttendancePage() {
   };
 
   const handlePreviousMonth = () => {
-    setSelectedDate(new Date(currentYear, currentMonth - 2, 1));
+    const newDate = new Date(selectedDate);
+    newDate.setMonth(newDate.getMonth() - 1);
+    setSelectedDate(newDate);
   };
 
   const handleNextMonth = () => {
-    setSelectedDate(new Date(currentYear, currentMonth, 1));
+    const newDate = new Date(selectedDate);
+    newDate.setMonth(newDate.getMonth() + 1);
+    setSelectedDate(newDate);
   };
 
   const formatDate = (dateString: string) => {
@@ -241,7 +234,7 @@ export default function AttendancePage() {
           <p className="text-sm text-gray-600 mt-1">
             {isEmployee 
               ? `View your attendance records for ${monthName}` 
-              : `View all employees' attendance for today`
+              : `View all employees' attendance for ${monthName}`
             }
           </p>
         </div>
@@ -350,24 +343,26 @@ export default function AttendancePage() {
         </div>
       )}
 
-      {/* Month Navigation - Only for Employees */}
-      {isEmployee && (
+      {/* Month Navigation */}
+      {(isEmployee || currentUser?.role === 'ADMIN' || currentUser?.role === 'HR_OFFICER') && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <button
               onClick={handlePreviousMonth}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
+              <span className="text-sm font-medium">Previous</span>
             </button>
             <h3 className="text-lg font-semibold text-gray-900">{monthName}</h3>
             <button
               onClick={handleNextMonth}
               disabled={currentMonth === new Date().getMonth() + 1 && currentYear === new Date().getFullYear()}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2"
             >
+              <span className="text-sm font-medium">Next</span>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
