@@ -81,7 +81,7 @@ async function main() {
       },
       {
         id: FIXTURES.payrollOfficer,
-        loginId: 'OIPAJO20210001',
+        loginId: 'OIPEJO20210001',
         email: 'payroll@workzen.com',
         password: hashedPassword,
         role: Role.PAYROLL_OFFICER,
@@ -164,7 +164,7 @@ async function main() {
       {
         id: FIXTURES.empPayroll,
         userId: FIXTURES.payrollOfficer,
-        employeeId: 'OIPAJO20210001',
+        employeeId: 'OIPEJO20210001',
         firstName: 'Peter',
         lastName: 'Johnson',
         dateOfBirth: new Date('1990-07-10'),

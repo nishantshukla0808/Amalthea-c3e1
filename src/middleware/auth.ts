@@ -18,7 +18,7 @@ declare global {
  * Middleware to verify JWT token and attach user to request
  */
 export const verifyTokenMiddleware = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, _res: Response, next: NextFunction) => {
     // Extract token from Authorization header
     const token = extractTokenFromHeader(req.headers.authorization);
 
@@ -50,7 +50,7 @@ export const verifyTokenMiddleware = asyncHandler(
  * Usage: requireRole('ADMIN', 'HR')
  */
 export function requireRole(...allowedRoles: Role[]) {
-  return asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  return asyncHandler(async (req: Request, _res: Response, next: NextFunction) => {
     if (!req.user) {
       throw new AppError(401, 'Authentication required');
     }

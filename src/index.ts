@@ -10,6 +10,7 @@ import { requestLogger } from './middleware/requestLogger';
 import { globalErrorHandler, notFoundHandler } from './middleware/errorHandler';
 import { logger } from './utils/logger';
 import authRoutes from './routes/auth';
+import usersRoutes from './routes/users';
 
 // Load environment variables
 dotenv.config();
@@ -64,6 +65,9 @@ app.get('/api/health', async (_req: Request, res: Response) => {
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+
+// Users routes (Admin/HR only)
+app.use('/api/users', usersRoutes);
 
 // ============================================
 // ROOT ENDPOINT

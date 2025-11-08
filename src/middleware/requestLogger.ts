@@ -26,7 +26,7 @@ export function requestLogger(
     );
 
     // Call the original end function
-    return originalEnd.apply(this, args);
+    return originalEnd.apply(this, args as any);
   };
 
   next();

@@ -11,90 +11,43 @@ const router = express.Router();
 
 /**
  * POST /api/auth/register
- * Register a new user
+ * DISABLED: Public registration is not allowed
+ * Users must be created by HR Officers or Admins via POST /api/users
  */
 router.post(
   '/register',
-  asyncHandler(async (req: Request, res: Response) => {
-    const { email, password, role = 'EMPLOYEE' } = req.body;
-
-    // Validate required fields
-    if (!email || !password) {
-      throw new AppError(400, 'Email and password are required');
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      throw new AppError(400, 'Invalid email format');
-    }
-
-    // Validate password strength
-    const passwordValidation = validatePasswordStrength(password);
-    if (!passwordValidation.isValid) {
-      throw new AppError(400, passwordValidation.errors.join(', '));
-    }
-
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (existingUser) {
-      throw new AppError(409, 'User with this email already exists');
-    }
-
-    // Hash password
-    const hashedPassword = await hashPassword(password);
-
-    // Create user
-    const user = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-        role: role as Role,
-      },
-      select: {
-        id: true,
-        email: true,
-        role: true,
-        isActive: true,
-        createdAt: true,
-      },
-    });
-
-    // Generate JWT token
-    const token = generateToken(user as any);
-
-    res.status(201).json({
-      message: 'User registered successfully',
-      token,
-      user,
-    });
+  asyncHandler(async (_req: Request, _res: Response) => {
+    throw new AppError(403, 'Public registration is disabled. Please contact HR to create your account.');
   })
 );
 
 /**
  * POST /api/auth/login
  * Login user and get JWT token
+ * Supports login with email OR loginId
  */
 router.post(
   '/login',
   asyncHandler(async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { email, loginId, password } = req.body;
 
     // Validate required fields
-    if (!email || !password) {
-      throw new AppError(400, 'Email and password are required');
+    if ((!email && !loginId) || !password) {
+      throw new AppError(400, 'Email or loginId and password are required');
     }
 
-    // Find user
-    const user = await prisma.user.findUnique({
-      where: { email },
+    // Find user by email or loginId
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: email || '' },
+          { loginId: loginId || '' },
+        ],
+      },
     });
 
     if (!user) {
-      throw new AppError(401, 'Invalid email or password');
+      throw new AppError(401, 'Invalid credentials');
     }
 
     // Check if user is active
@@ -106,7 +59,7 @@ router.post(
     const isPasswordValid = await comparePassword(password, user.password);
 
     if (!isPasswordValid) {
-      throw new AppError(401, 'Invalid email or password');
+      throw new AppError(401, 'Invalid credentials');
     }
 
     // Generate JWT token
@@ -119,6 +72,7 @@ router.post(
       message: 'Login successful',
       token,
       user: userWithoutPassword,
+      mustChangePassword: user.mustChangePassword,
     });
   })
 );
@@ -159,10 +113,76 @@ router.get(
 );
 
 /**
+ * POST /api/auth/change-password
+ * Change user password (authenticated users)
+ */
+router.post(
+  '/change-password',
+  verifyTokenMiddleware,
+  asyncHandler(async (req: Request, res: Response) => {
+    if (!req.user) {
+      throw new AppError(401, 'Authentication required');
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    // Validate required fields
+    if (!currentPassword || !newPassword) {
+      throw new AppError(400, 'Current password and new password are required');
+    }
+
+    // Validate new password strength
+    const passwordValidation = validatePasswordStrength(newPassword);
+    if (!passwordValidation.isValid) {
+      throw new AppError(400, passwordValidation.errors.join(', '));
+    }
+
+    // Fetch user
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+    });
+
+    if (!user) {
+      throw new AppError(404, 'User not found');
+    }
+
+    // Verify current password
+    const isPasswordValid = await comparePassword(currentPassword, user.password);
+
+    if (!isPasswordValid) {
+      throw new AppError(401, 'Current password is incorrect');
+    }
+
+    // Check if new password is same as current
+    const isSamePassword = await comparePassword(newPassword, user.password);
+    if (isSamePassword) {
+      throw new AppError(400, 'New password must be different from current password');
+    }
+
+    // Hash new password
+    const hashedPassword = await hashPassword(newPassword);
+
+    // Update password
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        mustChangePassword: false,
+        lastPasswordChange: new Date(),
+      },
+    });
+
+    res.json({
+      message: 'Password changed successfully',
+    });
+  })
+);
+
+/**
  * GET /api/auth/roles
  * Get all available roles
  */
-router.get('/roles', (req: Request, res: Response) => {
+router.get('/roles', (_req: Request, res: Response) => {
   const roles = Object.values(Role);
 
   res.json({

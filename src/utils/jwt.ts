@@ -24,11 +24,13 @@ export function generateToken(user: User): string {
     role: user.role,
   };
 
-  return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
+  const options: jwt.SignOptions = {
+    expiresIn: JWT_EXPIRES_IN as any,
     issuer: 'workzen-hrms',
     audience: 'workzen-users',
-  });
+  };
+
+  return jwt.sign(payload, JWT_SECRET, options);
 }
 
 /**

@@ -57,18 +57,22 @@ enum AttendanceStatus {
 // ============================================
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String   // bcrypt hashed
-  role      Role     @default(EMPLOYEE)
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                    String   @id @default(uuid())
+  loginId               String   @unique // Auto-generated: OIJODO20220001
+  email                 String   @unique
+  password              String   // bcrypt hashed
+  role                  Role     @default(EMPLOYEE)
+  isActive              Boolean  @default(true)
+  mustChangePassword    Boolean  @default(true) // Force password change on first login
+  lastPasswordChange    DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   employee  Employee?
   auditLogs AuditLog[]
 
   @@index([email])
+  @@index([loginId])
   @@map("users")
 }
 
@@ -79,10 +83,12 @@ model User {
 model Employee {
   id              String    @id @default(uuid())
   userId          String    @unique
+  employeeId      String    @unique // Same as User.loginId for reference
   firstName       String
   lastName        String
   dateOfBirth     DateTime?
   dateOfJoining   DateTime
+  joiningYear     Int       // Year of joining (extracted from dateOfJoining)
   department      String?
   designation     String?
   phoneNumber     String?
@@ -102,7 +108,9 @@ model Employee {
   payslips        Payslip[]
 
   @@index([userId])
+  @@index([employeeId])
   @@index([department])
+  @@index([joiningYear])
   @@map("employees")
 }
 
