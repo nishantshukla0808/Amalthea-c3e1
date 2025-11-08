@@ -45,6 +45,25 @@ router.post(
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
     
+    // Check if there's an approved leave for today
+    const approvedLeaveToday = await prisma.leave.findFirst({
+      where: {
+        employeeId: employee.id,
+        status: 'APPROVED',
+        startDate: {
+          lte: today,
+        },
+        endDate: {
+          gte: today,
+        },
+      },
+    });
+
+    // Block check-in for full-day leaves (totalDays >= 1), allow for half-day (totalDays = 0.5)
+    if (approvedLeaveToday && approvedLeaveToday.totalDays >= 1) {
+      throw new AppError(400, 'You have an approved full-day leave for today. Check-in is not allowed.');
+    }
+    
     const existingAttendance = await prisma.attendance.findFirst({
       where: {
         employeeId: employee.id,
@@ -615,6 +634,42 @@ router.get(
     res.json({
       message: 'Attendance report generated successfully',
       data: report,
+    });
+  })
+);
+
+// Get leave status for today - used to disable check-in/check-out buttons
+router.get(
+  '/check-leave-status',
+  verifyTokenMiddleware,
+  asyncHandler(async (req: Request, res: Response) => {
+    const userId = (req.user as any)?.userId;
+
+    const employee = await prisma.employee.findFirst({
+      where: { userId },
+    });
+
+    if (!employee) {
+      throw new AppError(404, 'Employee record not found');
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const approvedLeaveToday = await prisma.leave.findFirst({
+      where: {
+        employeeId: employee.id,
+        status: 'APPROVED',
+        startDate: { lte: today },
+        endDate: { gte: today },
+      },
+    });
+
+    res.json({
+      hasLeave: !!approvedLeaveToday,
+      hasFullDayLeave: !!(approvedLeaveToday && approvedLeaveToday.totalDays >= 1),
+      hasHalfDayLeave: !!(approvedLeaveToday && approvedLeaveToday.totalDays === 0.5),
+      leaveDetails: approvedLeaveToday || null,
     });
   })
 );

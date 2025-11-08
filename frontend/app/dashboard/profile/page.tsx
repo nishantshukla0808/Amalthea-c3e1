@@ -151,31 +151,35 @@ export default function MyProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-        <div className="flex items-center space-x-2">
-          <span className="text-2xl">{employee.user.isActive ? '🟢' : '🔴'}</span>
-          <span className="text-sm text-gray-600">
+        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent flex items-center gap-3">
+          👤 My Profile
+        </h1>
+        <div className="flex items-center space-x-3 bg-white px-6 py-3 rounded-xl shadow-lg border-2 border-gray-200">
+          <span className={`text-2xl ${employee.user.isActive ? 'animate-pulse' : ''}`}>
+            {employee.user.isActive ? '🟢' : '🔴'}
+          </span>
+          <span className={`text-base font-bold ${employee.user.isActive ? 'text-emerald-600' : 'text-red-600'}`}>
             {employee.user.isActive ? 'Active' : 'Inactive'}
           </span>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-200 p-8">
         <div className="flex space-x-8">
           {/* Left Section - Profile Info */}
-          <div className="w-1/3 border-r border-gray-200 pr-6">
+          <div className="w-1/3 border-r-2 border-gray-200 pr-8">
             {/* Avatar and Name */}
-            <div className="text-center mb-6">
-              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mb-4">
-                <span className="text-5xl text-white font-bold">
+            <div className="text-center mb-8">
+              <div className="w-40 h-40 mx-auto bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 rounded-full flex items-center justify-center mb-6 shadow-2xl ring-4 ring-white hover:scale-105 transition-transform">
+                <span className="text-6xl text-white font-extrabold">
                   {employee.firstName.charAt(0)}{employee.lastName.charAt(0)}
                 </span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
                 {employee.firstName} {employee.lastName}
               </h2>
               <p className="text-gray-600">{employee.designation || 'Employee'}</p>

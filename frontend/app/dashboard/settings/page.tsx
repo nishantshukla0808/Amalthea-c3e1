@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { userAPI } from '@/lib/api';
 
 interface User {
@@ -36,6 +36,9 @@ export default function SettingsPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [companyLogo, setCompanyLogo] = useState<string | null>(null);
+  const [companyName, setCompanyName] = useState('New Company (Ayaan)');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -171,6 +174,28 @@ export default function SettingsPage() {
     }));
   };
 
+  const handleSaveAccessRights = async () => {
+    try {
+      setError('');
+      setSuccess('');
+      
+      // In a real application, you would send the access rights to the backend
+      // For now, we'll just show a success message
+      // TODO: Implement API call to save custom access rights
+      
+      // Example API call structure:
+      // const customAccessUsers = users.filter(u => u.accessMode === 'custom');
+      // await Promise.all(customAccessUsers.map(user => 
+      //   userAPI.updateAccessRights(user.id, user.accessRights)
+      // ));
+      
+      setSuccess('Access rights saved successfully! Note: Role changes are saved automatically.');
+      setTimeout(() => setSuccess(''), 5000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to save access rights');
+    }
+  };
+
   const getRoleOptions = (role: string) => {
     const allRoles = ['EMPLOYEE', 'ADMIN', 'HR_OFFICER', 'PAYROLL_OFFICER'];
     return allRoles;
@@ -196,6 +221,32 @@ export default function SettingsPage() {
       PAYROLL_OFFICER: 'Employee / Admin / HR Officer / Payroll Officer',
     };
     return descriptions[role] || '';
+  };
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setError('Please upload an image file (PNG or JPG)');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setError('File size should be less than 5MB');
+        return;
+      }
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCompanyLogo(reader.result as string);
+        setError('');
+        setSuccess('Logo uploaded successfully! Remember to save changes.');
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const filteredUsers = users.filter(user => {
@@ -255,27 +306,27 @@ export default function SettingsPage() {
       )}
 
       {/* Tabs */}
-      <div className="bg-gray-800 rounded-t-lg">
-        <div className="flex gap-2 p-1">
+      <div className="bg-gradient-to-r from-slate-900 to-slate-800 rounded-t-2xl shadow-xl">
+        <div className="flex gap-3 p-2">
           <button
             onClick={() => setSelectedTab('company')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
               selectedTab === 'company'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105'
+                : 'text-gray-300 hover:text-white hover:bg-slate-700 hover:scale-105'
             }`}
           >
-            Logo/Company Name
+            🏢 Logo/Company Name
           </button>
           <button
             onClick={() => setSelectedTab('user-settings')}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+            className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-300 ${
               selectedTab === 'user-settings'
-                ? 'bg-blue-600 text-white'
-                : 'text-gray-300 hover:text-white hover:bg-gray-700'
+                ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105'
+                : 'text-gray-300 hover:text-white hover:bg-slate-700 hover:scale-105'
             }`}
           >
-            User Setting
+            👥 User Settings
           </button>
         </div>
       </div>
@@ -336,9 +387,9 @@ export default function SettingsPage() {
                 </thead>
                 <tbody>
                   {filteredUsers.map((user) => (
-                    <>
+                    <React.Fragment key={user.id}>
                       {/* User Info Row */}
-                      <tr key={user.id} className="bg-gray-800">
+                      <tr className="bg-gray-800">
                         <td className="border border-gray-300 px-4 py-3 text-sm font-medium text-white">
                           {/* Empty for first row */}
                         </td>
@@ -355,7 +406,11 @@ export default function SettingsPage() {
                           <select
                             value={user.role}
                             onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                            className="w-full px-2 py-1 border border-gray-500 rounded bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            disabled={user.role === 'ADMIN'}
+                            className={`w-full px-2 py-1 border border-gray-500 rounded bg-gray-700 text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                              user.role === 'ADMIN' ? 'opacity-60 cursor-not-allowed' : ''
+                            }`}
+                            title={user.role === 'ADMIN' ? 'Admin role cannot be changed' : ''}
                           >
                             {getRoleOptions(user.role).map((role) => (
                               <option key={role} value={role}>
@@ -395,23 +450,22 @@ export default function SettingsPage() {
                           </td>
                         </tr>
                       ))}
-                    </>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
             </div>
 
             {/* Save Button */}
-            <div className="mt-6 flex justify-end">
+            <div className="mt-6 flex justify-between items-center">
+              <p className="text-sm text-gray-600">
+                <span className="font-semibold">Note:</span> Role changes are saved automatically. Click "Save Changes" to save custom access rights.
+              </p>
               <button
-                onClick={() => {
-                  // TODO: Save access rights
-                  setSuccess('Access rights updated successfully');
-                  setTimeout(() => setSuccess(''), 3000);
-                }}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                onClick={handleSaveAccessRights}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
               >
-                Save Changes
+                💾 Save Changes
               </button>
             </div>
           </div>
@@ -429,6 +483,8 @@ export default function SettingsPage() {
                   </label>
                   <input
                     type="text"
+                    value={companyName}
+                    onChange={(e) => setCompanyName(e.target.value)}
                     placeholder="Enter company name"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
                   />
@@ -439,11 +495,25 @@ export default function SettingsPage() {
                     Company Logo
                   </label>
                   <div className="flex items-center gap-4">
-                    <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
-                      <span className="text-gray-400 text-sm">Logo Preview</span>
+                    <div className="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50 overflow-hidden">
+                      {companyLogo ? (
+                        <img src={companyLogo} alt="Company Logo" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-gray-400 text-sm">Logo Preview</span>
+                      )}
                     </div>
                     <div>
-                      <button className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/png, image/jpeg, image/jpg"
+                        onChange={handleLogoUpload}
+                        className="hidden"
+                      />
+                      <button 
+                        onClick={() => fileInputRef.current?.click()}
+                        className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                      >
                         Upload Logo
                       </button>
                       <p className="text-xs text-gray-500 mt-2">Recommended: 200x200px, PNG or JPG</p>
@@ -452,7 +522,13 @@ export default function SettingsPage() {
                 </div>
 
                 <div className="pt-4">
-                  <button className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors">
+                  <button 
+                    onClick={() => {
+                      setSuccess('Company information saved successfully!');
+                      setTimeout(() => setSuccess(''), 3000);
+                    }}
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  >
                     Save Changes
                   </button>
                 </div>

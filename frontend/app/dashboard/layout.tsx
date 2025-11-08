@@ -90,63 +90,63 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex">
       {/* Sidebar Navigation */}
-      <aside className="w-64 bg-gray-900 text-white flex flex-col">
+      <aside className="w-64 bg-gradient-to-b from-slate-900 to-slate-800 text-white flex flex-col shadow-2xl">
         {/* Company Name / Logo */}
-        <div className="p-6 border-b border-gray-800">
-          <h1 className="text-xl font-bold">Company Name</h1>
-          <p className="text-xs text-gray-400 mt-1">HRMS</p>
+        <div className="p-6 border-b border-slate-700">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Company Name</h1>
+          <p className="text-xs text-slate-400 mt-1 font-medium">HRMS Platform</p>
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
+        <nav className="flex-1 px-4 py-6 space-y-1">
           {/* Show Employees only for ADMIN and HR_OFFICER */}
           {(user?.role === 'ADMIN' || user?.role === 'HR_OFFICER') && (
             <a
               href="/dashboard/employees"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+              className="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-700/50 hover:translate-x-1 transition-all duration-200 group"
             >
-              <span>👥</span>
-              <span>Employees</span>
+              <span className="text-xl group-hover:scale-110 transition-transform duration-200">👥</span>
+              <span className="font-medium">Employees</span>
             </a>
           )}
           <a
             href="/dashboard/attendance"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-700/50 hover:translate-x-1 transition-all duration-200 group"
           >
-            <span>📅</span>
-            <span>Attendance</span>
+            <span className="text-xl group-hover:scale-110 transition-transform duration-200">📅</span>
+            <span className="font-medium">Attendance</span>
           </a>
           <a
             href="/dashboard/leave"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-700/50 hover:translate-x-1 transition-all duration-200 group"
           >
-            <span>🏖️</span>
-            <span>Time Off</span>
+            <span className="text-xl group-hover:scale-110 transition-transform duration-200">🏖️</span>
+            <span className="font-medium">Time Off</span>
           </a>
           <a
             href="/dashboard/payroll"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-700/50 hover:translate-x-1 transition-all duration-200 group"
           >
-            <span>💰</span>
-            <span>Payroll</span>
+            <span className="text-xl group-hover:scale-110 transition-transform duration-200">💰</span>
+            <span className="font-medium">Payroll</span>
           </a>
           <a
             href="/dashboard/reports"
-            className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+            className="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-700/50 hover:translate-x-1 transition-all duration-200 group"
           >
-            <span>📊</span>
-            <span>Reports</span>
+            <span className="text-xl group-hover:scale-110 transition-transform duration-200">📊</span>
+            <span className="font-medium">Reports</span>
           </a>
           {/* Show Settings only for Admin */}
           {user?.role === 'ADMIN' && (
             <a
               href="/dashboard/settings"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
+              className="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-700/50 hover:translate-x-1 transition-all duration-200 group"
             >
-              <span>⚙️</span>
-              <span>Settings</span>
+              <span className="text-xl group-hover:scale-110 transition-transform duration-200">⚙️</span>
+              <span className="font-medium">Settings</span>
             </a>
           )}
         </nav>
@@ -155,7 +155,7 @@ export default function DashboardLayout({
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top Navigation Bar */}
-        <header className="bg-white shadow-sm border-b border-gray-200">
+        <header className="bg-white/80 backdrop-blur-md shadow-lg border-b border-gray-200/50">
           <div className="px-6 py-4 flex justify-between items-center">
             <div className="flex-1">
               {/* Search or breadcrumb can go here */}
@@ -165,32 +165,34 @@ export default function DashboardLayout({
             <div className="flex items-center space-x-4">
               {/* User Avatar and Menu */}
               <div className="relative group">
-                <button className="flex items-center space-x-3 hover:bg-gray-50 px-3 py-2 rounded-lg transition-colors">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold text-sm">
+                <button className="flex items-center space-x-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 px-4 py-2 rounded-xl transition-all duration-200 hover:shadow-md">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg ring-2 ring-white">
+                    <span className="text-white font-bold text-sm">
                       {user?.email?.charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-medium text-gray-900">{user?.email?.split('@')[0]}</p>
-                    <p className="text-xs text-gray-500">{user?.role}</p>
+                    <p className="text-sm font-semibold text-gray-900">{user?.email?.split('@')[0]}</p>
+                    <p className="text-xs text-gray-500 font-medium">{user?.role.replace('_', ' ')}</p>
                   </div>
-                  <span className="text-gray-400">▼</span>
+                  <span className="text-gray-400 text-xs">▼</span>
                 </button>
 
                 {/* Dropdown Menu */}
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-2xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
                   <a
                     href="/dashboard/profile"
-                    className="block px-4 py-3 hover:bg-gray-50 text-gray-700 border-b border-gray-100"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 text-gray-700 border-b border-gray-100 transition-all duration-200"
                   >
-                    👤 My Profile
+                    <span className="text-lg">👤</span>
+                    <span className="font-medium">My Profile</span>
                   </a>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-3 hover:bg-gray-50 text-red-600"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-red-50 text-red-600 transition-all duration-200"
                   >
-                    🚪 Log Out
+                    <span className="text-lg">🚪</span>
+                    <span className="font-medium">Log Out</span>
                   </button>
                 </div>
               </div>

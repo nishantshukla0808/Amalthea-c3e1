@@ -194,6 +194,8 @@ export const attendanceAPI = {
     
     return apiRequest(`/attendance/report?${queryParams.toString()}`);
   },
+  
+  checkLeaveStatus: () => apiRequest('/attendance/check-leave-status'),
 };
 
 // Leave API

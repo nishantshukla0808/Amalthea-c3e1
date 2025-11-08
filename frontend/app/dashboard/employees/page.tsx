@@ -73,13 +73,15 @@ export default function EmployeesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header with Company Name */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Employees</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            Total: {totalEmployees} employees
+          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
+            Employees 👥
+          </h1>
+          <p className="text-base text-gray-600 mt-2 font-medium">
+            Total: <span className="font-bold text-purple-600">{totalEmployees}</span> employees
           </p>
         </div>
         
@@ -87,9 +89,10 @@ export default function EmployeesPage() {
         <div className="flex items-center space-x-4">
           <button 
             onClick={() => router.push('/dashboard/employees/add')}
-            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-2"
           >
-            + Add Employee
+            <span className="text-xl">+</span>
+            Add Employee
           </button>
         </div>
       </div>
@@ -99,53 +102,59 @@ export default function EmployeesPage() {
         <div className="flex-1 relative">
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search by name, department, or designation..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+            className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 shadow-sm hover:border-purple-300 transition-all"
           />
-          <span className="absolute right-3 top-2.5 text-gray-400">🔍</span>
+          <span className="absolute right-5 top-4 text-2xl">🔍</span>
         </div>
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-          {error}
+        <div className="bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-xl flex items-center gap-3 shadow-md">
+          <span className="text-2xl">⚠️</span>
+          <span className="font-semibold">{error}</span>
         </div>
       )}
 
       {/* Employee Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {employees.map((employee) => (
           <div
             key={employee.id}
-            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-lg transition-shadow cursor-pointer relative"
+            className="group relative bg-white border-2 border-gray-200 rounded-2xl p-6 hover:shadow-2xl hover:scale-[1.03] hover:border-purple-300 transition-all duration-300 cursor-pointer overflow-hidden"
             onClick={() => router.push(`/dashboard/employees/${employee.id}`)}
           >
-            {/* Status Dot in top-right corner */}
-            <div className="absolute top-2 right-2">
-              <span className="text-xl">{getStatusDot(employee.user.isActive)}</span>
+            {/* Gradient Background Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            
+            {/* Status Badge in top-right corner */}
+            <div className="absolute top-3 right-3 z-10">
+              <span className={`text-2xl transition-transform group-hover:scale-110 ${employee.user.isActive ? 'animate-pulse' : ''}`}>
+                {getStatusDot(employee.user.isActive)}
+              </span>
             </div>
 
             {/* Employee Avatar */}
-            <div className="flex justify-center mb-3">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
-                <span className="text-3xl text-white font-bold">
+            <div className="relative flex justify-center mb-4">
+              <div className="w-24 h-24 bg-gradient-to-br from-blue-500 via-purple-600 to-pink-500 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-2xl group-hover:scale-110 transition-all ring-4 ring-white">
+                <span className="text-4xl text-white font-extrabold">
                   {employee.firstName.charAt(0)}{employee.lastName.charAt(0)}
                 </span>
               </div>
             </div>
 
             {/* Employee Info */}
-            <div className="text-center">
-              <h3 className="font-semibold text-gray-900 text-lg">
+            <div className="relative text-center">
+              <h3 className="font-bold text-gray-900 text-xl group-hover:text-purple-600 transition-colors">
                 {employee.firstName} {employee.lastName}
               </h3>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-600 mt-2 font-semibold">
                 {employee.designation || 'No designation'}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-500 mt-1 font-medium">
                 {employee.department || 'No department'}
               </p>
               <p className="text-xs text-gray-400 mt-2 font-mono">

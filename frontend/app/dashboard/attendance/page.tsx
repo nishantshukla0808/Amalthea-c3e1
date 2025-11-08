@@ -39,6 +39,9 @@ export default function AttendancePage() {
   const [checkInOutLoading, setCheckInOutLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [hasFullDayLeave, setHasFullDayLeave] = useState(false);
+  const [hasHalfDayLeave, setHasHalfDayLeave] = useState(false);
+  const [leaveDetails, setLeaveDetails] = useState<any>(null);
 
   // Get current month and year from selectedDate
   const currentMonth = selectedDate.getMonth() + 1;
@@ -68,7 +71,7 @@ export default function AttendancePage() {
 
       setAttendanceRecords(response.data || []);
       
-      // For employees and HR, check if checked in/out today
+      // For employees and HR, check if checked in/out today and leave status
       if (userRole === 'EMPLOYEE' || userRole === 'HR_OFFICER') {
         const today = new Date().toISOString().split('T')[0];
         const todayRecord = response.data?.find((record: AttendanceRecord) => {
@@ -82,6 +85,17 @@ export default function AttendancePage() {
         } else {
           setHasCheckedInToday(false);
           setHasCheckedOutToday(false);
+        }
+
+        // Check if user has an approved leave today
+        try {
+          const leaveResponse = await attendanceAPI.checkLeaveStatus();
+          setHasFullDayLeave(leaveResponse.hasFullDayLeave);
+          setHasHalfDayLeave(leaveResponse.hasHalfDayLeave);
+          setLeaveDetails(leaveResponse.leaveDetails);
+        } catch (leaveErr) {
+          console.error('Failed to check leave status:', leaveErr);
+          // Don't show error for leave check failure, just proceed without leave info
         }
       }
 
@@ -267,20 +281,50 @@ export default function AttendancePage() {
       {canMarkAttendance && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Time Off</h2>
+          
+          {/* Leave Status Info */}
+          {hasFullDayLeave && (
+            <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-3">
+              <svg className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <div>
+                <p className="text-sm font-semibold text-amber-800">You have an approved full-day leave today</p>
+                <p className="text-xs text-amber-700 mt-1">
+                  Leave Type: {leaveDetails?.leaveType?.replace('_', ' ')} | {new Date(leaveDetails?.startDate).toLocaleDateString()} - {new Date(leaveDetails?.endDate).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          )}
+          
+          {hasHalfDayLeave && !hasFullDayLeave && (
+            <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
+              <svg className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+              </svg>
+              <div>
+                <p className="text-sm font-semibold text-blue-800">You have an approved half-day leave today</p>
+                <p className="text-xs text-blue-700 mt-1">
+                  Leave Type: {leaveDetails?.leaveType?.replace('_', ' ')} | You can still check in for the working half
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="flex gap-4">
             <button
               onClick={handleCheckIn}
-              disabled={hasCheckedInToday || checkInOutLoading}
-              className="flex-1 bg-green-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              disabled={hasCheckedInToday || checkInOutLoading || hasFullDayLeave}
+              className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-green-700 hover:to-emerald-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02]"
             >
-              {checkInOutLoading ? 'Processing...' : hasCheckedInToday ? 'Already Checked In' : 'Check In'}
+              {checkInOutLoading ? 'Processing...' : hasCheckedInToday ? '✓ Already Checked In' : hasFullDayLeave ? '🚫 Leave Today' : '→ Check In'}
             </button>
             <button
               onClick={handleCheckOut}
-              disabled={!hasCheckedInToday || hasCheckedOutToday || checkInOutLoading}
-              className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-medium hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+              disabled={!hasCheckedInToday || hasCheckedOutToday || checkInOutLoading || hasFullDayLeave}
+              className="flex-1 bg-gradient-to-r from-red-600 to-rose-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-red-700 hover:to-rose-700 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-[1.02]"
             >
-              {checkInOutLoading ? 'Processing...' : hasCheckedOutToday ? 'Already Checked Out' : 'Check Out'}
+              {checkInOutLoading ? 'Processing...' : hasCheckedOutToday ? '✓ Already Checked Out' : hasFullDayLeave ? '🚫 Leave Today' : '← Check Out'}
             </button>
           </div>
         </div>
@@ -349,24 +393,24 @@ export default function AttendancePage() {
 
       {/* Month Navigation */}
       {(isEmployee || currentUser?.role === 'ADMIN' || currentUser?.role === 'HR_OFFICER') && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <button
               onClick={handlePreviousMonth}
-              className="p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 flex items-center gap-2 font-medium"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              <span className="text-sm font-medium">Previous</span>
+              <span>Previous</span>
             </button>
-            <h3 className="text-lg font-semibold text-gray-900">{monthName}</h3>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{monthName}</h3>
             <button
               onClick={handleNextMonth}
               disabled={currentMonth === new Date().getMonth() + 1 && currentYear === new Date().getFullYear()}
-              className="p-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center gap-2 font-medium"
             >
-              <span className="text-sm font-medium">Next</span>
+              <span>Next</span>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

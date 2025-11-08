@@ -223,7 +223,13 @@ export default function LeavePage() {
 
   const handleFilterChange = async () => {
     if (currentUser) {
-      await fetchLeaves(currentUser.role);
+      try {
+        setError('');
+        await fetchLeaves(currentUser.role);
+      } catch (err: any) {
+        console.error('Filter change error:', err);
+        setError('Failed to apply filters');
+      }
     }
   };
 
@@ -240,17 +246,18 @@ export default function LeavePage() {
   };
 
   const getStatusBadge = (status: string) => {
-    const badges: Record<string, { bg: string; text: string }> = {
-      PENDING: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-      APPROVED: { bg: 'bg-green-100', text: 'text-green-800' },
-      REJECTED: { bg: 'bg-red-100', text: 'text-red-800' },
-      CANCELLED: { bg: 'bg-gray-100', text: 'text-gray-800' },
+    const badges: Record<string, { gradient: string; icon: string }> = {
+      PENDING: { gradient: 'from-amber-500 to-yellow-500', icon: '⏳' },
+      APPROVED: { gradient: 'from-emerald-500 to-green-500', icon: '✅' },
+      REJECTED: { gradient: 'from-red-500 to-rose-500', icon: '❌' },
+      CANCELLED: { gradient: 'from-gray-500 to-slate-500', icon: '🚫' },
     };
 
-    const badge = badges[status] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+    const badge = badges[status] || { gradient: 'from-gray-500 to-slate-500', icon: '•' };
 
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`}>
+      <span className={`px-3 py-1.5 rounded-full text-xs font-bold bg-gradient-to-r ${badge.gradient} text-white shadow-md flex items-center gap-1 w-fit`}>
+        <span>{badge.icon}</span>
         {status}
       </span>
     );
@@ -278,14 +285,14 @@ export default function LeavePage() {
   const canApplyForLeave = isEmployee || isHR;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {isEmployee ? 'My Time Off' : 'Time Off Management'}
+          <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent flex items-center gap-3">
+            {isEmployee ? '🏖️ My Time Off' : '🏖️ Time Off Management'}
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-base text-gray-600 mt-2 font-medium">
             {isEmployee 
               ? 'Apply for leave and view your time off history' 
               : isHR 
@@ -297,45 +304,65 @@ export default function LeavePage() {
         {canApplyForLeave && (
           <button
             onClick={() => setShowApplyForm(!showApplyForm)}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className={`px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 ${
+              showApplyForm 
+                ? 'bg-gradient-to-r from-gray-600 to-slate-700 hover:from-gray-700 hover:to-slate-800 text-white'
+                : 'bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white'
+            }`}
           >
-            {showApplyForm ? 'Cancel' : 'Apply for Leave'}
+            {showApplyForm ? '✕ Cancel' : '+ Apply for Leave'}
           </button>
         )}
       </div>
 
       {/* Alerts */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
-          <svg className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <div className="bg-gradient-to-r from-red-50 to-rose-50 border-2 border-red-200 rounded-xl p-5 flex items-start gap-3 shadow-md">
+          <svg className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
           </svg>
-          <p className="text-sm text-red-800">{error}</p>
+          <p className="text-sm text-red-800 font-semibold">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
-          <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <div className="bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-200 rounded-xl p-5 flex items-start gap-3 shadow-md">
+          <svg className="w-6 h-6 text-emerald-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
-          <p className="text-sm text-green-800">{success}</p>
+          <p className="text-sm text-emerald-800 font-semibold">{success}</p>
         </div>
       )}
 
       {/* Leave Balance Cards - For Employees and HR */}
       {canApplyForLeave && leaveBalance && (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {Object.entries(leaveBalance).map(([type, balance]) => (
-            <div key={type} className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-              <h3 className="text-sm font-medium text-gray-600 mb-2">{getLeaveTypeLabel(type)}</h3>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold text-blue-600">{balance.remaining}</span>
-                <span className="text-sm text-gray-500">/ {balance.total} days</span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Object.entries(leaveBalance).map(([type, balance], index) => {
+            const gradients = [
+              'from-blue-500 to-indigo-600',
+              'from-purple-500 to-pink-600',
+              'from-emerald-500 to-green-600',
+            ];
+            const gradient = gradients[index % gradients.length];
+            
+            return (
+              <div key={type} className="group relative bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 hover:shadow-2xl hover:scale-[1.03] hover:border-purple-300 transition-all duration-300 overflow-hidden">
+                <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5 group-hover:opacity-10 transition-opacity`}></div>
+                <div className="relative">
+                  <h3 className="text-sm font-bold text-gray-600 mb-3 uppercase tracking-wide">{getLeaveTypeLabel(type)}</h3>
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className={`text-5xl font-extrabold bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
+                      {balance.remaining}
+                    </span>
+                    <span className="text-lg text-gray-500 font-semibold">/ {balance.total}</span>
+                  </div>
+                  <p className="text-sm text-gray-600 font-medium">
+                    <span className={`bg-gradient-to-r ${gradient} bg-clip-text text-transparent font-bold`}>{balance.used}</span> days used
+                  </p>
+                </div>
               </div>
-              <p className="text-xs text-gray-500 mt-1">{balance.used} days used</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -433,9 +460,9 @@ export default function LeavePage() {
               <button
                 type="submit"
                 disabled={actionLoading === 'apply'}
-                className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                className="px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300"
               >
-                {actionLoading === 'apply' ? 'Submitting...' : 'Submit Request'}
+                {actionLoading === 'apply' ? '⏳ Submitting...' : '✓ Submit Request'}
               </button>
             </div>
           </form>
@@ -444,17 +471,35 @@ export default function LeavePage() {
 
       {/* Filters - Only for Admin/HR */}
       {canApprove && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+        <div className="bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6">
+          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span>🔍</span>
+            Filter Leave Requests
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
               <select
                 value={filters.status}
-                onChange={(e) => {
-                  setFilters({ ...filters, status: e.target.value });
-                  setTimeout(handleFilterChange, 100);
+                onChange={async (e) => {
+                  const newFilters = { ...filters, status: e.target.value };
+                  setFilters(newFilters);
+                  if (currentUser) {
+                    try {
+                      setError('');
+                      const params: any = { limit: 100 };
+                      if (newFilters.status) params.status = newFilters.status;
+                      if (newFilters.leaveType) params.leaveType = newFilters.leaveType;
+                      if (newFilters.department) params.department = newFilters.department;
+                      const response = await leaveAPI.getAll(params);
+                      setLeaveRecords(response.data || []);
+                    } catch (err: any) {
+                      console.error('Filter error:', err);
+                      setError('Failed to apply filters');
+                    }
+                  }
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white font-medium hover:border-purple-300 transition-all"
               >
                 <option value="">All Statuses</option>
                 <option value="PENDING">Pending</option>
@@ -465,14 +510,28 @@ export default function LeavePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Leave Type</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Leave Type</label>
               <select
                 value={filters.leaveType}
-                onChange={(e) => {
-                  setFilters({ ...filters, leaveType: e.target.value });
-                  setTimeout(handleFilterChange, 100);
+                onChange={async (e) => {
+                  const newFilters = { ...filters, leaveType: e.target.value };
+                  setFilters(newFilters);
+                  if (currentUser) {
+                    try {
+                      setError('');
+                      const params: any = { limit: 100 };
+                      if (newFilters.status) params.status = newFilters.status;
+                      if (newFilters.leaveType) params.leaveType = newFilters.leaveType;
+                      if (newFilters.department) params.department = newFilters.department;
+                      const response = await leaveAPI.getAll(params);
+                      setLeaveRecords(response.data || []);
+                    } catch (err: any) {
+                      console.error('Filter error:', err);
+                      setError('Failed to apply filters');
+                    }
+                  }
                 }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white font-medium hover:border-purple-300 transition-all"
               >
                 <option value="">All Types</option>
                 <option value="PAID">Paid Time Off</option>
@@ -485,26 +544,50 @@ export default function LeavePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Department</label>
               <input
                 type="text"
                 value={filters.department}
                 onChange={(e) => setFilters({ ...filters, department: e.target.value })}
-                onBlur={handleFilterChange}
+                onKeyPress={async (e) => {
+                  if (e.key === 'Enter' && currentUser) {
+                    try {
+                      setError('');
+                      const params: any = { limit: 100 };
+                      if (filters.status) params.status = filters.status;
+                      if (filters.leaveType) params.leaveType = filters.leaveType;
+                      if (filters.department) params.department = filters.department;
+                      const response = await leaveAPI.getAll(params);
+                      setLeaveRecords(response.data || []);
+                    } catch (err: any) {
+                      console.error('Filter error:', err);
+                      setError('Failed to apply filters');
+                    }
+                  }
+                }}
                 placeholder="e.g., Engineering"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-400 font-medium hover:border-purple-300 transition-all"
               />
             </div>
 
             <div className="flex items-end">
               <button
-                onClick={() => {
+                onClick={async () => {
                   setFilters({ status: '', leaveType: '', department: '' });
-                  setTimeout(handleFilterChange, 100);
+                  if (currentUser) {
+                    try {
+                      setError('');
+                      const response = await leaveAPI.getAll({ limit: 100 });
+                      setLeaveRecords(response.data || []);
+                    } catch (err: any) {
+                      console.error('Clear filters error:', err);
+                      setError('Failed to clear filters');
+                    }
+                  }
                 }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                className="w-full px-4 py-2.5 bg-gradient-to-r from-gray-600 to-slate-700 hover:from-gray-700 hover:to-slate-800 text-white rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-300 hover:scale-105"
               >
-                Clear Filters
+                🔄 Clear Filters
               </button>
             </div>
           </div>
@@ -577,16 +660,16 @@ export default function LeavePage() {
                               <button
                                 onClick={() => handleApprove(record.id)}
                                 disabled={actionLoading === record.id}
-                                className="text-green-600 hover:text-green-800 font-medium disabled:opacity-50"
+                                className="px-4 py-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 transition-all duration-200"
                               >
-                                Approve
+                                ✓ Approve
                               </button>
                               <button
                                 onClick={() => handleReject(record.id)}
                                 disabled={actionLoading === record.id}
-                                className="text-red-600 hover:text-red-800 font-medium disabled:opacity-50"
+                                className="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white rounded-lg font-semibold shadow-md hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 transition-all duration-200"
                               >
-                                Reject
+                                ✕ Reject
                               </button>
                             </div>
                           ) : (
