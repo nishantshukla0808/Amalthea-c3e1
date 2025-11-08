@@ -71,3 +71,26 @@ export const userAPI = {
     body: JSON.stringify(userData),
   }),
 };
+
+// Employee API functions
+export const employeeAPI = {
+  getAll: (params?: { page?: number; limit?: number; department?: string; search?: string; isActive?: boolean }) => {
+    const queryParams = new URLSearchParams();
+    if (params?.page) queryParams.append('page', params.page.toString());
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+    if (params?.department) queryParams.append('department', params.department);
+    if (params?.search) queryParams.append('search', params.search);
+    if (params?.isActive !== undefined) queryParams.append('isActive', params.isActive.toString());
+    
+    return apiRequest(`/employees?${queryParams.toString()}`);
+  },
+  getById: (id: string) => apiRequest(`/employees/${id}`),
+  getProfile: (id: string) => apiRequest(`/employees/${id}/profile`),
+  update: (id: string, data: any) => apiRequest(`/employees/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  }),
+  delete: (id: string) => apiRequest(`/employees/${id}`, {
+    method: 'DELETE',
+  }),
+};

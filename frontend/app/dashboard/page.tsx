@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
@@ -10,7 +12,10 @@ export default function DashboardPage() {
     if (userData) {
       setUser(JSON.parse(userData));
     }
-  }, []);
+    
+    // Redirect to employees page
+    router.push('/dashboard/employees');
+  }, [router]);
 
   return (
     <div className="space-y-6">
