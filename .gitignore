@@ -53,6 +53,10 @@ scripts/*.d.ts
 scripts/*.js.map
 scripts/*.d.ts.map
 
+# Test scripts (keep local only)
+tests/*.ps1
+tests/*.sh
+
 # Optional npm cache directory
 .npm
 
