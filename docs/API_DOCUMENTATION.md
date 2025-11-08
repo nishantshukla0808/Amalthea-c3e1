@@ -1,7 +1,7 @@
 # 📡 WorkZen HRMS - API Documentation
 
 **Base URL**: `http://localhost:5000/api`  
-**Last Updated**: November 8, 2025 - 13:00  
+**Last Updated**: November 8, 2025 - 18:45  
 **Backend Location**: `/backend/src/routes/`
 
 ---
@@ -15,12 +15,13 @@ Authorization: Bearer <your-jwt-token>
 
 ---
 
-## ✅ **IMPLEMENTED APIs** (13 endpoints)
+## ✅ **IMPLEMENTED APIs** (21 endpoints)
 
 ### Summary:
 - **Authentication**: 5 endpoints
 - **User Management**: 3 endpoints
-- **Employee Management**: 5 endpoints ✨ NEW!
+- **Employee Management**: 5 endpoints
+- **Attendance Management**: 8 endpoints ✨ NEW!
 
 ### 🔑 Authentication Routes (`/api/auth`)
 
@@ -651,6 +652,245 @@ if (data.success) {
 } else {
   // Show error message
   console.error(data.error);
+}
+```
+
+---
+
+### 📅 Attendance Routes (`/api/attendance`)
+
+#### 1. **Check-In**
+```http
+POST /api/attendance/check-in
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "remarks": "Starting work for today"
+}
+```
+
+**Response** (201):
+```json
+{
+  "message": "Check-in successful",
+  "data": {
+    "id": "uuid",
+    "employeeId": "uuid",
+    "date": "2025-11-08",
+    "checkIn": "2025-11-08T09:00:00.000Z",
+    "checkOut": null,
+    "status": "PRESENT",
+    "workingHours": 0,
+    "remarks": "Starting work for today",
+    "employee": {
+      "id": "uuid",
+      "employeeId": "OIJODO20240001",
+      "firstName": "John",
+      "lastName": "Doe",
+      "department": "IT"
+    }
+  }
+}
+```
+
+#### 2. **Check-Out**
+```http
+POST /api/attendance/check-out
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "remarks": "Completed tasks for today"
+}
+```
+
+**Response** (200):
+```json
+{
+  "message": "Check-out successful",
+  "data": {
+    "id": "uuid",
+    "checkIn": "2025-11-08T09:00:00.000Z",
+    "checkOut": "2025-11-08T17:30:00.000Z",
+    "workingHours": 8.5,
+    "status": "PRESENT"
+  }
+}
+```
+
+#### 3. **List Attendance Records**
+```http
+GET /api/attendance?page=1&limit=10&department=IT&status=PRESENT&month=11&year=2025
+Authorization: Bearer <token>
+```
+
+**Query Parameters**:
+- `page` (optional): Page number (default: 1)
+- `limit` (optional): Records per page (default: 10)
+- `department` (optional): Filter by department
+- `status` (optional): PRESENT | ABSENT | HALF_DAY | LEAVE
+- `startDate` (optional): Start date (YYYY-MM-DD)
+- `endDate` (optional): End date (YYYY-MM-DD)
+- `month` (optional): Month number (1-12)
+- `year` (optional): Year (e.g., 2025)
+
+**Response** (200):
+```json
+{
+  "message": "Attendance records retrieved successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "date": "2025-11-08",
+      "checkIn": "2025-11-08T09:00:00.000Z",
+      "checkOut": "2025-11-08T17:30:00.000Z",
+      "workingHours": 8.5,
+      "status": "PRESENT",
+      "employee": {
+        "employeeId": "OIJODO20240001",
+        "firstName": "John",
+        "lastName": "Doe",
+        "department": "IT"
+      }
+    }
+  ],
+  "pagination": {
+    "total": 50,
+    "page": 1,
+    "limit": 10,
+    "totalPages": 5
+  }
+}
+```
+
+#### 4. **Get Employee Attendance**
+```http
+GET /api/attendance/employee/:employeeId?month=11&year=2025
+Authorization: Bearer <token>
+```
+
+**Response** (200):
+```json
+{
+  "message": "Employee attendance retrieved successfully",
+  "employee": {
+    "id": "uuid",
+    "employeeId": "OIJODO20240001",
+    "name": "John Doe",
+    "department": "IT"
+  },
+  "statistics": {
+    "total": 22,
+    "present": 20,
+    "absent": 0,
+    "halfDay": 2,
+    "leave": 0,
+    "totalHours": 176,
+    "avgHours": 8
+  },
+  "data": [/* attendance records */]
+}
+```
+
+#### 5. **Manual Attendance Entry** (HR/Admin Only)
+```http
+POST /api/attendance/manual
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "employeeId": "uuid",
+  "date": "2025-11-08",
+  "status": "PRESENT",
+  "checkIn": "2025-11-08T09:00:00.000Z",
+  "checkOut": "2025-11-08T17:00:00.000Z",
+  "workingHours": 8,
+  "remarks": "Manually marked by HR"
+}
+```
+
+**Response** (201):
+```json
+{
+  "message": "Attendance record created successfully",
+  "data": {/* attendance record */}
+}
+```
+
+#### 6. **Update Attendance** (HR/Admin Only)
+```http
+PUT /api/attendance/:id
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "status": "HALF_DAY",
+  "workingHours": 4,
+  "remarks": "Left early due to personal reason"
+}
+```
+
+**Response** (200):
+```json
+{
+  "message": "Attendance record updated successfully",
+  "data": {/* updated attendance record */}
+}
+```
+
+#### 7. **Delete Attendance** (Admin Only)
+```http
+DELETE /api/attendance/:id
+Authorization: Bearer <token>
+```
+
+**Response** (200):
+```json
+{
+  "message": "Attendance record deleted successfully"
+}
+```
+
+#### 8. **Attendance Report** (HR/Admin Only)
+```http
+GET /api/attendance/report?department=IT&month=11&year=2025
+Authorization: Bearer <token>
+```
+
+**Response** (200):
+```json
+{
+  "message": "Attendance report generated successfully",
+  "data": {
+    "summary": {
+      "totalRecords": 150,
+      "totalHours": 1200,
+      "avgHours": 8
+    },
+    "statusBreakdown": [
+      {
+        "status": "PRESENT",
+        "count": 140,
+        "percentage": 93.33
+      },
+      {
+        "status": "ABSENT",
+        "count": 5,
+        "percentage": 3.33
+      },
+      {
+        "status": "HALF_DAY",
+        "count": 3,
+        "percentage": 2
+      },
+      {
+        "status": "LEAVE",
+        "count": 2,
+        "percentage": 1.33
+      }
+    ]
+  }
 }
 ```
 

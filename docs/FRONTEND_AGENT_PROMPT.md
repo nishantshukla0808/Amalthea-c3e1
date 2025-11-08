@@ -380,19 +380,69 @@ Track your progress here:
 
 ## ⚡ **Quick Reference**
 
-### **Available Backend APIs** (Ready to Use)
+### **Available Backend APIs** (Ready to Use - 21 endpoints) ✨ UPDATED!
 ```
+✅ Authentication (3 endpoints)
 POST   /api/auth/login             # Login
 GET    /api/auth/me                # Get current user
 POST   /api/auth/change-password   # Change password
+
+✅ User Management (3 endpoints)
 POST   /api/users                  # Create user (Admin/HR)
 GET    /api/users                  # List users (Admin/HR)
 GET    /api/users/:id              # Get user details (Admin/HR)
+
+✅ Employee Management (5 endpoints)
+POST   /api/employees              # Create employee
+GET    /api/employees              # List employees with pagination
+GET    /api/employees/:id          # Get employee details
+PUT    /api/employees/:id          # Update employee
+DELETE /api/employees/:id          # Delete employee
+
+✨ NEW! Attendance Management (8 endpoints) - TESTED & WORKING!
+POST   /api/attendance/check-in            # Employee check-in
+POST   /api/attendance/check-out           # Employee check-out
+GET    /api/attendance                     # List all attendance (with filters)
+GET    /api/attendance/employee/:id        # Get employee attendance + stats
+POST   /api/attendance/manual              # Manual entry (HR/Admin)
+PUT    /api/attendance/:id                 # Update attendance (HR/Admin)
+DELETE /api/attendance/:id                 # Delete attendance (Admin)
+GET    /api/attendance/report              # Generate report (HR/Admin)
 ```
+
+### **Attendance API Features** ✨ NEW!
+
+**Key Features Tested & Working:**
+- ✅ Check-in/Check-out flow with automatic working hours calculation
+- ✅ Day-wise attendance view with current month default
+- ✅ Employee can view only their own attendance
+- ✅ HR/Admin can view all employees' attendance
+- ✅ Advanced filtering (department, status, date range, month/year)
+- ✅ Pagination for large datasets
+- ✅ Statistics generation (total hours, present days, absent days, etc.)
+- ✅ Manual attendance entry for HR/Admin (for corrections)
+- ✅ Attendance reports with department breakdowns
+- ✅ Duplicate check-in prevention
+
+**Important for Frontend:**
+1. **Default View**: Show current month day-wise attendance by default
+2. **Employee View**: GET `/api/attendance/employee/:id?month=11&year=2025`
+3. **Admin/HR View**: GET `/api/attendance?page=1&limit=10&month=11&year=2025`
+4. **Today's Attendance**: Use `startDate` and `endDate` with today's date
+5. **Statistics**: API returns `totalHours`, `present`, `absent`, `halfDay`, `leave` counts
+
+**Query Parameters Available:**
+- `page` & `limit` - Pagination
+- `department` - Filter by department
+- `status` - Filter by status (PRESENT, ABSENT, HALF_DAY, LEAVE)
+- `startDate` & `endDate` - Date range filter
+- `month` & `year` - Month filter (recommended for default view)
+
+See `docs/API_DOCUMENTATION.md` for complete request/response examples!
 
 ### **Test Users**
 ```
-Admin:    OIADUS20200001 / Password123!
+Admin:    OIADUS20200001 / NewPassword123!  (updated password)
 HR:       OIHERO20200002 / Password123!
 Employee: OIALSM20210002 / Password123!
 ```
