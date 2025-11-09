@@ -135,8 +135,8 @@ export default function DashboardLayout({
             <span className="text-xl group-hover:scale-110 transition-transform duration-200">🏖️</span>
             <span className="font-medium">Time Off</span>
           </a>
-          {/* Show Payroll only for ADMIN, PAYROLL_OFFICER, and HR_OFFICER */}
-          {(user?.role === 'ADMIN' || user?.role === 'PAYROLL_OFFICER' || user?.role === 'HR_OFFICER') && (
+          {/* Show Payroll only for ADMIN and PAYROLL_OFFICER */}
+          {(user?.role === 'ADMIN' || user?.role === 'PAYROLL_OFFICER') && (
             <a
               href="/dashboard/payroll"
               className="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-700/50 hover:translate-x-1 transition-all duration-200 group"

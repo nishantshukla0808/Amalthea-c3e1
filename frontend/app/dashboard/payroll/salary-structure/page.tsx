@@ -28,10 +28,11 @@ export default function SalaryStructureListPage() {
     try {
       setLoading(true);
       const response = await salaryStructureAPI.getAll();
+      console.log('Loaded salary structures:', response);
       setStructures(response.data || []);
     } catch (error: any) {
       console.error('Failed to load salary structures:', error);
-      alert('Failed to load salary structures: ' + error.message);
+      alert('Failed to load salary structures: ' + (error.message || error.error || 'Unknown error'));
     } finally {
       setLoading(false);
     }
