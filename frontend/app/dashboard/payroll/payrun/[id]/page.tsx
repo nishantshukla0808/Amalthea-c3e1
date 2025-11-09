@@ -76,11 +76,34 @@ export default function PayrunDetailsPage() {
     try {
       setProcessing(true);
       const response = await payrunAPI.validate(payrunId);
-      if (response.data.warnings && response.data.warnings.length > 0) {
-        alert(`Payrun validated with warnings:\n\n${response.data.warnings.join('\n')}`);
+      
+      // Handle warnings - can be array or string
+      let warnings = response.data.warnings;
+      if (warnings) {
+        let warningMessage = '';
+        
+        if (Array.isArray(warnings)) {
+          if (warnings.length > 0) {
+            // Array of strings or objects
+            warningMessage = warnings.map((w: any) => 
+              typeof w === 'string' ? w : (w.message || JSON.stringify(w))
+            ).join('\n');
+          }
+        } else if (typeof warnings === 'string') {
+          warningMessage = warnings;
+        } else if (typeof warnings === 'object') {
+          warningMessage = JSON.stringify(warnings, null, 2);
+        }
+        
+        if (warningMessage) {
+          alert(`Payrun validated with warnings:\n\n${warningMessage}`);
+        } else {
+          alert('Payrun validated successfully with no warnings!');
+        }
       } else {
         alert('Payrun validated successfully with no warnings!');
       }
+      
       await loadPayrun();
     } catch (error: any) {
       alert('Failed to validate payrun: ' + error.message);
@@ -158,9 +181,9 @@ export default function PayrunDetailsPage() {
       case 'PROCESSING':
         return 'bg-yellow-100 text-yellow-800 border-yellow-300';
       case 'DRAFT':
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return 'bg-gray-100 text-black border-gray-300';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return 'bg-gray-100 text-black border-gray-300';
     }
   };
 
@@ -169,7 +192,7 @@ export default function PayrunDetailsPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading payrun details...</p>
+          <p className="mt-4 text-black">Loading payrun details...</p>
         </div>
       </div>
     );
@@ -191,7 +214,7 @@ export default function PayrunDetailsPage() {
         </button>
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <h1 className="text-3xl font-bold text-black flex items-center gap-3">
               {formatMonth(payrun.month, payrun.year)}
               <span
                 className={`px-4 py-1 rounded-full text-sm font-semibold border ${getStatusColor(
@@ -201,7 +224,7 @@ export default function PayrunDetailsPage() {
                 {payrun.status}
               </span>
             </h1>
-            <p className="text-gray-600 mt-1">
+            <p className="text-black mt-1">
               Pay Period: {new Date(payrun.payPeriodStart).toLocaleDateString('en-GB')} to{' '}
               {new Date(payrun.payPeriodEnd).toLocaleDateString('en-GB')}
             </p>
@@ -217,8 +240,13 @@ export default function PayrunDetailsPage() {
             <div className="flex-1">
               <h4 className="font-semibold text-yellow-900 mb-2">Warnings:</h4>
               <ul className="list-disc list-inside space-y-1 text-sm text-yellow-800">
-                {payrun.warnings.map((warning, index) => (
-                  <li key={index}>{warning}</li>
+                {payrun.warnings.map((warning: any, index: number) => (
+                  <li key={index}>
+                    {typeof warning === 'string' 
+                      ? warning 
+                      : `${warning.employeeName || 'Employee'}: ${warning.message || JSON.stringify(warning)}`
+                    }
+                  </li>
                 ))}
               </ul>
             </div>
@@ -229,7 +257,7 @@ export default function PayrunDetailsPage() {
       {/* Action Buttons */}
       {canManagePayroll() && (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
+          <h3 className="text-lg font-semibold text-black mb-4">Actions</h3>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {payrun.status === 'DRAFT' && (
               <button
@@ -242,7 +270,7 @@ export default function PayrunDetailsPage() {
               </button>
             )}
 
-            {payrun.status === 'PROCESSED' && (
+            {payrun.status === 'DRAFT' && payrun.processedAt && payrun.payslips && payrun.payslips.length > 0 && (
               <>
                 <button
                   onClick={handleValidate}
@@ -284,7 +312,7 @@ export default function PayrunDetailsPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-purple-100">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
               Employees
             </h3>
             <span className="text-2xl">👥</span>
@@ -292,12 +320,12 @@ export default function PayrunDetailsPage() {
           <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             {payrun.employeeCount}
           </p>
-          <p className="text-sm text-gray-600 mt-2">Total employees in payrun</p>
+          <p className="text-sm text-black mt-2">Total employees in payrun</p>
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-blue-100">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
               Total Gross
             </h3>
             <span className="text-2xl">💵</span>
@@ -305,12 +333,12 @@ export default function PayrunDetailsPage() {
           <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
             {formatCurrency(payrun.totalGrossWage)}
           </p>
-          <p className="text-sm text-gray-600 mt-2">Before deductions</p>
+          <p className="text-sm text-black mt-2">Before deductions</p>
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-green-100">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
               Total Net
             </h3>
             <span className="text-2xl">💰</span>
@@ -318,15 +346,15 @@ export default function PayrunDetailsPage() {
           <p className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
             {formatCurrency(payrun.totalNetWage)}
           </p>
-          <p className="text-sm text-gray-600 mt-2">Final payout amount</p>
+          <p className="text-sm text-black mt-2">Final payout amount</p>
         </div>
       </div>
 
       {/* Payslips List */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-xl font-bold text-gray-900">Payslips</h3>
-          <p className="text-gray-600 text-sm mt-1">
+          <h3 className="text-xl font-bold text-black">Payslips</h3>
+          <p className="text-black text-sm mt-1">
             {payrun.payslips?.length || 0} payslips in this payrun
           </p>
         </div>
@@ -334,7 +362,7 @@ export default function PayrunDetailsPage() {
         {!payrun.payslips || payrun.payslips.length === 0 ? (
           <div className="text-center py-16">
             <span className="text-6xl mb-4 block">📄</span>
-            <p className="text-gray-600 mb-4">
+            <p className="text-black mb-4">
               {payrun.status === 'DRAFT'
                 ? 'Process the payrun to generate payslips'
                 : 'No payslips generated yet'}
@@ -345,19 +373,19 @@ export default function PayrunDetailsPage() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-purple-50 to-pink-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-black uppercase">
                     Employee
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-black uppercase">
                     Gross Salary
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-black uppercase">
                     Deductions
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-black uppercase">
                     Net Salary
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-center text-xs font-semibold text-black uppercase">
                     Actions
                   </th>
                 </tr>
@@ -367,11 +395,11 @@ export default function PayrunDetailsPage() {
                   <tr key={payslip.id} className="hover:bg-purple-50 transition-colors">
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-semibold text-gray-900">{payslip.employeeName}</div>
-                        <div className="text-sm text-gray-600">{payslip.employeeCode}</div>
+                        <div className="font-semibold text-black">{payslip.employeeName}</div>
+                        <div className="text-sm text-black">{payslip.employeeCode}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">
+                    <td className="px-6 py-4 text-right font-semibold text-black">
                       {formatCurrency(payslip.grossSalary)}
                     </td>
                     <td className="px-6 py-4 text-right font-semibold text-red-600">
@@ -399,28 +427,28 @@ export default function PayrunDetailsPage() {
       {/* Metadata */}
       {payrun.processedAt && (
         <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">Processing History</h3>
+          <h3 className="text-sm font-semibold text-black mb-4">Processing History</h3>
           <div className="grid gap-4 md:grid-cols-2">
             {payrun.processedAt && (
               <div>
-                <div className="text-xs text-gray-600 mb-1">Processed At</div>
-                <div className="font-semibold text-gray-900">
+                <div className="text-xs text-black mb-1">Processed At</div>
+                <div className="font-semibold text-black">
                   {new Date(payrun.processedAt).toLocaleString('en-GB')}
                 </div>
               </div>
             )}
             {payrun.validatedAt && (
               <div>
-                <div className="text-xs text-gray-600 mb-1">Validated At</div>
-                <div className="font-semibold text-gray-900">
+                <div className="text-xs text-black mb-1">Validated At</div>
+                <div className="font-semibold text-black">
                   {new Date(payrun.validatedAt).toLocaleString('en-GB')}
                 </div>
               </div>
             )}
             {payrun.paidAt && (
               <div>
-                <div className="text-xs text-gray-600 mb-1">Paid At</div>
-                <div className="font-semibold text-gray-900">
+                <div className="text-xs text-black mb-1">Paid At</div>
+                <div className="font-semibold text-black">
                   {new Date(payrun.paidAt).toLocaleString('en-GB')}
                 </div>
               </div>

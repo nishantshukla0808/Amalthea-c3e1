@@ -69,9 +69,9 @@ export default function PayrollDashboard() {
       case 'PROCESSING':
         return 'bg-yellow-100 text-yellow-800';
       case 'DRAFT':
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-black';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 text-black';
     }
   };
 
@@ -80,7 +80,7 @@ export default function PayrollDashboard() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading payroll dashboard...</p>
+          <p className="mt-4 text-black">Loading payroll dashboard...</p>
         </div>
       </div>
     );
@@ -91,8 +91,8 @@ export default function PayrollDashboard() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Payroll Dashboard</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-black">Payroll Dashboard</h1>
+          <p className="text-black mt-1">
             Manage payruns, payslips, and salary structures
           </p>
         </div>
@@ -127,7 +127,7 @@ export default function PayrollDashboard() {
         {/* Employer Cost Card */}
         <div className="group bg-white p-6 rounded-2xl shadow-lg border border-purple-100 hover:shadow-2xl hover:scale-[1.02] hover:border-purple-300 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
               Employer Cost
             </h3>
             <span className="text-2xl group-hover:scale-110 transition-transform">💰</span>
@@ -135,13 +135,13 @@ export default function PayrollDashboard() {
           <p className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             {formatCurrency(stats.employerCost)}
           </p>
-          <p className="text-sm text-gray-600 mt-2">Latest payrun total</p>
+          <p className="text-sm text-black mt-2">Latest payrun total</p>
         </div>
 
         {/* Employee Count Card */}
         <div className="group bg-white p-6 rounded-2xl shadow-lg border border-blue-100 hover:shadow-2xl hover:scale-[1.02] hover:border-blue-300 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
               Employee Count
             </h3>
             <span className="text-2xl group-hover:scale-110 transition-transform">👥</span>
@@ -149,7 +149,7 @@ export default function PayrollDashboard() {
           <p className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {stats.employeeCount}
           </p>
-          <p className="text-sm text-gray-600 mt-2">In latest payrun</p>
+          <p className="text-sm text-black mt-2">In latest payrun</p>
         </div>
 
         {/* Payruns Card */}
@@ -158,7 +158,7 @@ export default function PayrollDashboard() {
           onClick={() => router.push('/dashboard/payroll/payrun')}
         >
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
               Payruns
             </h3>
             <span className="text-2xl group-hover:scale-110 transition-transform">📅</span>
@@ -166,7 +166,7 @@ export default function PayrollDashboard() {
           <p className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent">
             {recentPayruns.length}
           </p>
-          <p className="text-sm text-gray-600 mt-2">View all payruns →</p>
+          <p className="text-sm text-black mt-2">View all payruns →</p>
         </div>
 
         {/* Salary Structures Card */}
@@ -175,7 +175,7 @@ export default function PayrollDashboard() {
           onClick={() => router.push('/dashboard/payroll/salary-structure')}
         >
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
               Salary Structures
             </h3>
             <span className="text-2xl group-hover:scale-110 transition-transform">📊</span>
@@ -183,7 +183,7 @@ export default function PayrollDashboard() {
           <p className="text-3xl font-bold bg-gradient-to-r from-amber-600 to-yellow-600 bg-clip-text text-transparent">
             Manage
           </p>
-          <p className="text-sm text-gray-600 mt-2">Employee salaries →</p>
+          <p className="text-sm text-black mt-2">Employee salaries →</p>
         </div>
       </div>
 
@@ -191,8 +191,8 @@ export default function PayrollDashboard() {
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">Recent Payruns</h2>
-            <p className="text-gray-600 mt-1">Latest payroll processing activities</p>
+            <h2 className="text-2xl font-bold text-black">Recent Payruns</h2>
+            <p className="text-black mt-1">Latest payroll processing activities</p>
           </div>
           <button
             onClick={() => router.push('/dashboard/payroll/payrun')}
@@ -204,7 +204,7 @@ export default function PayrollDashboard() {
         </div>
 
         {recentPayruns.length === 0 ? (
-          <div className="text-center py-12 text-gray-600">
+          <div className="text-center py-12 text-black">
             <span className="text-6xl mb-4 block">📅</span>
             <p className="text-lg">No payruns found</p>
             <button
@@ -227,10 +227,10 @@ export default function PayrollDashboard() {
                     📅
                   </div>
                   <div>
-                    <div className="font-bold text-gray-900">
+                    <div className="font-bold text-black">
                       {formatMonth(payrun.month, payrun.year)}
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-black">
                       {payrun.employeeCount} employees • {formatCurrency(payrun.totalNetWage)} net
                     </div>
                   </div>
@@ -253,8 +253,8 @@ export default function PayrollDashboard() {
 
       {/* Quick Actions */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Quick Actions</h2>
-        <p className="text-gray-600 mb-6">Common payroll tasks</p>
+        <h2 className="text-2xl font-bold text-black mb-2">Quick Actions</h2>
+        <p className="text-black mb-6">Common payroll tasks</p>
 
         <div className="grid gap-4 md:grid-cols-3">
           <button
@@ -262,8 +262,8 @@ export default function PayrollDashboard() {
             className="group text-left p-6 bg-gradient-to-br from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 rounded-xl transition-all duration-300 border-2 border-purple-100 hover:border-purple-300 hover:shadow-lg"
           >
             <span className="text-4xl mb-3 block group-hover:scale-110 transition-transform">📅</span>
-            <div className="font-bold text-gray-900 text-lg">View Payruns</div>
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="font-bold text-black text-lg">View Payruns</div>
+            <div className="text-sm text-black mt-1">
               Browse all payroll runs
             </div>
           </button>
@@ -273,8 +273,8 @@ export default function PayrollDashboard() {
             className="group text-left p-6 bg-gradient-to-br from-blue-50 to-emerald-50 hover:from-blue-100 hover:to-emerald-100 rounded-xl transition-all duration-300 border-2 border-blue-100 hover:border-blue-300 hover:shadow-lg"
           >
             <span className="text-4xl mb-3 block group-hover:scale-110 transition-transform">📄</span>
-            <div className="font-bold text-gray-900 text-lg">View Payslips</div>
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="font-bold text-black text-lg">View Payslips</div>
+            <div className="text-sm text-black mt-1">
               Browse employee payslips
             </div>
           </button>
@@ -284,8 +284,8 @@ export default function PayrollDashboard() {
             className="group text-left p-6 bg-gradient-to-br from-emerald-50 to-amber-50 hover:from-emerald-100 hover:to-amber-100 rounded-xl transition-all duration-300 border-2 border-emerald-100 hover:border-emerald-300 hover:shadow-lg"
           >
             <span className="text-4xl mb-3 block group-hover:scale-110 transition-transform">📊</span>
-            <div className="font-bold text-gray-900 text-lg">Salary Structures</div>
-            <div className="text-sm text-gray-600 mt-1">
+            <div className="font-bold text-black text-lg">Salary Structures</div>
+            <div className="text-sm text-black mt-1">
               Manage employee salaries
             </div>
           </button>
@@ -294,3 +294,4 @@ export default function PayrollDashboard() {
     </div>
   );
 }
+

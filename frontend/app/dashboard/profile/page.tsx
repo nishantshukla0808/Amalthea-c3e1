@@ -91,7 +91,7 @@ export default function MyProfilePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-600">Loading your profile...</div>
+        <div className="text-lg text-black">Loading your profile...</div>
       </div>
     );
   }
@@ -99,7 +99,7 @@ export default function MyProfilePage() {
   if (error || !employee) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
+        <h1 className="text-2xl font-bold text-black">My Profile</h1>
         
         {currentUser ? (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -109,7 +109,7 @@ export default function MyProfilePage() {
                   {currentUser.email?.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">{currentUser.email}</h2>
+              <h2 className="text-2xl font-bold text-black">{currentUser.email}</h2>
               <p className="text-sm text-purple-600 font-medium mt-1">{currentUser.role}</p>
             </div>
             
@@ -121,20 +121,20 @@ export default function MyProfilePage() {
             <div className="mt-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-gray-600">Login ID</label>
-                  <p className="font-medium text-gray-900">{currentUser.loginId}</p>
+                  <label className="text-sm text-black">Login ID</label>
+                  <p className="font-medium text-black">{currentUser.loginId}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600">Email</label>
-                  <p className="font-medium text-gray-900">{currentUser.email}</p>
+                  <label className="text-sm text-black">Email</label>
+                  <p className="font-medium text-black">{currentUser.email}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600">Role</label>
-                  <p className="font-medium text-gray-900">{currentUser.role}</p>
+                  <label className="text-sm text-black">Role</label>
+                  <p className="font-medium text-black">{currentUser.role}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600">Status</label>
-                  <p className="font-medium text-gray-900">
+                  <label className="text-sm text-black">Status</label>
+                  <p className="font-medium text-black">
                     {currentUser.isActive ? '✅ Active' : '❌ Inactive'}
                   </p>
                 </div>
@@ -179,10 +179,10 @@ export default function MyProfilePage() {
                   {employee.firstName.charAt(0)}{employee.lastName.charAt(0)}
                 </span>
               </div>
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+              <h2 className="text-3xl font-extrabold text-black mb-2">
                 {employee.firstName} {employee.lastName}
               </h2>
-              <p className="text-gray-600">{employee.designation || 'Employee'}</p>
+              <p className="text-black">{employee.designation || 'Employee'}</p>
               <p className="text-sm text-purple-600 font-medium mt-1">{currentUser?.role}</p>
             </div>
 
@@ -193,7 +193,7 @@ export default function MyProfilePage() {
                 className={`px-3 py-2 font-medium text-sm ${
                   activeTab === 'resume'
                     ? 'border-b-2 border-purple-600 text-purple-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-black hover:text-black'
                 }`}
               >
                 Resume
@@ -203,7 +203,7 @@ export default function MyProfilePage() {
                 className={`px-3 py-2 font-medium text-sm ${
                   activeTab === 'private'
                     ? 'border-b-2 border-purple-600 text-purple-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-black hover:text-black'
                 }`}
               >
                 Private Info
@@ -214,7 +214,7 @@ export default function MyProfilePage() {
                   className={`px-3 py-2 font-medium text-sm ${
                     activeTab === 'salary'
                       ? 'border-b-2 border-purple-600 text-purple-600'
-                      : 'text-gray-600 hover:text-gray-900'
+                      : 'text-black hover:text-black'
                   }`}
                 >
                   Salary Info
@@ -225,7 +225,7 @@ export default function MyProfilePage() {
                 className={`px-3 py-2 font-medium text-sm ${
                   activeTab === 'security'
                     ? 'border-b-2 border-purple-600 text-purple-600'
-                    : 'text-gray-600 hover:text-gray-900'
+                    : 'text-black hover:text-black'
                 }`}
               >
                 Security
@@ -238,8 +238,8 @@ export default function MyProfilePage() {
                 <div className="space-y-6">
                   {/* About Section */}
                   <div>
-                    <h3 className="font-semibold text-gray-900 mb-2">About</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <h3 className="font-semibold text-black mb-2">About</h3>
+                    <p className="text-sm text-black leading-relaxed">
                       Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
                       Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
                     </p>
@@ -248,12 +248,12 @@ export default function MyProfilePage() {
                   {/* Skills Section */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-gray-900">Skills</h3>
+                      <h3 className="font-semibold text-black">Skills</h3>
                       <button className="text-sm text-purple-600 hover:text-purple-700">
                         + Add Skill
                       </button>
                     </div>
-                    <div className="border border-gray-200 rounded-lg p-4 min-h-[100px] text-center text-gray-400">
+                    <div className="border border-gray-200 rounded-lg p-4 min-h-[100px] text-center text-black">
                       No skills added yet
                     </div>
                   </div>
@@ -261,12 +261,12 @@ export default function MyProfilePage() {
                   {/* Certification Section */}
                   <div>
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-gray-900">Certification</h3>
+                      <h3 className="font-semibold text-black">Certification</h3>
                       <button className="text-sm text-purple-600 hover:text-purple-700">
                         + Add Skill
                       </button>
                     </div>
-                    <div className="border border-gray-200 rounded-lg p-4 min-h-[100px] text-center text-gray-400">
+                    <div className="border border-gray-200 rounded-lg p-4 min-h-[100px] text-center text-black">
                       No certifications added yet
                     </div>
                   </div>
@@ -277,28 +277,28 @@ export default function MyProfilePage() {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm text-gray-600">Login ID</label>
-                      <p className="font-medium text-gray-900">{employee.user.loginId}</p>
+                      <label className="text-sm text-black">Login ID</label>
+                      <p className="font-medium text-black">{employee.user.loginId}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Company</label>
-                      <p className="font-medium text-gray-900">Odeo India</p>
+                      <label className="text-sm text-black">Company</label>
+                      <p className="font-medium text-black">Odeo India</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Email</label>
-                      <p className="font-medium text-gray-900">{employee.user.email}</p>
+                      <label className="text-sm text-black">Email</label>
+                      <p className="font-medium text-black">{employee.user.email}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Department</label>
-                      <p className="font-medium text-gray-900">{employee.department || 'N/A'}</p>
+                      <label className="text-sm text-black">Department</label>
+                      <p className="font-medium text-black">{employee.department || 'N/A'}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Mobile</label>
-                      <p className="font-medium text-gray-900">{employee.phoneNumber || 'N/A'}</p>
+                      <label className="text-sm text-black">Mobile</label>
+                      <p className="font-medium text-black">{employee.phoneNumber || 'N/A'}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Manager</label>
-                      <p className="font-medium text-gray-900">N/A</p>
+                      <label className="text-sm text-black">Manager</label>
+                      <p className="font-medium text-black">N/A</p>
                     </div>
                   </div>
 
@@ -306,30 +306,30 @@ export default function MyProfilePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm text-gray-600">Date of Birth</label>
-                      <p className="font-medium text-gray-900">
+                      <label className="text-sm text-black">Date of Birth</label>
+                      <p className="font-medium text-black">
                         {employee.dateOfBirth ? new Date(employee.dateOfBirth).toLocaleDateString() : 'N/A'}
                       </p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Gender</label>
-                      <p className="font-medium text-gray-900">N/A</p>
+                      <label className="text-sm text-black">Gender</label>
+                      <p className="font-medium text-black">N/A</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Reporting Address</label>
-                      <p className="font-medium text-gray-900 text-sm">{employee.address || 'N/A'}</p>
+                      <label className="text-sm text-black">Reporting Address</label>
+                      <p className="font-medium text-black text-sm">{employee.address || 'N/A'}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Marital Status</label>
-                      <p className="font-medium text-gray-900">N/A</p>
+                      <label className="text-sm text-black">Marital Status</label>
+                      <p className="font-medium text-black">N/A</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Nationality</label>
-                      <p className="font-medium text-gray-900">N/A</p>
+                      <label className="text-sm text-black">Nationality</label>
+                      <p className="font-medium text-black">N/A</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Date of Joining</label>
-                      <p className="font-medium text-gray-900">
+                      <label className="text-sm text-black">Date of Joining</label>
+                      <p className="font-medium text-black">
                         {new Date(employee.user.createdAt).toLocaleDateString()}
                       </p>
                     </div>
@@ -339,28 +339,28 @@ export default function MyProfilePage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="text-sm text-gray-600">Account Number</label>
-                      <p className="font-medium text-gray-900">{employee.bankAccountNo || 'N/A'}</p>
+                      <label className="text-sm text-black">Account Number</label>
+                      <p className="font-medium text-black">{employee.bankAccountNo || 'N/A'}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Bank Name</label>
-                      <p className="font-medium text-gray-900">N/A</p>
+                      <label className="text-sm text-black">Bank Name</label>
+                      <p className="font-medium text-black">N/A</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">IFSC Code</label>
-                      <p className="font-medium text-gray-900">{employee.ifscCode || 'N/A'}</p>
+                      <label className="text-sm text-black">IFSC Code</label>
+                      <p className="font-medium text-black">{employee.ifscCode || 'N/A'}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">PAN No</label>
-                      <p className="font-medium text-gray-900">{employee.panNumber || 'N/A'}</p>
+                      <label className="text-sm text-black">PAN No</label>
+                      <p className="font-medium text-black">{employee.panNumber || 'N/A'}</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">UAN No</label>
-                      <p className="font-medium text-gray-900">N/A</p>
+                      <label className="text-sm text-black">UAN No</label>
+                      <p className="font-medium text-black">N/A</p>
                     </div>
                     <div>
-                      <label className="text-sm text-gray-600">Emp Code</label>
-                      <p className="font-medium text-gray-900">{employee.employeeId}</p>
+                      <label className="text-sm text-black">Emp Code</label>
+                      <p className="font-medium text-black">{employee.employeeId}</p>
                     </div>
                   </div>
                 </div>
@@ -369,20 +369,20 @@ export default function MyProfilePage() {
               {activeTab === 'salary' && canViewSalary() && (
                 <div className="space-y-4">
                   <div className="bg-white border border-gray-200 p-4 rounded-lg">
-                    <h3 className="font-semibold text-gray-900 mb-4">Salary Information</h3>
+                    <h3 className="font-semibold text-black mb-4">Salary Information</h3>
                     {employee.salaryStructure ? (
                       <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-700 font-medium">Month Wage</span>
-                          <span className="font-bold text-gray-900 text-lg">₹{employee.salaryStructure.basicSalary}</span>
+                          <span className="text-black font-medium">Month Wage</span>
+                          <span className="font-bold text-black text-lg">₹{employee.salaryStructure.basicSalary}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                          <span className="text-gray-700 font-medium">Yearly Wage</span>
-                          <span className="font-bold text-gray-900 text-lg">₹{employee.salaryStructure.basicSalary * 12}</span>
+                          <span className="text-black font-medium">Yearly Wage</span>
+                          <span className="font-bold text-black text-lg">₹{employee.salaryStructure.basicSalary * 12}</span>
                         </div>
                       </div>
                     ) : (
-                      <p className="text-gray-500 text-center py-4">No salary information available</p>
+                      <p className="text-black text-center py-4">No salary information available</p>
                     )}
                   </div>
                 </div>
@@ -391,12 +391,12 @@ export default function MyProfilePage() {
               {activeTab === 'security' && (
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm text-gray-600">PAN Number</label>
-                    <p className="font-medium text-gray-900">{employee.panNumber || 'Not provided'}</p>
+                    <label className="text-sm text-black">PAN Number</label>
+                    <p className="font-medium text-black">{employee.panNumber || 'Not provided'}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-600">Aadhar Number</label>
-                    <p className="font-medium text-gray-900">{employee.aadharNumber || 'Not provided'}</p>
+                    <label className="text-sm text-black">Aadhar Number</label>
+                    <p className="font-medium text-black">{employee.aadharNumber || 'Not provided'}</p>
                   </div>
                   <div className="mt-6">
                     <button className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition-colors">
@@ -414,15 +414,15 @@ export default function MyProfilePage() {
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-4">
                 <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="text-sm text-gray-600 mb-2">Total Attendance</h4>
+                  <h4 className="text-sm text-black mb-2">Total Attendance</h4>
                   <p className="text-2xl font-bold text-blue-600">{employee.attendances?.length || 0}</p>
                 </div>
                 <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="text-sm text-gray-600 mb-2">Leaves Taken</h4>
+                  <h4 className="text-sm text-black mb-2">Leaves Taken</h4>
                   <p className="text-2xl font-bold text-green-600">{employee.leaves?.length || 0}</p>
                 </div>
                 <div className="bg-purple-50 p-4 rounded-lg">
-                  <h4 className="text-sm text-gray-600 mb-2">Payslips</h4>
+                  <h4 className="text-sm text-black mb-2">Payslips</h4>
                   <p className="text-2xl font-bold text-purple-600">{employee.payslips?.length || 0}</p>
                 </div>
               </div>
@@ -439,15 +439,15 @@ export default function MyProfilePage() {
 
               {/* Recent Attendance */}
               <div>
-                <h3 className="font-semibold text-gray-900 mb-3">Recent Attendance</h3>
+                <h3 className="font-semibold text-black mb-3">Recent Attendance</h3>
                 {employee.attendances && employee.attendances.length > 0 ? (
                   <div className="space-y-2">
                     {employee.attendances.slice(0, 5).map((attendance: any) => (
                       <div key={attendance.id} className="bg-gray-50 p-3 rounded-lg flex justify-between">
-                        <span className="text-sm text-gray-700">
+                        <span className="text-sm text-black">
                           {new Date(attendance.checkIn).toLocaleDateString()}
                         </span>
-                        <span className="text-sm font-medium text-gray-900">
+                        <span className="text-sm font-medium text-black">
                           {new Date(attendance.checkIn).toLocaleTimeString()} - 
                           {attendance.checkOut ? new Date(attendance.checkOut).toLocaleTimeString() : 'Present'}
                         </span>
@@ -455,21 +455,21 @@ export default function MyProfilePage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-8">No attendance records</p>
+                  <p className="text-black text-center py-8">No attendance records</p>
                 )}
               </div>
 
               {/* Recent Leaves */}
               <div>
-                <h3 className="font-semibold text-gray-900 mb-3">Recent Leaves</h3>
+                <h3 className="font-semibold text-black mb-3">Recent Leaves</h3>
                 {employee.leaves && employee.leaves.length > 0 ? (
                   <div className="space-y-2">
                     {employee.leaves.slice(0, 5).map((leave: any) => (
                       <div key={leave.id} className="bg-gray-50 p-3 rounded-lg">
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="text-sm font-medium text-gray-900">{leave.leaveType}</p>
-                            <p className="text-xs text-gray-600">
+                            <p className="text-sm font-medium text-black">{leave.leaveType}</p>
+                            <p className="text-xs text-black">
                               {new Date(leave.startDate).toLocaleDateString()} - 
                               {new Date(leave.endDate).toLocaleDateString()}
                             </p>
@@ -486,7 +486,7 @@ export default function MyProfilePage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500 text-center py-8">No leave records</p>
+                  <p className="text-black text-center py-8">No leave records</p>
                 )}
               </div>
             </div>
@@ -496,3 +496,4 @@ export default function MyProfilePage() {
     </div>
   );
 }
+

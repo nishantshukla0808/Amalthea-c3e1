@@ -261,7 +261,7 @@ export default function SettingsPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-600">Loading...</div>
+        <div className="text-lg text-black">Loading...</div>
       </div>
     );
   }
@@ -280,8 +280,8 @@ export default function SettingsPage() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-sm text-gray-600 mt-1">
+        <h1 className="text-2xl font-bold text-black">Settings</h1>
+        <p className="text-sm text-black mt-1">
           Configure system settings and user access rights
         </p>
       </div>
@@ -336,14 +336,14 @@ export default function SettingsPage() {
         {selectedTab === 'user-settings' && (
           <div className="p-6">
             {/* Description */}
-            <div className="mb-6 text-sm text-gray-600 space-y-2">
+            <div className="mb-6 text-sm text-black space-y-2">
               <p>- In the Admin Settings, the administrator can assign user access rights based on each user's role.</p>
               <p>- Access rights can be configured on an module basis, allowing specific permissions for each module.</p>
               <div className="mt-4">
-                <p className="text-gray-700">
+                <p className="text-black">
                   Select user access rights as per their role and responsibilities. These access rights define what users are allowed to access and what they are restricted from accessing.
                 </p>
-                <p className="text-gray-500 italic mt-1">
+                <p className="text-black italic mt-1">
                   Employee / Admin / HR Officer / Payroll Officer
                 </p>
               </div>
@@ -356,7 +356,7 @@ export default function SettingsPage() {
                 placeholder="Search by name, email, or login ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black placeholder-gray-600"
               />
             </div>
 
@@ -365,22 +365,22 @@ export default function SettingsPage() {
               <table className="min-w-full border-collapse border border-gray-300">
                 <thead>
                   <tr className="bg-gray-50">
-                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-black">
                       Module
                     </th>
-                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-black">
                       User name
                     </th>
-                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-black">
                       Login id
                     </th>
-                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-black">
                       Email
                     </th>
-                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-black">
                       Role
                     </th>
-                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                    <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-black">
                       Access Mode
                     </th>
                   </tr>
@@ -434,7 +434,7 @@ export default function SettingsPage() {
                       {/* Module Access Rights Rows - Only show when Custom mode is selected */}
                       {user.accessMode === 'custom' && (Object.keys(user.accessRights) as Array<keyof AccessRights>).map((module) => (
                         <tr key={`${user.id}-${module}`} className="hover:bg-gray-50">
-                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-black">
                             {getModuleLabel(module)}
                           </td>
                           <td className="border border-gray-300 px-4 py-3" colSpan={4}>
@@ -458,7 +458,7 @@ export default function SettingsPage() {
 
             {/* Save Button */}
             <div className="mt-6 flex justify-between items-center">
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-black">
                 <span className="font-semibold">Note:</span> Role changes are saved automatically. Click "Save Changes" to save custom access rights.
               </p>
               <button
@@ -474,11 +474,11 @@ export default function SettingsPage() {
         {selectedTab === 'company' && (
           <div className="p-6">
             <div className="max-w-2xl">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Company Information</h2>
+              <h2 className="text-lg font-semibold text-black mb-4">Company Information</h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-black mb-2">
                     Company Name
                   </label>
                   <input
@@ -486,12 +486,12 @@ export default function SettingsPage() {
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
                     placeholder="Enter company name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-black mb-2">
                     Company Logo
                   </label>
                   <div className="flex items-center gap-4">
@@ -499,7 +499,7 @@ export default function SettingsPage() {
                       {companyLogo ? (
                         <img src={companyLogo} alt="Company Logo" className="w-full h-full object-cover" />
                       ) : (
-                        <span className="text-gray-400 text-sm">Logo Preview</span>
+                        <span className="text-black text-sm">Logo Preview</span>
                       )}
                     </div>
                     <div>
@@ -516,7 +516,7 @@ export default function SettingsPage() {
                       >
                         Upload Logo
                       </button>
-                      <p className="text-xs text-gray-500 mt-2">Recommended: 200x200px, PNG or JPG</p>
+                      <p className="text-xs text-black mt-2">Recommended: 200x200px, PNG or JPG</p>
                     </div>
                   </div>
                 </div>
@@ -540,3 +540,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+

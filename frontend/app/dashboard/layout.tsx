@@ -84,7 +84,7 @@ export default function DashboardLayout({
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="text-lg text-gray-600">Loading...</div>
+        <div className="text-lg text-black">Loading...</div>
       </div>
     );
   }
@@ -185,17 +185,17 @@ export default function DashboardLayout({
                     </span>
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-gray-900">{user?.email?.split('@')[0]}</p>
-                    <p className="text-xs text-gray-500 font-medium">{user?.role.replace('_', ' ')}</p>
+                    <p className="text-sm font-semibold text-black">{user?.email?.split('@')[0]}</p>
+                    <p className="text-xs text-black font-medium">{user?.role.replace('_', ' ')}</p>
                   </div>
-                  <span className="text-gray-400 text-xs">▼</span>
+                  <span className="text-black text-xs">▼</span>
                 </button>
 
                 {/* Dropdown Menu */}
                 <div className="absolute right-0 mt-2 w-52 bg-white rounded-xl shadow-2xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
                   <a
                     href="/dashboard/profile"
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 text-gray-700 border-b border-gray-100 transition-all duration-200"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 text-black border-b border-gray-100 transition-all duration-200"
                   >
                     <span className="text-lg">👤</span>
                     <span className="font-medium">My Profile</span>

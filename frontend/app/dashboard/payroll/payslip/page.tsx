@@ -98,7 +98,7 @@ export default function PayslipListPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading payslips...</p>
+          <p className="mt-4 text-black">Loading payslips...</p>
         </div>
       </div>
     );
@@ -109,8 +109,8 @@ export default function PayslipListPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Payslips</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-black">Payslips</h1>
+          <p className="text-black mt-1">
             {isEmployee() ? 'Your payslip history' : 'All employee payslips'}
           </p>
         </div>
@@ -124,15 +124,15 @@ export default function PayslipListPage() {
 
       {/* Filters */}
       <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+        <h3 className="text-lg font-semibold text-black mb-4">Filters</h3>
         <div className="grid gap-4 md:grid-cols-4">
           {/* Month Filter */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Month</label>
+            <label className="block text-sm font-semibold text-black mb-2">Month</label>
             <select
               value={filters.month}
               onChange={(e) => handleFilterChange('month', e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black bg-white"
             >
               <option value="">All Months</option>
               {months.map((month) => (
@@ -145,11 +145,11 @@ export default function PayslipListPage() {
 
           {/* Year Filter */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Year</label>
+            <label className="block text-sm font-semibold text-black mb-2">Year</label>
             <select
               value={filters.year}
               onChange={(e) => handleFilterChange('year', e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black bg-white"
             >
               <option value="">All Years</option>
               {years.map((year) => (
@@ -163,7 +163,7 @@ export default function PayslipListPage() {
           {/* Employee ID Filter - Only for non-employee roles */}
           {!isEmployee() && (
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Employee ID
               </label>
               <input
@@ -171,7 +171,7 @@ export default function PayslipListPage() {
                 value={filters.employeeId}
                 onChange={(e) => handleFilterChange('employeeId', e.target.value)}
                 placeholder="Enter employee ID"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black placeholder-gray-600"
               />
             </div>
           )}
@@ -186,7 +186,7 @@ export default function PayslipListPage() {
             </button>
             <button
               onClick={handleClearFilters}
-              className="px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+              className="px-4 py-3 border-2 border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-colors font-semibold"
             >
               Clear
             </button>
@@ -199,7 +199,7 @@ export default function PayslipListPage() {
         <div className="grid gap-6 md:grid-cols-3">
           <div className="bg-white p-6 rounded-2xl shadow-lg border border-purple-100">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
                 Total Payslips
               </h3>
               <span className="text-2xl">📄</span>
@@ -211,7 +211,7 @@ export default function PayslipListPage() {
 
           <div className="bg-white p-6 rounded-2xl shadow-lg border border-blue-100">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
                 Total Gross
               </h3>
               <span className="text-2xl">💵</span>
@@ -225,7 +225,7 @@ export default function PayslipListPage() {
 
           <div className="bg-white p-6 rounded-2xl shadow-lg border border-green-100">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
                 Total Net
               </h3>
               <span className="text-2xl">💰</span>
@@ -242,15 +242,15 @@ export default function PayslipListPage() {
       {/* Payslips Table */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-xl font-bold text-gray-900">Payslip Records</h3>
-          <p className="text-gray-600 text-sm mt-1">{payslips.length} payslips found</p>
+          <h3 className="text-xl font-bold text-black">Payslip Records</h3>
+          <p className="text-black text-sm mt-1">{payslips.length} payslips found</p>
         </div>
 
         {payslips.length === 0 ? (
           <div className="text-center py-16">
             <span className="text-6xl mb-4 block">📋</span>
-            <p className="text-gray-600 mb-2 text-lg font-semibold">No payslips found</p>
-            <p className="text-gray-500 text-sm">
+            <p className="text-black mb-2 text-lg font-semibold">No payslips found</p>
+            <p className="text-black text-sm">
               {isEmployee()
                 ? 'You have no payslips yet. Payslips are generated during payrun processing.'
                 : 'Try adjusting your filters or create a new payrun to generate payslips.'}
@@ -261,25 +261,25 @@ export default function PayslipListPage() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-purple-50 to-pink-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-black uppercase">
                     Employee
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-black uppercase">
                     Period
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-black uppercase">
                     Gross Salary
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-black uppercase">
                     Deductions
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-black uppercase">
                     Net Salary
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-center text-xs font-semibold text-black uppercase">
                     Editable
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-center text-xs font-semibold text-black uppercase">
                     Actions
                   </th>
                 </tr>
@@ -293,20 +293,20 @@ export default function PayslipListPage() {
                   >
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-semibold text-gray-900">{payslip.employeeName}</div>
-                        <div className="text-sm text-gray-600">{payslip.employeeCode}</div>
+                        <div className="font-semibold text-black">{payslip.employeeName}</div>
+                        <div className="text-sm text-black">{payslip.employeeCode}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="font-semibold text-gray-900">
+                      <div className="font-semibold text-black">
                         {formatMonth(payslip.month, payslip.year)}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-black">
                         {new Date(payslip.payPeriodStart).toLocaleDateString('en-GB')} -{' '}
                         {new Date(payslip.payPeriodEnd).toLocaleDateString('en-GB')}
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">
+                    <td className="px-6 py-4 text-right font-semibold text-black">
                       {formatCurrency(payslip.grossSalary)}
                     </td>
                     <td className="px-6 py-4 text-right font-semibold text-red-600">
@@ -321,7 +321,7 @@ export default function PayslipListPage() {
                           ✓ Yes
                         </span>
                       ) : (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-black">
                           🔒 Locked
                         </span>
                       )}
@@ -347,3 +347,4 @@ export default function PayslipListPage() {
     </div>
   );
 }
+

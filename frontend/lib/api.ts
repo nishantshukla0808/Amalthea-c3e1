@@ -43,11 +43,19 @@ export async function apiRequest(
 
 // Auth API functions
 export const authAPI = {
-  login: (loginId: string, password: string) =>
-    apiRequest('/auth/login', {
+  login: (loginId: string, password: string) => {
+    // Check if loginId is an email (contains @)
+    const isEmail = loginId.includes('@');
+    
+    return apiRequest('/auth/login', {
       method: 'POST',
-      body: JSON.stringify({ loginId, password }),
-    }),
+      body: JSON.stringify(
+        isEmail 
+          ? { email: loginId, password } 
+          : { loginId, password }
+      ),
+    });
+  },
 
   getCurrentUser: () => apiRequest('/auth/me'),
 

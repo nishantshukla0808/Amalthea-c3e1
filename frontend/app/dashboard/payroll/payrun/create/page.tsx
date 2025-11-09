@@ -75,7 +75,7 @@ export default function CreatePayrunPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-black">Loading...</p>
         </div>
       </div>
     );
@@ -91,8 +91,8 @@ export default function CreatePayrunPage() {
         >
           ← Back
         </button>
-        <h1 className="text-3xl font-bold text-gray-900">Create New Payrun</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-black">Create New Payrun</h1>
+        <p className="text-black mt-1">
           Set up a new monthly payroll processing cycle
         </p>
       </div>
@@ -102,7 +102,7 @@ export default function CreatePayrunPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Month Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
+            <label className="block text-sm font-semibold text-black mb-3">
               Select Month <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
@@ -125,7 +125,7 @@ export default function CreatePayrunPage() {
 
           {/* Year Selection */}
           <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-3">
+            <label className="block text-sm font-semibold text-black mb-3">
               Select Year <span className="text-red-500">*</span>
             </label>
             <div className="grid grid-cols-3 md:grid-cols-5 gap-3">
@@ -148,14 +148,14 @@ export default function CreatePayrunPage() {
 
           {/* Preview */}
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">Preview</h3>
+            <h3 className="text-sm font-semibold text-black mb-2">Preview</h3>
             <div className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
               {new Date(formData.year, formData.month - 1).toLocaleDateString('en-US', {
                 month: 'long',
                 year: 'numeric',
               })}
             </div>
-            <div className="text-sm text-gray-600 mt-2">
+            <div className="text-sm text-black mt-2">
               Pay Period: {new Date(formData.year, formData.month - 1, 1).toLocaleDateString('en-GB')} to{' '}
               {new Date(formData.year, formData.month, 0).toLocaleDateString('en-GB')}
             </div>
@@ -182,7 +182,7 @@ export default function CreatePayrunPage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+              className="flex-1 px-6 py-3 border-2 border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-colors font-semibold"
               disabled={loading}
             >
               Cancel
@@ -207,3 +207,4 @@ export default function CreatePayrunPage() {
     </div>
   );
 }
+

@@ -81,8 +81,8 @@ export default function LeavePage() {
           if (empResponse && empResponse.data) {
             setCurrentEmployee(empResponse.data);
             
-            // Fetch leave balance for employees and HR
-            if (user.role === 'EMPLOYEE' || user.role === 'HR_OFFICER') {
+            // Fetch leave balance for employees, HR, and payroll officers
+            if (user.role === 'EMPLOYEE' || user.role === 'HR_OFFICER' || user.role === 'PAYROLL_OFFICER') {
               await fetchLeaveBalance(empResponse.data.id);
             }
           }
@@ -274,15 +274,16 @@ export default function LeavePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-600">Loading...</div>
+        <div className="text-lg text-black">Loading...</div>
       </div>
     );
   }
 
   const isEmployee = currentUser?.role === 'EMPLOYEE';
   const isHR = currentUser?.role === 'HR_OFFICER';
+  const isPayrollOfficer = currentUser?.role === 'PAYROLL_OFFICER';
   const canApprove = currentUser?.role === 'ADMIN' || currentUser?.role === 'HR_OFFICER';
-  const canApplyForLeave = isEmployee || isHR;
+  const canApplyForLeave = isEmployee || isHR || isPayrollOfficer;
 
   return (
     <div className="p-6 space-y-8">
@@ -292,7 +293,7 @@ export default function LeavePage() {
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 bg-clip-text text-transparent flex items-center gap-3">
             {isEmployee ? '🏖️ My Time Off' : '🏖️ Time Off Management'}
           </h1>
-          <p className="text-base text-gray-600 mt-2 font-medium">
+          <p className="text-base text-black mt-2 font-medium">
             {isEmployee 
               ? 'Apply for leave and view your time off history' 
               : isHR 
@@ -349,14 +350,14 @@ export default function LeavePage() {
               <div key={type} className="group relative bg-white rounded-2xl shadow-lg border-2 border-gray-200 p-6 hover:shadow-2xl hover:scale-[1.03] hover:border-purple-300 transition-all duration-300 overflow-hidden">
                 <div className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-5 group-hover:opacity-10 transition-opacity`}></div>
                 <div className="relative">
-                  <h3 className="text-sm font-bold text-gray-600 mb-3 uppercase tracking-wide">{getLeaveTypeLabel(type)}</h3>
+                  <h3 className="text-sm font-bold text-black mb-3 uppercase tracking-wide">{getLeaveTypeLabel(type)}</h3>
                   <div className="flex items-baseline gap-2 mb-2">
                     <span className={`text-5xl font-extrabold bg-gradient-to-r ${gradient} bg-clip-text text-transparent`}>
                       {balance.remaining}
                     </span>
-                    <span className="text-lg text-gray-500 font-semibold">/ {balance.total}</span>
+                    <span className="text-lg text-black font-semibold">/ {balance.total}</span>
                   </div>
-                  <p className="text-sm text-gray-600 font-medium">
+                  <p className="text-sm text-black font-medium">
                     <span className={`bg-gradient-to-r ${gradient} bg-clip-text text-transparent font-bold`}>{balance.used}</span> days used
                   </p>
                 </div>
@@ -369,17 +370,17 @@ export default function LeavePage() {
       {/* Apply Leave Form - For Employees and HR */}
       {canApplyForLeave && showApplyForm && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Apply for Leave</h2>
+          <h2 className="text-lg font-semibold text-black mb-4">Apply for Leave</h2>
           <form onSubmit={handleApplyLeave} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-1">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Leave Type <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={formData.leaveType}
                   onChange={(e) => setFormData({ ...formData, leaveType: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black bg-white"
                   required
                 >
                   <option value="PAID">Paid Time Off</option>
@@ -399,35 +400,35 @@ export default function LeavePage() {
                     onChange={(e) => setFormData({ ...formData, isHalfDay: e.target.checked })}
                     className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                   />
-                  <span className="text-sm font-medium text-gray-700">Half Day</span>
+                  <span className="text-sm font-medium text-black">Half Day</span>
                 </label>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Start Date <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
                   value={formData.startDate}
                   onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
                   placeholder="dd-mm-yyyy"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   End Date <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="date"
                   value={formData.endDate}
                   onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
                   placeholder="dd-mm-yyyy"
                   required
                   min={formData.startDate}
@@ -436,13 +437,13 @@ export default function LeavePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-black mb-2">
                 Reason <span className="text-red-500">*</span>
               </label>
               <textarea
                 value={formData.reason}
                 onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 resize-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black placeholder-gray-600 resize-none"
                 rows={4}
                 placeholder="Please provide a reason for your leave..."
                 required
@@ -453,7 +454,7 @@ export default function LeavePage() {
               <button
                 type="button"
                 onClick={() => setShowApplyForm(false)}
-                className="px-8 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors"
+                className="px-8 py-3 border border-gray-300 rounded-lg text-black font-medium hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
@@ -472,13 +473,13 @@ export default function LeavePage() {
       {/* Filters - Only for Admin/HR */}
       {canApprove && (
         <div className="bg-white rounded-xl shadow-lg border-2 border-gray-200 p-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
             <span>🔍</span>
             Filter Leave Requests
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Status</label>
+              <label className="block text-sm font-semibold text-black mb-2">Status</label>
               <select
                 value={filters.status}
                 onChange={async (e) => {
@@ -499,7 +500,7 @@ export default function LeavePage() {
                     }
                   }
                 }}
-                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white font-medium hover:border-purple-300 transition-all"
+                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-black bg-white font-medium hover:border-purple-300 transition-all"
               >
                 <option value="">All Statuses</option>
                 <option value="PENDING">Pending</option>
@@ -510,7 +511,7 @@ export default function LeavePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Leave Type</label>
+              <label className="block text-sm font-semibold text-black mb-2">Leave Type</label>
               <select
                 value={filters.leaveType}
                 onChange={async (e) => {
@@ -531,7 +532,7 @@ export default function LeavePage() {
                     }
                   }
                 }}
-                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 bg-white font-medium hover:border-purple-300 transition-all"
+                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-black bg-white font-medium hover:border-purple-300 transition-all"
               >
                 <option value="">All Types</option>
                 <option value="PAID">Paid Time Off</option>
@@ -544,7 +545,7 @@ export default function LeavePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Department</label>
+              <label className="block text-sm font-semibold text-black mb-2">Department</label>
               <input
                 type="text"
                 value={filters.department}
@@ -566,7 +567,7 @@ export default function LeavePage() {
                   }
                 }}
                 placeholder="e.g., Engineering"
-                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-gray-900 placeholder-gray-400 font-medium hover:border-purple-300 transition-all"
+                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-black placeholder-gray-600 font-medium hover:border-purple-300 transition-all"
               />
             </div>
 
@@ -597,11 +598,11 @@ export default function LeavePage() {
       {/* Leave Records Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Leave Requests</h2>
+          <h2 className="text-lg font-semibold text-black">Leave Requests</h2>
         </div>
         
         {leaveRecords.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-black">
             No leave records found
           </div>
         ) : (
@@ -609,14 +610,14 @@ export default function LeavePage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  {canApprove && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>}
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Leave Type</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Days</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
-                  {canApprove && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>}
+                  {canApprove && <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Employee</th>}
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Leave Type</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Start Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">End Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Days</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Reason</th>
+                  {canApprove && <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>}
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -625,30 +626,30 @@ export default function LeavePage() {
                     {canApprove && record.employee && (
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-black">
                             {record.employee.firstName} {record.employee.lastName}
                           </div>
-                          <div className="text-sm text-gray-500">{record.employee.department}</div>
+                          <div className="text-sm text-black">{record.employee.department}</div>
                         </div>
                       </td>
                     )}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {getLeaveTypeLabel(record.leaveType)}
                       {record.isHalfDay && <span className="ml-2 text-xs text-blue-600">(Half Day)</span>}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {formatDate(record.startDate)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {formatDate(record.endDate)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {record.totalDays} {record.totalDays === 1 ? 'day' : 'days'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(record.status)}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900 max-w-xs truncate" title={record.reason}>
+                    <td className="px-6 py-4 text-sm text-black max-w-xs truncate" title={record.reason}>
                       {record.reason}
                     </td>
                     {canApprove && (
@@ -676,7 +677,7 @@ export default function LeavePage() {
                             <span className="text-xs text-amber-600 italic">Admin Only</span>
                           )
                         ) : (
-                          <span className="text-gray-400">-</span>
+                          <span className="text-black">-</span>
                         )}
                       </td>
                     )}
@@ -692,22 +693,22 @@ export default function LeavePage() {
       {showRejectDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Reject Leave Request</h3>
-            <p className="text-sm text-gray-600 mb-4">Please provide a reason for rejecting this leave request:</p>
+            <h3 className="text-lg font-semibold text-black mb-4">Reject Leave Request</h3>
+            <p className="text-sm text-black mb-4">Please provide a reason for rejecting this leave request:</p>
             
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Enter rejection reason..."
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900 placeholder-gray-400 resize-none"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-black placeholder-gray-600 resize-none"
               autoFocus
             />
             
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={cancelReject}
-                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
+                className="px-4 py-2 text-black bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors"
               >
                 Cancel
               </button>
@@ -725,3 +726,4 @@ export default function LeavePage() {
     </div>
   );
 }
+

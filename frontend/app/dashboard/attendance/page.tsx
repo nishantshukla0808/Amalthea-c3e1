@@ -71,21 +71,27 @@ export default function AttendancePage() {
 
       setAttendanceRecords(response.data || []);
       
-      // For employees and HR, check if checked in/out today and leave status
-      if (userRole === 'EMPLOYEE' || userRole === 'HR_OFFICER') {
+      // For employees, HR, and payroll officers, check if checked in/out today and leave status
+      if (userRole === 'EMPLOYEE' || userRole === 'HR_OFFICER' || userRole === 'PAYROLL_OFFICER') {
         const today = new Date().toISOString().split('T')[0];
         const todayRecord = response.data?.find((record: AttendanceRecord) => {
           const recordDate = new Date(record.date).toISOString().split('T')[0];
           return recordDate === today;
         });
 
-        if (todayRecord) {
-          setHasCheckedInToday(true);
-          setHasCheckedOutToday(!!todayRecord.checkOut);
-        } else {
-          setHasCheckedInToday(false);
-          setHasCheckedOutToday(false);
-        }
+        console.log('📅 Today:', today);
+        console.log('📊 Today Record:', todayRecord);
+        console.log('✅ Check-in:', todayRecord?.checkIn);
+        console.log('🚪 Check-out:', todayRecord?.checkOut);
+
+        // Set check-in/out status based on today's record
+        const hasCheckIn = todayRecord?.checkIn ? true : false;
+        const hasCheckOut = todayRecord?.checkOut ? true : false;
+        
+        setHasCheckedInToday(hasCheckIn);
+        setHasCheckedOutToday(hasCheckOut);
+        
+        console.log('🔍 State Update - hasCheckedIn:', hasCheckIn, 'hasCheckedOut:', hasCheckOut);
 
         // Check if user has an approved leave today
         try {
@@ -134,15 +140,22 @@ export default function AttendancePage() {
       setError('');
       setSuccess('');
 
-      await attendanceAPI.checkIn();
-      setSuccess('Checked in successfully!');
-      setHasCheckedInToday(true);
+      console.log('🟢 Check-in initiated...');
+      const response = await attendanceAPI.checkIn();
+      console.log('✅ Check-in response:', response);
       
-      // Refresh attendance data
+      setSuccess('Checked in successfully!');
+      
+      // Small delay to ensure database transaction is committed
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Refresh attendance data to get the latest state
       if (currentUser) {
-        fetchAttendance(currentUser.role);
+        console.log('🔄 Refreshing attendance data after check-in...');
+        await fetchAttendance(currentUser.role);
       }
     } catch (err: any) {
+      console.error('❌ Check-in error:', err);
       // Check if it's an employee not found error
       if (err.message?.includes('Employee record not found') || err.message?.includes('Employee not found')) {
         setError('Your user account is not linked to an employee record yet. Please contact your administrator to complete your employee profile setup.');
@@ -160,15 +173,22 @@ export default function AttendancePage() {
       setError('');
       setSuccess('');
 
-      await attendanceAPI.checkOut();
-      setSuccess('Checked out successfully!');
-      setHasCheckedOutToday(true);
+      console.log('🔴 Check-out initiated...');
+      const response = await attendanceAPI.checkOut();
+      console.log('✅ Check-out response:', response);
       
-      // Refresh attendance data
+      setSuccess('Checked out successfully!');
+      
+      // Small delay to ensure database transaction is committed
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Refresh attendance data to get the latest state
       if (currentUser) {
-        fetchAttendance(currentUser.role);
+        console.log('🔄 Refreshing attendance data after check-out...');
+        await fetchAttendance(currentUser.role);
       }
     } catch (err: any) {
+      console.error('❌ Check-out error:', err);
       // Check if it's an employee not found error
       if (err.message?.includes('Employee record not found') || err.message?.includes('Employee not found')) {
         setError('Your user account is not linked to an employee record yet. Please contact your administrator to complete your employee profile setup.');
@@ -217,7 +237,7 @@ export default function AttendancePage() {
       HOLIDAY: { bg: 'bg-purple-100', text: 'text-purple-800' },
     };
 
-    const badge = badges[status] || { bg: 'bg-gray-100', text: 'text-gray-800' };
+    const badge = badges[status] || { bg: 'bg-gray-100', text: 'text-black' };
 
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`}>
@@ -229,14 +249,15 @@ export default function AttendancePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg text-gray-600">Loading attendance...</div>
+        <div className="text-lg text-black">Loading attendance...</div>
       </div>
     );
   }
 
   const isEmployee = currentUser?.role === 'EMPLOYEE';
   const isHR = currentUser?.role === 'HR_OFFICER';
-  const canMarkAttendance = isEmployee || isHR;
+  const isPayrollOfficer = currentUser?.role === 'PAYROLL_OFFICER';
+  const canMarkAttendance = isEmployee || isHR || isPayrollOfficer;
   const monthName = selectedDate.toLocaleString('default', { month: 'long', year: 'numeric' });
 
   return (
@@ -244,10 +265,10 @@ export default function AttendancePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-black">
             {isEmployee ? 'My Attendance' : 'Attendance Management'}
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-black mt-1">
             {isEmployee 
               ? `View your attendance records for ${monthName}` 
               : isHR
@@ -280,7 +301,7 @@ export default function AttendancePage() {
       {/* Check-in/Check-out Buttons - For Employees and HR */}
       {canMarkAttendance && (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Time Off</h2>
+          <h2 className="text-lg font-semibold text-black mb-4">Time Off</h2>
           
           {/* Leave Status Info */}
           {hasFullDayLeave && (
@@ -336,8 +357,8 @@ export default function AttendancePage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Days</p>
-                <p className="text-2xl font-bold text-gray-900">{statistics.total}</p>
+                <p className="text-sm text-black">Total Days</p>
+                <p className="text-2xl font-bold text-black">{statistics.total}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -350,7 +371,7 @@ export default function AttendancePage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Present</p>
+                <p className="text-sm text-black">Present</p>
                 <p className="text-2xl font-bold text-green-600">{statistics.present}</p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
@@ -364,7 +385,7 @@ export default function AttendancePage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Leave</p>
+                <p className="text-sm text-black">Leave</p>
                 <p className="text-2xl font-bold text-blue-600">{statistics.leave}</p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -378,7 +399,7 @@ export default function AttendancePage() {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Avg Hours</p>
+                <p className="text-sm text-black">Avg Hours</p>
                 <p className="text-2xl font-bold text-purple-600">{statistics.avgHours.toFixed(1)}h</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
@@ -392,7 +413,7 @@ export default function AttendancePage() {
       )}
 
       {/* Month Navigation */}
-      {(isEmployee || currentUser?.role === 'ADMIN' || currentUser?.role === 'HR_OFFICER') && (
+      {(isEmployee || currentUser?.role === 'ADMIN' || currentUser?.role === 'HR_OFFICER' || currentUser?.role === 'PAYROLL_OFFICER') && (
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <button
@@ -422,11 +443,11 @@ export default function AttendancePage() {
       {/* Attendance Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Attendance</h2>
+          <h2 className="text-lg font-semibold text-black">Attendance</h2>
         </div>
         
         {attendanceRecords.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
+          <div className="p-8 text-center text-black">
             No attendance records found
           </div>
         ) : (
@@ -434,13 +455,13 @@ export default function AttendancePage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  {!isEmployee && <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Employee</th>}
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check In</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Check Out</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Work Hours</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Extra hours</th>
+                  {!isEmployee && <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Employee</th>}
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Check In</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Check Out</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Work Hours</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Extra hours</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -449,29 +470,29 @@ export default function AttendancePage() {
                     {!isEmployee && record.employee && (
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-gray-900">
+                          <div className="text-sm font-medium text-black">
                             {record.employee.firstName} {record.employee.lastName}
                           </div>
-                          <div className="text-sm text-gray-500">{record.employee.department}</div>
+                          <div className="text-sm text-black">{record.employee.department}</div>
                         </div>
                       </td>
                     )}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {formatDate(record.date)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {formatTime(record.checkIn)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {formatTime(record.checkOut)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {record.workingHours ? `${record.workingHours.toFixed(2)}h` : '0.00h'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(record.status)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {record.workingHours > 8 ? `+${(record.workingHours - 8).toFixed(2)}h` : '0.00h'}
                     </td>
                   </tr>
@@ -484,3 +505,4 @@ export default function AttendancePage() {
     </div>
   );
 }
+

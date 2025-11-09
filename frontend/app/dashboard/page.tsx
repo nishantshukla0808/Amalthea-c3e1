@@ -40,39 +40,39 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="group bg-white p-6 rounded-2xl shadow-lg border border-blue-100 hover:shadow-2xl hover:scale-[1.02] hover:border-blue-300 transition-all duration-300 cursor-pointer">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Your Role</h3>
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">Your Role</h3>
             <span className="text-2xl group-hover:scale-110 transition-transform">🎯</span>
           </div>
           <p className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mt-2">
             {user?.role || 'Loading...'}
           </p>
-          <p className="text-sm text-gray-600 mt-2 font-medium">Current access level</p>
+          <p className="text-sm text-black mt-2 font-medium">Current access level</p>
         </div>
 
         <div className="group bg-white p-6 rounded-2xl shadow-lg border border-emerald-100 hover:shadow-2xl hover:scale-[1.02] hover:border-emerald-300 transition-all duration-300 cursor-pointer">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Account Status</h3>
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">Account Status</h3>
             <span className="text-2xl group-hover:scale-110 transition-transform">{user?.isActive ? '✅' : '⚠️'}</span>
           </div>
           <p className={`text-4xl font-extrabold mt-2 ${user?.isActive ? 'bg-gradient-to-r from-emerald-600 to-green-600 bg-clip-text text-transparent' : 'bg-gradient-to-r from-red-600 to-rose-600 bg-clip-text text-transparent'}`}>
             {user?.isActive ? 'Active' : 'Inactive'}
           </p>
-          <p className="text-sm text-gray-600 mt-2 font-medium">Account is {user?.isActive ? 'operational' : 'suspended'}</p>
+          <p className="text-sm text-black mt-2 font-medium">Account is {user?.isActive ? 'operational' : 'suspended'}</p>
         </div>
 
         <div className="group bg-white p-6 rounded-2xl shadow-lg border border-purple-100 hover:shadow-2xl hover:scale-[1.02] hover:border-purple-300 transition-all duration-300 cursor-pointer">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Login ID</h3>
+            <h3 className="text-sm font-semibold text-black uppercase tracking-wide">Login ID</h3>
             <span className="text-2xl group-hover:scale-110 transition-transform">🔑</span>
           </div>
-          <p className="text-2xl font-mono font-bold text-gray-900 mt-2">{user?.loginId || 'Loading...'}</p>
-          <p className="text-sm text-gray-600 mt-2 font-medium">Your unique identifier</p>
+          <p className="text-2xl font-mono font-bold text-black mt-2">{user?.loginId || 'Loading...'}</p>
+          <p className="text-sm text-black mt-2 font-medium">Your unique identifier</p>
         </div>
       </div>
 
       {/* Feature Modules Grid */}
       <div>
-        <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <h3 className="text-2xl font-bold text-black mb-6 flex items-center gap-2">
           <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Quick Access</span>
           <span className="text-2xl">⚡</span>
         </h3>
@@ -86,8 +86,8 @@ export default function DashboardPage() {
                   <span className="text-3xl">👥</span>
                 </div>
               </div>
-              <h4 className="font-bold text-gray-900 text-lg">Employees</h4>
-              <p className="text-sm text-gray-600 mt-2">Manage employee data and profiles</p>
+              <h4 className="font-bold text-black text-lg">Employees</h4>
+              <p className="text-sm text-black mt-2">Manage employee data and profiles</p>
             </div>
           </div>
 
@@ -99,8 +99,8 @@ export default function DashboardPage() {
                   <span className="text-3xl">📅</span>
                 </div>
               </div>
-              <h4 className="font-bold text-gray-900 text-lg">Attendance</h4>
-              <p className="text-sm text-gray-600 mt-2">Track attendance and timesheets</p>
+              <h4 className="font-bold text-black text-lg">Attendance</h4>
+              <p className="text-sm text-black mt-2">Track attendance and timesheets</p>
             </div>
           </div>
 
@@ -112,8 +112,8 @@ export default function DashboardPage() {
                   <span className="text-3xl">🏖️</span>
                 </div>
               </div>
-              <h4 className="font-bold text-gray-900 text-lg">Leaves</h4>
-              <p className="text-sm text-gray-600 mt-2">Manage leave requests and balances</p>
+              <h4 className="font-bold text-black text-lg">Leaves</h4>
+              <p className="text-sm text-black mt-2">Manage leave requests and balances</p>
             </div>
           </div>
 
@@ -125,8 +125,8 @@ export default function DashboardPage() {
                   <span className="text-3xl">💰</span>
                 </div>
               </div>
-              <h4 className="font-bold text-gray-900 text-lg">Payroll</h4>
-              <p className="text-sm text-gray-600 mt-2">Process payroll and compensation</p>
+              <h4 className="font-bold text-black text-lg">Payroll</h4>
+              <p className="text-sm text-black mt-2">Process payroll and compensation</p>
             </div>
           </div>
 
@@ -137,34 +137,34 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <h3 className="text-2xl font-bold text-black mb-6 flex items-center gap-2">
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Quick Actions</span>
             <span className="text-xl">⚡</span>
           </h3>
           <div className="space-y-3">
             <button className="group w-full text-left px-5 py-4 bg-gradient-to-r from-gray-50 to-blue-50 hover:from-blue-100 hover:to-purple-100 rounded-xl transition-all duration-300 flex items-center justify-between shadow-sm hover:shadow-md border border-gray-200 hover:border-blue-300">
-              <span className="text-gray-900 font-semibold flex items-center gap-3">
+              <span className="text-black font-semibold flex items-center gap-3">
                 <span className="text-xl">👤</span>
                 View My Profile
               </span>
               <span className="text-blue-600 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             <button className="group w-full text-left px-5 py-4 bg-gradient-to-r from-gray-50 to-purple-50 hover:from-purple-100 hover:to-pink-100 rounded-xl transition-all duration-300 flex items-center justify-between shadow-sm hover:shadow-md border border-gray-200 hover:border-purple-300">
-              <span className="text-gray-900 font-semibold flex items-center gap-3">
+              <span className="text-black font-semibold flex items-center gap-3">
                 <span className="text-xl">🔐</span>
                 Change Password
               </span>
               <span className="text-purple-600 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             <button className="group w-full text-left px-5 py-4 bg-gradient-to-r from-gray-50 to-emerald-50 hover:from-emerald-100 hover:to-green-100 rounded-xl transition-all duration-300 flex items-center justify-between shadow-sm hover:shadow-md border border-gray-200 hover:border-emerald-300">
-              <span className="text-gray-900 font-semibold flex items-center gap-3">
+              <span className="text-black font-semibold flex items-center gap-3">
                 <span className="text-xl">📊</span>
                 View Attendance
               </span>
               <span className="text-emerald-600 group-hover:translate-x-1 transition-transform">→</span>
             </button>
             <button className="group w-full text-left px-5 py-4 bg-gradient-to-r from-gray-50 to-pink-50 hover:from-pink-100 hover:to-rose-100 rounded-xl transition-all duration-300 flex items-center justify-between shadow-sm hover:shadow-md border border-gray-200 hover:border-pink-300">
-              <span className="text-gray-900 font-semibold flex items-center gap-3">
+              <span className="text-black font-semibold flex items-center gap-3">
                 <span className="text-xl">🏖️</span>
                 Request Leave
               </span>
@@ -210,3 +210,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

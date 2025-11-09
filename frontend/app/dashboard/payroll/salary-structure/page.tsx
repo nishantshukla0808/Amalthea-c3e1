@@ -29,7 +29,16 @@ export default function SalaryStructureListPage() {
       setLoading(true);
       const response = await salaryStructureAPI.getAll();
       console.log('Loaded salary structures:', response);
-      setStructures(response.data || []);
+      
+      // Map the response to include employee details at the top level
+      const mappedStructures = (response.data || []).map((structure: any) => ({
+        ...structure,
+        employeeName: structure.employee ? `${structure.employee.firstName} ${structure.employee.lastName}` : 'Unknown',
+        employeeCode: structure.employee?.employeeId || 'N/A',
+        department: structure.employee?.department || 'N/A',
+      }));
+      
+      setStructures(mappedStructures);
     } catch (error: any) {
       console.error('Failed to load salary structures:', error);
       alert('Failed to load salary structures: ' + (error.message || error.error || 'Unknown error'));
@@ -77,7 +86,7 @@ export default function SalaryStructureListPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading salary structures...</p>
+          <p className="mt-4 text-black">Loading salary structures...</p>
         </div>
       </div>
     );
@@ -88,8 +97,8 @@ export default function SalaryStructureListPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Salary Structures</h1>
-          <p className="text-gray-600 mt-1">Manage employee salary configurations</p>
+          <h1 className="text-3xl font-bold text-black">Salary Structures</h1>
+          <p className="text-black mt-1">Manage employee salary configurations</p>
         </div>
         <div className="flex gap-3">
           <button
@@ -112,7 +121,7 @@ export default function SalaryStructureListPage() {
         <div className="grid gap-6 md:grid-cols-3">
           <div className="bg-white p-6 rounded-2xl shadow-lg border border-purple-100">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
                 Total Structures
               </h3>
               <span className="text-2xl">📋</span>
@@ -124,7 +133,7 @@ export default function SalaryStructureListPage() {
 
           <div className="bg-white p-6 rounded-2xl shadow-lg border border-blue-100">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
                 Average Monthly Wage
               </h3>
               <span className="text-2xl">💵</span>
@@ -138,7 +147,7 @@ export default function SalaryStructureListPage() {
 
           <div className="bg-white p-6 rounded-2xl shadow-lg border border-green-100">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+              <h3 className="text-sm font-semibold text-black uppercase tracking-wide">
                 Total Monthly Cost
               </h3>
               <span className="text-2xl">💰</span>
@@ -161,19 +170,19 @@ export default function SalaryStructureListPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search by employee name, code, or department..."
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black placeholder-gray-600"
             />
           </div>
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="px-4 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+              className="px-4 py-3 border-2 border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-colors font-semibold"
             >
               Clear
             </button>
           )}
         </div>
-        <p className="text-sm text-gray-600 mt-2">
+        <p className="text-sm text-black mt-2">
           Showing {filteredStructures.length} of {structures.length} salary structures
         </p>
       </div>
@@ -181,16 +190,16 @@ export default function SalaryStructureListPage() {
       {/* Salary Structures Table */}
       <div className="bg-white rounded-2xl shadow-xl border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-xl font-bold text-gray-900">Salary Structure Records</h3>
+          <h3 className="text-xl font-bold text-black">Salary Structure Records</h3>
         </div>
 
         {filteredStructures.length === 0 ? (
           <div className="text-center py-16">
             <span className="text-6xl mb-4 block">📋</span>
-            <p className="text-gray-600 mb-2 text-lg font-semibold">
+            <p className="text-black mb-2 text-lg font-semibold">
               {searchTerm ? 'No matching salary structures found' : 'No salary structures found'}
             </p>
-            <p className="text-gray-500 text-sm mb-6">
+            <p className="text-black text-sm mb-6">
               {searchTerm
                 ? 'Try adjusting your search criteria'
                 : 'Create salary structures for employees before processing payruns'}
@@ -209,22 +218,22 @@ export default function SalaryStructureListPage() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-purple-50 to-pink-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-black uppercase">
                     Employee
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-black uppercase">
                     Department
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-black uppercase">
                     Monthly Wage
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-center text-xs font-semibold text-black uppercase">
                     PF %
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-center text-xs font-semibold text-black uppercase">
                     Effective From
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">
+                  <th className="px-6 py-3 text-center text-xs font-semibold text-black uppercase">
                     Actions
                   </th>
                 </tr>
@@ -237,14 +246,14 @@ export default function SalaryStructureListPage() {
                   >
                     <td className="px-6 py-4">
                       <div>
-                        <div className="font-semibold text-gray-900">{structure.employeeName}</div>
-                        <div className="text-sm text-gray-600">{structure.employeeCode}</div>
+                        <div className="font-semibold text-black">{structure.employeeName}</div>
+                        <div className="text-sm text-black">{structure.employeeCode}</div>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-gray-900">{structure.department || 'N/A'}</div>
+                      <div className="text-black">{structure.department || 'N/A'}</div>
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900 text-lg">
+                    <td className="px-6 py-4 text-right font-semibold text-black text-lg">
                       {formatCurrency(structure.monthlyWage)}
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -252,7 +261,7 @@ export default function SalaryStructureListPage() {
                         {structure.pfPercentage || 12}%
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-center font-semibold text-gray-900">
+                    <td className="px-6 py-4 text-center font-semibold text-black">
                       {formatDate(structure.effectiveFrom)}
                     </td>
                     <td className="px-6 py-4 text-center">
@@ -300,3 +309,4 @@ export default function SalaryStructureListPage() {
     </div>
   );
 }
+

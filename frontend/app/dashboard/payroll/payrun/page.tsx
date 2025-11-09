@@ -24,7 +24,7 @@ export default function PayrunListPage() {
     if (!authLoading) {
       loadPayruns();
     }
-  }, [authLoading, filters]);
+  }, [authLoading, filters.month, filters.year, filters.status]);
 
   const loadPayruns = async () => {
     try {
@@ -68,9 +68,9 @@ export default function PayrunListPage() {
       case 'PROCESSING':
         return 'bg-yellow-100 text-yellow-800 border-yellow-300';
       case 'DRAFT':
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return 'bg-gray-100 text-black border-gray-300';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return 'bg-gray-100 text-black border-gray-300';
     }
   };
 
@@ -79,7 +79,7 @@ export default function PayrunListPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading payruns...</p>
+          <p className="mt-4 text-black">Loading payruns...</p>
         </div>
       </div>
     );
@@ -90,8 +90,8 @@ export default function PayrunListPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Payruns</h1>
-          <p className="text-gray-600 mt-1">Manage monthly payroll processing</p>
+          <h1 className="text-3xl font-bold text-black">Payruns</h1>
+          <p className="text-black mt-1">Manage monthly payroll processing</p>
         </div>
         <button
           onClick={() => router.push('/dashboard/payroll/payrun/create')}
@@ -104,10 +104,10 @@ export default function PayrunListPage() {
 
       {/* Filters */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+        <h3 className="text-lg font-semibold text-black mb-4">Filters</h3>
         <div className="grid gap-4 md:grid-cols-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-black mb-2">
               Month
             </label>
             <select
@@ -125,7 +125,7 @@ export default function PayrunListPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-black mb-2">
               Year
             </label>
             <select
@@ -142,7 +142,7 @@ export default function PayrunListPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-black mb-2">
               Status
             </label>
             <select
@@ -162,7 +162,7 @@ export default function PayrunListPage() {
           <div className="flex items-end">
             <button
               onClick={() => setFilters({ month: '', year: new Date().getFullYear().toString(), status: '' })}
-              className="w-full px-4 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="w-full px-4 py-2 border-2 border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-colors"
             >
               Clear Filters
             </button>
@@ -175,8 +175,8 @@ export default function PayrunListPage() {
         {payruns.length === 0 ? (
           <div className="text-center py-16">
             <span className="text-8xl mb-6 block">📅</span>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No Payruns Found</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-xl font-bold text-black mb-2">No Payruns Found</h3>
+            <p className="text-black mb-6">
               {filters.month || filters.status
                 ? 'Try adjusting your filters or create a new payrun'
                 : 'Create your first payrun to get started'}
@@ -194,22 +194,22 @@ export default function PayrunListPage() {
             <table className="w-full">
               <thead className="bg-gradient-to-r from-purple-50 to-pink-50 border-b-2 border-purple-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-black">
                     Period
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-black">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">
+                  <th className="px-6 py-4 text-right text-sm font-semibold text-black">
                     Employees
                   </th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">
+                  <th className="px-6 py-4 text-right text-sm font-semibold text-black">
                     Total Gross
                   </th>
-                  <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">
+                  <th className="px-6 py-4 text-right text-sm font-semibold text-black">
                     Total Net
                   </th>
-                  <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900">
+                  <th className="px-6 py-4 text-center text-sm font-semibold text-black">
                     Actions
                   </th>
                 </tr>
@@ -227,10 +227,10 @@ export default function PayrunListPage() {
                           📅
                         </div>
                         <div>
-                          <div className="font-semibold text-gray-900">
+                          <div className="font-semibold text-black">
                             {formatMonth(payrun.month, payrun.year)}
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-black">
                             {new Date(payrun.payPeriodStart).toLocaleDateString('en-GB')} -{' '}
                             {new Date(payrun.payPeriodEnd).toLocaleDateString('en-GB')}
                           </div>
@@ -246,10 +246,10 @@ export default function PayrunListPage() {
                         {payrun.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">
+                    <td className="px-6 py-4 text-right font-semibold text-black">
                       {payrun.employeeCount}
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">
+                    <td className="px-6 py-4 text-right font-semibold text-black">
                       {formatCurrency(payrun.totalGrossWage)}
                     </td>
                     <td className="px-6 py-4 text-right font-semibold text-purple-600">
@@ -276,3 +276,4 @@ export default function PayrunListPage() {
     </div>
   );
 }
+

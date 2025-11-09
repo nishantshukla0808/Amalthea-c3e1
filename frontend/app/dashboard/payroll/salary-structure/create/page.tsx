@@ -125,7 +125,15 @@ export default function CreateSalaryStructurePage() {
       alert('Salary structure created successfully!');
       router.push(`/dashboard/payroll/salary-structure/${response.data.id}`);
     } catch (error: any) {
-      alert('Failed to create salary structure: ' + error.message);
+      console.error('❌ Full error:', error);
+      const errorMsg = error.message || error.error || error.toString() || 'Unknown error';
+      
+      // Check if backend is not running
+      if (errorMsg.includes('fetch') || errorMsg.includes('Failed to fetch')) {
+        alert('Failed to create salary structure: Cannot connect to backend server. Please ensure the backend is running on http://localhost:5000');
+      } else {
+        alert('Failed to create salary structure: ' + errorMsg);
+      }
     } finally {
       setLoading(false);
     }
@@ -144,7 +152,7 @@ export default function CreateSalaryStructurePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-black">Loading...</p>
         </div>
       </div>
     );
@@ -160,37 +168,37 @@ export default function CreateSalaryStructurePage() {
         >
           ← Back to Salary Structures
         </button>
-        <h1 className="text-3xl font-bold text-gray-900">Create Salary Structure</h1>
-        <p className="text-gray-600 mt-1">Set up salary configuration for an employee</p>
+        <h1 className="text-3xl font-bold text-black">Create Salary Structure</h1>
+        <p className="text-black mt-1">Set up salary configuration for an employee</p>
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
         <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+          <h3 className="text-lg font-semibold text-black mb-4">Basic Information</h3>
           <div className="grid gap-6 md:grid-cols-2">
             {/* Employee ID */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Employee ID <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={formData.employeeId}
                 onChange={(e) => handleChange('employeeId', e.target.value)}
-                placeholder="e.g., 00000000-0000-4000-8000-000000000110"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                placeholder="e.g., OIALSM20210002 or UUID"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black placeholder-gray-600"
                 required
               />
-              <p className="text-sm text-gray-500 mt-1">
-                Enter the UUID of the employee (from fixtures or database)
+              <p className="text-sm text-black mt-1">
+                Enter employee ID (e.g., OIALSM20210002) or UUID
               </p>
             </div>
 
             {/* Monthly Wage */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Monthly Wage (₹) <span className="text-red-500">*</span>
               </label>
               <input
@@ -200,34 +208,34 @@ export default function CreateSalaryStructurePage() {
                 placeholder="e.g., 50000"
                 min="0"
                 step="0.01"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black placeholder-gray-600"
                 required
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-black mt-1">
                 Total monthly salary (will be broken down into components)
               </p>
             </div>
 
             {/* Effective From */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Effective From <span className="text-red-500">*</span>
               </label>
               <input
                 type="date"
                 value={formData.effectiveFrom}
                 onChange={(e) => handleChange('effectiveFrom', e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                 required
               />
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-black mt-1">
                 Date from which this structure becomes active
               </p>
             </div>
 
             {/* PF Percentage */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 PF Percentage (%)
               </label>
               <input
@@ -238,20 +246,20 @@ export default function CreateSalaryStructurePage() {
                 min="0"
                 max="100"
                 step="0.01"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black placeholder-gray-600"
               />
-              <p className="text-sm text-gray-500 mt-1">Default: 12%</p>
+              <p className="text-sm text-black mt-1">Default: 12%</p>
             </div>
           </div>
         </div>
 
         {/* Optional Settings */}
         <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Optional Settings</h3>
+          <h3 className="text-lg font-semibold text-black mb-4">Optional Settings</h3>
           <div className="grid gap-6 md:grid-cols-3">
             {/* Professional Tax */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Professional Tax (₹)
               </label>
               <input
@@ -261,14 +269,14 @@ export default function CreateSalaryStructurePage() {
                 placeholder="200"
                 min="0"
                 step="0.01"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black placeholder-gray-600"
               />
-              <p className="text-sm text-gray-500 mt-1">Default: ₹200</p>
+              <p className="text-sm text-black mt-1">Default: ₹200</p>
             </div>
 
             {/* Working Days Per Week */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Working Days/Week
               </label>
               <input
@@ -278,14 +286,14 @@ export default function CreateSalaryStructurePage() {
                 placeholder="5"
                 min="1"
                 max="7"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black placeholder-gray-600"
               />
-              <p className="text-sm text-gray-500 mt-1">Default: 5 days</p>
+              <p className="text-sm text-black mt-1">Default: 5 days</p>
             </div>
 
             {/* Working Hours Per Day */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Working Hours/Day
               </label>
               <input
@@ -295,9 +303,9 @@ export default function CreateSalaryStructurePage() {
                 placeholder="8"
                 min="0"
                 step="0.5"
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black placeholder-gray-600"
               />
-              <p className="text-sm text-gray-500 mt-1">Default: 8 hours</p>
+              <p className="text-sm text-black mt-1">Default: 8 hours</p>
             </div>
           </div>
         </div>
@@ -305,7 +313,7 @@ export default function CreateSalaryStructurePage() {
         {/* Salary Breakdown Preview */}
         {parseFloat(formData.monthlyWage) > 0 && (
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border-2 border-purple-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
               <span>📊</span> Salary Breakdown Preview
             </h3>
             <div className="grid gap-4 md:grid-cols-2">
@@ -314,31 +322,31 @@ export default function CreateSalaryStructurePage() {
                 <h4 className="font-semibold text-green-700 mb-3">Earnings</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Basic Salary (50%)</span>
+                    <span className="text-black">Basic Salary (50%)</span>
                     <span className="font-semibold">{formatCurrency(preview.basicSalary)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">HRA (50% of Basic)</span>
+                    <span className="text-black">HRA (50% of Basic)</span>
                     <span className="font-semibold">{formatCurrency(preview.hra)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Standard Allowance</span>
+                    <span className="text-black">Standard Allowance</span>
                     <span className="font-semibold">{formatCurrency(preview.standardAllowance)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Performance Bonus (8.33%)</span>
+                    <span className="text-black">Performance Bonus (8.33%)</span>
                     <span className="font-semibold">{formatCurrency(preview.performanceBonus)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">LTA (8.33%)</span>
+                    <span className="text-black">LTA (8.33%)</span>
                     <span className="font-semibold">{formatCurrency(preview.lta)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Fixed Allowance</span>
+                    <span className="text-black">Fixed Allowance</span>
                     <span className="font-semibold">{formatCurrency(preview.fixedAllowance)}</span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-gray-200">
-                    <span className="font-bold text-gray-900">Total</span>
+                    <span className="font-bold text-black">Total</span>
                     <span className="font-bold text-green-600 text-lg">
                       {formatCurrency(parseFloat(formData.monthlyWage))}
                     </span>
@@ -351,23 +359,23 @@ export default function CreateSalaryStructurePage() {
                 <h4 className="font-semibold text-red-700 mb-3">Estimated Deductions</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">PF Employee ({formData.pfPercentage}%)</span>
+                    <span className="text-black">PF Employee ({formData.pfPercentage}%)</span>
                     <span className="font-semibold">
                       {formatCurrency((preview.basicSalary * parseFloat(formData.pfPercentage)) / 100)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">PF Employer ({formData.pfPercentage}%)</span>
+                    <span className="text-black">PF Employer ({formData.pfPercentage}%)</span>
                     <span className="font-semibold">
                       {formatCurrency((preview.basicSalary * parseFloat(formData.pfPercentage)) / 100)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Professional Tax</span>
+                    <span className="text-black">Professional Tax</span>
                     <span className="font-semibold">{formatCurrency(parseFloat(formData.professionalTax))}</span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-gray-200">
-                    <span className="font-bold text-gray-900">Estimated Net</span>
+                    <span className="font-bold text-black">Estimated Net</span>
                     <span className="font-bold text-green-600 text-lg">
                       {formatCurrency(
                         parseFloat(formData.monthlyWage) -
@@ -379,7 +387,7 @@ export default function CreateSalaryStructurePage() {
                 </div>
               </div>
             </div>
-            <p className="text-sm text-gray-600 mt-4 italic">
+            <p className="text-sm text-black mt-4 italic">
               * This is an estimated breakdown. Actual values may vary based on attendance and other factors during payrun processing.
             </p>
           </div>
@@ -408,7 +416,7 @@ export default function CreateSalaryStructurePage() {
           <button
             type="button"
             onClick={() => router.push('/dashboard/payroll/salary-structure')}
-            className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+            className="px-6 py-3 border-2 border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-colors font-semibold"
             disabled={loading}
           >
             Cancel
@@ -432,3 +440,4 @@ export default function CreateSalaryStructurePage() {
     </div>
   );
 }
+

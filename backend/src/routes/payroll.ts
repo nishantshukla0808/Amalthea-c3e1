@@ -452,18 +452,28 @@ router.post('/salary-structure', verifyTokenMiddleware, async (req: Request, res
       return res.status(400).json({ error: 'Missing required fields' });
     }
     
-    // Check if employee exists
-    const employee = await prisma.employee.findUnique({
+    // Check if employee exists - support both UUID and employeeId
+    let employee = await prisma.employee.findUnique({
       where: { id: employeeId },
     });
+    
+    // If not found by UUID, try by employeeId field
+    if (!employee) {
+      employee = await prisma.employee.findUnique({
+        where: { employeeId: employeeId },
+      });
+    }
     
     if (!employee) {
       return res.status(404).json({ error: 'Employee not found' });
     }
     
+    // Use the actual employee UUID for the salary structure
+    const actualEmployeeId = employee.id;
+    
     // Check if salary structure already exists
     const existing = await prisma.salaryStructure.findUnique({
-      where: { employeeId },
+      where: { employeeId: actualEmployeeId },
     });
     
     if (existing) {
@@ -476,7 +486,7 @@ router.post('/salary-structure', verifyTokenMiddleware, async (req: Request, res
     // Create salary structure
     const salaryStructure = await prisma.salaryStructure.create({
       data: {
-        employeeId,
+        employeeId: actualEmployeeId,
         monthlyWage,
         basicSalary: components.basicSalary,
         basicPercentage,
@@ -584,6 +594,48 @@ router.get('/salary-structure', verifyTokenMiddleware, async (req: Request, res:
   } catch (error: any) {
     console.error('Error fetching salary structures:', error);
     return res.status(500).json({ error: 'Failed to fetch salary structures' });
+  }
+});
+
+/**
+ * Get salary structure by salary structure ID
+ * GET /api/payroll/salary-structure/id/:id
+ * Access: Admin, HR_OFFICER, PAYROLL_OFFICER
+ */
+router.get('/salary-structure/id/:id', verifyTokenMiddleware, async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    const { id } = req.params;
+    
+    // Check permission
+    if (![Role.ADMIN, Role.HR_OFFICER, Role.PAYROLL_OFFICER].includes(user.role)) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    
+    const salaryStructure = await prisma.salaryStructure.findUnique({
+      where: { id },
+      include: {
+        employee: {
+          include: {
+            user: {
+              select: {
+                email: true,
+                role: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    
+    if (!salaryStructure) {
+      return res.status(404).json({ error: 'Salary structure not found' });
+    }
+    
+    return res.json({ data: salaryStructure });
+  } catch (error: any) {
+    console.error('Error fetching salary structure by ID:', error);
+    return res.status(500).json({ error: 'Failed to fetch salary structure' });
   }
 });
 
@@ -1068,16 +1120,18 @@ router.put('/payruns/:id/process', verifyTokenMiddleware, async (req: Request, r
       }
     }
     
-    // Update payrun with totals and status
+    // Update payrun with totals - keep status as DRAFT so payslips remain editable
     const updatedPayrun = await prisma.payrun.update({
       where: { id },
       data: {
-        status: 'DRAFT', // Back to DRAFT after processing
+        status: 'DRAFT', // Keep as DRAFT so payslips can be edited
         employeeCount: employees.length,
         totalEmployerCost: Math.round(totalEmployerCost * 100) / 100,
         totalBasicWage: Math.round(totalBasicWage * 100) / 100,
         totalGrossWage: Math.round(totalGrossWage * 100) / 100,
         totalNetWage: Math.round(totalNetWage * 100) / 100,
+        processedBy: user.userId,
+        processedAt: new Date(),
       },
       include: {
         payslips: {
@@ -1312,7 +1366,29 @@ router.get('/payslips', verifyTokenMiddleware, async (req: Request, res: Respons
     
     // Apply filters
     if (payrunId) where.payrunId = payrunId as string;
-    if (employeeId && user.role !== Role.EMPLOYEE) where.employeeId = employeeId as string;
+    
+    // Handle employeeId - support both UUID and employee code
+    if (employeeId && user.role !== Role.EMPLOYEE) {
+      // Try to find employee by UUID first
+      let targetEmployee = await prisma.employee.findUnique({
+        where: { id: employeeId as string },
+      });
+      
+      // If not found by UUID, try by employeeId (employee code)
+      if (!targetEmployee) {
+        targetEmployee = await prisma.employee.findUnique({
+          where: { employeeId: employeeId as string },
+        });
+      }
+      
+      if (targetEmployee) {
+        where.employeeId = targetEmployee.id; // Use the UUID
+      } else {
+        // No employee found - return empty result
+        return res.json({ data: [], pagination: { total: 0, page: Number(page), limit: Number(limit), totalPages: 0 } });
+      }
+    }
+    
     if (status) where.status = status as string;
     if (month) where.month = Number(month);
     if (year) where.year = Number(year);

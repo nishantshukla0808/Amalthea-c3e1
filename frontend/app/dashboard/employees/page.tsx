@@ -17,6 +17,7 @@ interface Employee {
     isActive: boolean;
     role: string;
   };
+  todayStatus?: 'present' | 'leave' | 'absent' | null;
 }
 
 export default function EmployeesPage() {
@@ -32,6 +33,16 @@ export default function EmployeesPage() {
     fetchEmployees();
   }, [search, currentPage]);
 
+  // Auto-refresh employee statuses every 30 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      console.log('🔄 Auto-refreshing employee statuses...');
+      refreshEmployeeStatuses();
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, [employees]);
+
   const fetchEmployees = async () => {
     try {
       setLoading(true);
@@ -45,7 +56,16 @@ export default function EmployeesPage() {
       });
       
       console.log('✅ Employees loaded:', response.data.length);
-      setEmployees(response.data);
+      
+      // Fetch today's status for all employees
+      const employeesWithStatus = await Promise.all(
+        response.data.map(async (emp: Employee) => {
+          const status = await getTodayStatus(emp.id, emp.user.role);
+          return { ...emp, todayStatus: status };
+        })
+      );
+      
+      setEmployees(employeesWithStatus);
       setTotalEmployees(response.pagination.total);
     } catch (err: any) {
       console.error('❌ Error loading employees:', err);
@@ -55,19 +75,123 @@ export default function EmployeesPage() {
     }
   };
 
-  const getStatusColor = (isActive: boolean) => {
-    return isActive ? 'bg-green-500' : 'bg-gray-400';
+  // Refresh only the status of existing employees without re-fetching the full list
+  const refreshEmployeeStatuses = async () => {
+    if (employees.length === 0) return;
+    
+    try {
+      const updatedEmployees = await Promise.all(
+        employees.map(async (emp) => {
+          const status = await getTodayStatus(emp.id, emp.user.role);
+          return { ...emp, todayStatus: status };
+        })
+      );
+      
+      setEmployees(updatedEmployees);
+      console.log('✅ Employee statuses refreshed');
+    } catch (err) {
+      console.error('❌ Error refreshing statuses:', err);
+    }
   };
 
-  const getStatusDot = (isActive: boolean) => {
-    if (isActive) return '🟢'; // Green - Present
-    return '⚪'; // Gray - Inactive
+  const getTodayStatus = async (employeeId: string, userRole?: string): Promise<'present' | 'leave' | 'absent' | null> => {
+    try {
+      // Admin users don't need status tracking - they're always considered present
+      if (userRole === 'ADMIN') {
+        return null;
+      }
+      
+      const today = new Date().toISOString().split('T')[0];
+      const currentMonth = new Date().getMonth() + 1;
+      const currentYear = new Date().getFullYear();
+      
+      // Check attendance first
+      const attendanceResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/attendance?employeeId=${employeeId}&month=${currentMonth}&year=${currentYear}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      
+      if (attendanceResponse.ok) {
+        const attendanceData = await attendanceResponse.json();
+        const todayAttendance = attendanceData.data?.find((record: any) => {
+          const recordDate = new Date(record.date).toISOString().split('T')[0];
+          return recordDate === today;
+        });
+        
+        if (todayAttendance) {
+          // Check if it's a leave status
+          if (todayAttendance.status === 'LEAVE') {
+            return 'leave';
+          }
+          // If checked in, they're present
+          if (todayAttendance.checkIn) {
+            return 'present';
+          }
+        }
+      }
+      
+      // Check if employee has an approved leave today
+      const leaveResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/leaves?employeeId=${employeeId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      
+      if (leaveResponse.ok) {
+        const leaveData = await leaveResponse.json();
+        const hasLeaveToday = leaveData.data?.some((leave: any) => {
+          if (leave.status !== 'APPROVED') return false;
+          const leaveStart = new Date(leave.startDate).toISOString().split('T')[0];
+          const leaveEnd = new Date(leave.endDate).toISOString().split('T')[0];
+          return today >= leaveStart && today <= leaveEnd;
+        });
+        
+        if (hasLeaveToday) {
+          return 'leave';
+        }
+      }
+      
+      // Default to absent if no attendance and no leave
+      return 'absent';
+    } catch (error) {
+      console.error('Error fetching status:', error);
+      return 'absent';
+    }
+  };
+
+  const getStatusIcon = (status?: 'present' | 'leave' | 'absent' | null) => {
+    if (status === null) return null; // No status for admins
+    switch (status) {
+      case 'present':
+        return '🟢'; // Green dot - Present in office
+      case 'leave':
+        return '✈️'; // Airplane - On leave
+      case 'absent':
+        return '🟡'; // Yellow dot - Absent (no leave applied)
+      default:
+        return '⚪'; // Gray - Unknown status
+    }
+  };
+
+  const getStatusText = (status?: 'present' | 'leave' | 'absent' | null) => {
+    if (status === null) return null; // No status for admins
+    switch (status) {
+      case 'present':
+        return 'Present';
+      case 'leave':
+        return 'On Leave';
+      case 'absent':
+        return 'Absent';
+      default:
+        return 'Unknown';
+    }
   };
 
   if (loading && employees.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-lg text-gray-600">Loading employees...</div>
+        <div className="text-lg text-black">Loading employees...</div>
       </div>
     );
   }
@@ -80,7 +204,7 @@ export default function EmployeesPage() {
           <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent flex items-center gap-3">
             Employees 👥
           </h1>
-          <p className="text-base text-gray-600 mt-2 font-medium">
+          <p className="text-base text-black mt-2 font-medium">
             Total: <span className="font-bold text-purple-600">{totalEmployees}</span> employees
           </p>
         </div>
@@ -105,7 +229,7 @@ export default function EmployeesPage() {
             placeholder="Search by name, department, or designation..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-900 shadow-sm hover:border-purple-300 transition-all"
+            className="w-full px-6 py-4 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black shadow-sm hover:border-purple-300 transition-all"
           />
           <span className="absolute right-5 top-4 text-2xl">🔍</span>
         </div>
@@ -130,12 +254,20 @@ export default function EmployeesPage() {
             {/* Gradient Background Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             
-            {/* Status Badge in top-right corner */}
-            <div className="absolute top-3 right-3 z-10">
-              <span className={`text-2xl transition-transform group-hover:scale-110 ${employee.user.isActive ? 'animate-pulse' : ''}`}>
-                {getStatusDot(employee.user.isActive)}
-              </span>
-            </div>
+            {/* Status Badge in top-right corner - Only show for non-admin users */}
+            {employee.todayStatus !== null && (
+              <div className="absolute top-3 right-3 z-10 group/status">
+                <div className="relative">
+                  <span className={`text-2xl transition-transform group-hover:scale-110 ${employee.todayStatus === 'present' ? 'animate-pulse' : ''}`}>
+                    {getStatusIcon(employee.todayStatus)}
+                  </span>
+                  {/* Tooltip */}
+                  <div className="absolute right-0 top-full mt-2 bg-gray-900 text-white text-xs px-3 py-1 rounded-lg opacity-0 invisible group-hover/status:opacity-100 group-hover/status:visible transition-all duration-200 whitespace-nowrap z-20 shadow-lg">
+                    {getStatusText(employee.todayStatus)}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Employee Avatar */}
             <div className="relative flex justify-center mb-4">
@@ -148,16 +280,16 @@ export default function EmployeesPage() {
 
             {/* Employee Info */}
             <div className="relative text-center">
-              <h3 className="font-bold text-gray-900 text-xl group-hover:text-purple-600 transition-colors">
+              <h3 className="font-bold text-black text-xl group-hover:text-purple-600 transition-colors">
                 {employee.firstName} {employee.lastName}
               </h3>
-              <p className="text-sm text-gray-600 mt-2 font-semibold">
+              <p className="text-sm text-black mt-2 font-semibold">
                 {employee.designation || 'No designation'}
               </p>
-              <p className="text-xs text-gray-500 mt-1 font-medium">
+              <p className="text-xs text-black mt-1 font-medium">
                 {employee.department || 'No department'}
               </p>
-              <p className="text-xs text-gray-400 mt-2 font-mono">
+              <p className="text-xs text-black mt-2 font-mono">
                 {employee.employeeId}
               </p>
             </div>
@@ -197,7 +329,7 @@ export default function EmployeesPage() {
           >
             Previous
           </button>
-          <span className="text-gray-700">
+          <span className="text-black">
             Page {currentPage} of {Math.ceil(totalEmployees / 12)}
           </span>
           <button
@@ -214,10 +346,10 @@ export default function EmployeesPage() {
       {employees.length === 0 && !loading && (
         <div className="text-center py-12">
           <div className="text-6xl mb-4">👥</div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-black mb-2">
             No employees found
           </h3>
-          <p className="text-gray-600">
+          <p className="text-black">
             {search ? 'Try adjusting your search' : 'Get started by adding your first employee'}
           </p>
         </div>
@@ -225,3 +357,4 @@ export default function EmployeesPage() {
     </div>
   );
 }
+

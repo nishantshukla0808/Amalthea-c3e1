@@ -174,7 +174,7 @@ export default function EditSalaryStructurePage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading salary structure...</p>
+          <p className="mt-4 text-black">Loading salary structure...</p>
         </div>
       </div>
     );
@@ -194,8 +194,8 @@ export default function EditSalaryStructurePage() {
         >
           ← Back to Salary Structures
         </button>
-        <h1 className="text-3xl font-bold text-gray-900">Edit Salary Structure</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-black">Edit Salary Structure</h1>
+        <p className="text-black mt-1">
           {structure.employeeName} ({structure.employeeCode}) - {structure.department}
         </p>
       </div>
@@ -204,20 +204,20 @@ export default function EditSalaryStructurePage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
         <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+          <h3 className="text-lg font-semibold text-black mb-4">Basic Information</h3>
           <div className="grid gap-6 md:grid-cols-2">
             {/* Employee (Read-only) */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Employee</label>
-              <div className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-700">
+              <label className="block text-sm font-semibold text-black mb-2">Employee</label>
+              <div className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 text-black">
                 {structure.employeeName} ({structure.employeeCode})
               </div>
-              <p className="text-sm text-gray-500 mt-1">Employee cannot be changed</p>
+              <p className="text-sm text-black mt-1">Employee cannot be changed</p>
             </div>
 
             {/* Monthly Wage */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Monthly Wage (₹) <span className="text-red-500">*</span>
               </label>
               <input
@@ -234,7 +234,7 @@ export default function EditSalaryStructurePage() {
 
             {/* Effective From */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Effective From <span className="text-red-500">*</span>
               </label>
               <input
@@ -248,7 +248,7 @@ export default function EditSalaryStructurePage() {
 
             {/* PF Percentage */}
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 PF Percentage (%)
               </label>
               <input
@@ -267,10 +267,10 @@ export default function EditSalaryStructurePage() {
 
         {/* Optional Settings */}
         <div className="bg-white p-6 rounded-2xl shadow-xl border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Optional Settings</h3>
+          <h3 className="text-lg font-semibold text-black mb-4">Optional Settings</h3>
           <div className="grid gap-6 md:grid-cols-3">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Professional Tax (₹)
               </label>
               <input
@@ -285,7 +285,7 @@ export default function EditSalaryStructurePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Working Days/Week
               </label>
               <input
@@ -300,7 +300,7 @@ export default function EditSalaryStructurePage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+              <label className="block text-sm font-semibold text-black mb-2">
                 Working Hours/Day
               </label>
               <input
@@ -319,7 +319,7 @@ export default function EditSalaryStructurePage() {
         {/* Salary Breakdown Preview */}
         {parseFloat(formData.monthlyWage) > 0 && (
           <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-2xl border-2 border-purple-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-black mb-4 flex items-center gap-2">
               <span>📊</span> Salary Breakdown Preview
             </h3>
             <div className="grid gap-4 md:grid-cols-2">
@@ -328,31 +328,31 @@ export default function EditSalaryStructurePage() {
                 <h4 className="font-semibold text-green-700 mb-3">Earnings</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Basic Salary (50%)</span>
+                    <span className="text-black">Basic Salary (50%)</span>
                     <span className="font-semibold">{formatCurrency(preview.basicSalary)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">HRA (50% of Basic)</span>
+                    <span className="text-black">HRA (50% of Basic)</span>
                     <span className="font-semibold">{formatCurrency(preview.hra)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Standard Allowance</span>
+                    <span className="text-black">Standard Allowance</span>
                     <span className="font-semibold">{formatCurrency(preview.standardAllowance)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Performance Bonus (8.33%)</span>
+                    <span className="text-black">Performance Bonus (8.33%)</span>
                     <span className="font-semibold">{formatCurrency(preview.performanceBonus)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">LTA (8.33%)</span>
+                    <span className="text-black">LTA (8.33%)</span>
                     <span className="font-semibold">{formatCurrency(preview.lta)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Fixed Allowance</span>
+                    <span className="text-black">Fixed Allowance</span>
                     <span className="font-semibold">{formatCurrency(preview.fixedAllowance)}</span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-gray-200">
-                    <span className="font-bold text-gray-900">Total</span>
+                    <span className="font-bold text-black">Total</span>
                     <span className="font-bold text-green-600 text-lg">
                       {formatCurrency(parseFloat(formData.monthlyWage))}
                     </span>
@@ -365,23 +365,23 @@ export default function EditSalaryStructurePage() {
                 <h4 className="font-semibold text-red-700 mb-3">Estimated Deductions</h4>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">PF Employee ({formData.pfPercentage}%)</span>
+                    <span className="text-black">PF Employee ({formData.pfPercentage}%)</span>
                     <span className="font-semibold">
                       {formatCurrency((preview.basicSalary * parseFloat(formData.pfPercentage)) / 100)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">PF Employer ({formData.pfPercentage}%)</span>
+                    <span className="text-black">PF Employer ({formData.pfPercentage}%)</span>
                     <span className="font-semibold">
                       {formatCurrency((preview.basicSalary * parseFloat(formData.pfPercentage)) / 100)}
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Professional Tax</span>
+                    <span className="text-black">Professional Tax</span>
                     <span className="font-semibold">{formatCurrency(parseFloat(formData.professionalTax))}</span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-gray-200">
-                    <span className="font-bold text-gray-900">Estimated Net</span>
+                    <span className="font-bold text-black">Estimated Net</span>
                     <span className="font-bold text-green-600 text-lg">
                       {formatCurrency(
                         parseFloat(formData.monthlyWage) -
@@ -410,7 +410,7 @@ export default function EditSalaryStructurePage() {
             <button
               type="button"
               onClick={() => router.push('/dashboard/payroll/salary-structure')}
-              className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-semibold"
+              className="px-6 py-3 border-2 border-gray-300 text-black rounded-lg hover:bg-gray-50 transition-colors font-semibold"
               disabled={saving}
             >
               Cancel

@@ -51,8 +51,10 @@ export default function ReportsPage() {
         year: parseInt(formData.year),
       });
 
+      console.log('Payslips response:', response);
+      
       if (!response.data || response.data.length === 0) {
-        alert('No payslips found for this employee and year');
+        alert(`No payslips found for employee "${formData.employeeId}" in year ${formData.year}. Please ensure:\n1. The employee ID is correct\n2. Payruns have been processed for this employee\n3. The year is correct`);
         setLoading(false);
         return;
       }
@@ -321,7 +323,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+          <p className="mt-4 text-black">Loading...</p>
         </div>
       </div>
     );
@@ -331,8 +333,8 @@ export default function ReportsPage() {
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">📊 Reports</h1>
-        <p className="text-gray-600 mt-1">
+        <h1 className="text-3xl font-bold text-black">📊 Reports</h1>
+        <p className="text-black mt-1">
           {isEmployee() 
             ? 'Download your salary statement report'
             : 'Generate salary statement reports for employees'}
@@ -344,46 +346,46 @@ export default function ReportsPage() {
         <div className="flex items-center gap-3 mb-6">
           <span className="text-4xl">📄</span>
           <div>
-            <h3 className="text-xl font-bold text-gray-900">Salary Statement Report</h3>
-            <p className="text-sm text-gray-600">Generate yearly salary breakdown with all earnings and deductions</p>
+            <h3 className="text-xl font-bold text-black">Salary Statement Report</h3>
+            <p className="text-sm text-black">Generate yearly salary breakdown with all earnings and deductions</p>
           </div>
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
           {/* Employee ID */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-black mb-2">
               Employee ID <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.employeeId}
               onChange={(e) => handleChange('employeeId', e.target.value)}
-              placeholder="Employee UUID"
+              placeholder="e.g., OIALSM20210002 or UUID"
               disabled={isEmployee()}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed text-black placeholder-gray-600"
             />
             {isEmployee() && (
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-black mt-1">
                 Your employee ID (auto-filled)
               </p>
             )}
             {!isEmployee() && (
-              <p className="text-sm text-gray-500 mt-1">
-                Enter employee UUID to generate their report
+              <p className="text-sm text-black mt-1">
+                Enter employee ID (e.g., OIALSM20210002) or UUID
               </p>
             )}
           </div>
 
           {/* Year */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="block text-sm font-semibold text-black mb-2">
               Year <span className="text-red-500">*</span>
             </label>
             <select
               value={formData.year}
               onChange={(e) => handleChange('year', e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black bg-white"
             >
               {years.map((year) => (
                 <option key={year} value={year}>
@@ -391,7 +393,7 @@ export default function ReportsPage() {
                 </option>
               ))}
             </select>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-black mt-1">
               Select year for the report
             </p>
           </div>
@@ -462,3 +464,4 @@ export default function ReportsPage() {
     </div>
   );
 }
+

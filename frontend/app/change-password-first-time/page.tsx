@@ -131,9 +131,9 @@ export default function FirstTimePasswordChangePage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Change Password</h1>
-          <p className="text-gray-600">Welcome, {userName}! 👋</p>
-          <p className="text-sm text-gray-500 mt-2">
+          <h1 className="text-3xl font-bold text-black mb-2">Change Password</h1>
+          <p className="text-black">Welcome, {userName}! 👋</p>
+          <p className="text-sm text-black mt-2">
             For security reasons, please change your password before continuing.
           </p>
         </div>
@@ -163,7 +163,7 @@ export default function FirstTimePasswordChangePage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Current Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-black mb-2">
                 Current Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -172,14 +172,14 @@ export default function FirstTimePasswordChangePage() {
                   name="oldPassword"
                   value={formData.oldPassword}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 pr-12"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-black pr-12"
                   required
                   disabled={loading || !!success}
                 />
                 <button
                   type="button"
                   onClick={() => setShowOldPassword(!showOldPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
                   disabled={loading || !!success}
                 >
                   {showOldPassword ? (
@@ -198,7 +198,7 @@ export default function FirstTimePasswordChangePage() {
 
             {/* New Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-black mb-2">
                 New Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -207,14 +207,14 @@ export default function FirstTimePasswordChangePage() {
                   name="newPassword"
                   value={formData.newPassword}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 pr-12"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-black pr-12"
                   required
                   disabled={loading || !!success}
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
                   disabled={loading || !!success}
                 >
                   {showNewPassword ? (
@@ -229,14 +229,14 @@ export default function FirstTimePasswordChangePage() {
                   )}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-2">
+              <p className="text-xs text-black mt-2">
                 Password must be at least 8 characters with uppercase, lowercase, number, and special character.
               </p>
             </div>
 
             {/* Confirm Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-black mb-2">
                 Confirm New Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -245,14 +245,14 @@ export default function FirstTimePasswordChangePage() {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 pr-12"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-black pr-12"
                   required
                   disabled={loading || !!success}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-black"
                   disabled={loading || !!success}
                 >
                   {showConfirmPassword ? (

@@ -147,14 +147,14 @@ export default function AddEmployeePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Add New Employee</h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <h1 className="text-2xl font-bold text-black">Add New Employee</h1>
+          <p className="text-sm text-black mt-1">
             Fill in the details to create a new employee account
           </p>
         </div>
         <button
           onClick={() => router.back()}
-          className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+          className="px-4 py-2 text-black bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
         >
           ← Back
         </button>
@@ -176,7 +176,7 @@ export default function AddEmployeePage() {
               <span className="text-3xl text-white">🏢</span>
             </div>
             <div className="mt-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-black mb-2">
                 Company Name
               </label>
               <input
@@ -184,7 +184,7 @@ export default function AddEmployeePage() {
                 name="companyName"
                 value={formData.companyName}
                 onChange={handleChange}
-                className="w-full max-w-md mx-auto px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900 text-center"
+                className="w-full max-w-md mx-auto px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black text-center"
                 required
               />
             </div>
@@ -192,13 +192,13 @@ export default function AddEmployeePage() {
 
           {/* Personal Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+            <h3 className="text-lg font-semibold text-black border-b pb-2">
               Personal Information
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   First Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -206,13 +206,13 @@ export default function AddEmployeePage() {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Last Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -220,13 +220,13 @@ export default function AddEmployeePage() {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Email <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -234,13 +234,13 @@ export default function AddEmployeePage() {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -248,13 +248,13 @@ export default function AddEmployeePage() {
                   name="phoneNumber"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Date of Birth
                 </label>
                 <input
@@ -262,14 +262,14 @@ export default function AddEmployeePage() {
                   name="dateOfBirth"
                   value={formData.dateOfBirth}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                 />
               </div>
 
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-black mb-2">
                 Address
               </label>
               <textarea
@@ -277,20 +277,20 @@ export default function AddEmployeePage() {
                 value={formData.address}
                 onChange={handleChange}
                 rows={2}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
               />
             </div>
           </div>
 
           {/* Employment Details */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+            <h3 className="text-lg font-semibold text-black border-b pb-2">
               Employment Details
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Department
                 </label>
                 <input
@@ -299,12 +299,12 @@ export default function AddEmployeePage() {
                   value={formData.department}
                   onChange={handleChange}
                   placeholder="e.g., Engineering, HR, Sales"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Designation
                 </label>
                 <input
@@ -313,12 +313,12 @@ export default function AddEmployeePage() {
                   value={formData.designation}
                   onChange={handleChange}
                   placeholder="e.g., Software Engineer, Manager"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Date of Joining <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -326,20 +326,20 @@ export default function AddEmployeePage() {
                   name="dateOfJoining"
                   value={formData.dateOfJoining}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Role <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                   required
                 >
                   <option value="EMPLOYEE">Employee</option>
@@ -360,7 +360,7 @@ export default function AddEmployeePage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Basic Salary (₹)
                 </label>
                 <input
@@ -369,7 +369,7 @@ export default function AddEmployeePage() {
                   value={formData.basicSalary}
                   onChange={handleChange}
                   placeholder="e.g., 50000"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                 />
               </div>
             </div>
@@ -377,13 +377,13 @@ export default function AddEmployeePage() {
 
           {/* Emergency Contact */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+            <h3 className="text-lg font-semibold text-black border-b pb-2">
               Emergency Contact
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Contact Name
                 </label>
                 <input
@@ -392,12 +392,12 @@ export default function AddEmployeePage() {
                   value={formData.emergencyContactName}
                   onChange={handleChange}
                   placeholder="Full name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Contact Phone
                 </label>
                 <input
@@ -406,7 +406,7 @@ export default function AddEmployeePage() {
                   value={formData.emergencyContactPhone}
                   onChange={handleChange}
                   placeholder="Phone number"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                 />
               </div>
             </div>
@@ -414,26 +414,26 @@ export default function AddEmployeePage() {
 
           {/* Account Credentials */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 border-b pb-2">
+            <h3 className="text-lg font-semibold text-black border-b pb-2">
               Account Credentials
             </h3>
             
             {/* Auto-generated Login ID Preview */}
             <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-black mb-2">
                 Login ID (Auto-generated)
               </label>
               <div className="font-mono text-lg text-blue-900 font-semibold">
                 {previewLoginId}
               </div>
-              <p className="text-xs text-gray-600 mt-2">
+              <p className="text-xs text-black mt-2">
                 Format: {formData.companyName.split(' ').map(w => w[0]).join('')} + First Name (2 letters) + Last Name (2 letters) + Year of Joining + Serial Number
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -442,25 +442,25 @@ export default function AddEmployeePage() {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                     required
                     minLength={8}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-2.5 text-black hover:text-black"
                   >
                     {showPassword ? '🙈' : '👁️'}
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-black mt-1">
                   Minimum 8 characters
                 </p>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-black mb-2">
                   Confirm Password <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
@@ -469,14 +469,14 @@ export default function AddEmployeePage() {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-gray-900"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-black"
                     required
                     minLength={8}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-2.5 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-2.5 text-black hover:text-black"
                   >
                     {showConfirmPassword ? '🙈' : '👁️'}
                   </button>
@@ -499,7 +499,7 @@ export default function AddEmployeePage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
+              className="px-6 py-2 text-black bg-gray-200 rounded-md hover:bg-gray-300 transition-colors"
               disabled={loading}
             >
               Cancel
@@ -517,3 +517,4 @@ export default function AddEmployeePage() {
     </div>
   );
 }
+

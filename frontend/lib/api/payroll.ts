@@ -116,7 +116,7 @@ export const salaryStructureAPI = {
     apiRequest(`/payroll/salary-structure?employeeId=${employeeId}`),
 
   // Get single salary structure by ID
-  getById: (id: string) => apiRequest(`/payroll/salary-structure/${id}`),
+  getById: (id: string) => apiRequest(`/payroll/salary-structure/id/${id}`),
 
   // Create new salary structure
   create: (data: {

@@ -70,7 +70,7 @@ router.get(
 router.get(
   '/',
   verifyTokenMiddleware,
-  requireRole(Role.ADMIN, Role.HR_OFFICER),
+  requireRole(Role.ADMIN, Role.HR_OFFICER, Role.PAYROLL_OFFICER),
   async (req: Request, res: Response) => {
     const { 
       page = '1', 

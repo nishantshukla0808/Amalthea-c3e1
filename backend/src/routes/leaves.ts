@@ -267,8 +267,8 @@ router.get('/', verifyTokenMiddleware, async (req: Request, res: Response) => {
     const where: any = {};
 
     // Role-based access
-    if (userRole === 'EMPLOYEE') {
-      // Employees can only see their own leaves
+    if (userRole === 'EMPLOYEE' || userRole === 'PAYROLL_OFFICER') {
+      // Employees and Payroll Officers can only see their own leaves
       if (!employee) {
         return res.status(404).json({ error: 'Employee record not found' });
       }
@@ -387,8 +387,8 @@ router.get('/balance/:employeeId', verifyTokenMiddleware, async (req: Request, r
     });
 
     // Authorization check
-    if (userRole === 'EMPLOYEE') {
-      // Employees can only view their own balance
+    if (userRole === 'EMPLOYEE' || userRole === 'PAYROLL_OFFICER') {
+      // Employees and Payroll Officers can only view their own balance
       if (!requestingEmployee || requestingEmployee.id !== employeeId) {
         return res.status(403).json({ error: 'You can only view your own leave balance' });
       }
@@ -473,7 +473,7 @@ router.get('/:id', verifyTokenMiddleware, async (req: Request, res: Response) =>
       where: { userId },
     });
 
-    if (userRole === 'EMPLOYEE') {
+    if (userRole === 'EMPLOYEE' || userRole === 'PAYROLL_OFFICER') {
       if (!requestingEmployee || requestingEmployee.id !== leave.employeeId) {
         return res.status(403).json({ error: 'You can only view your own leave requests' });
       }
@@ -728,8 +728,8 @@ router.delete('/:id', verifyTokenMiddleware, async (req: Request, res: Response)
     });
 
     // Authorization check
-    if (userRole === 'EMPLOYEE') {
-      // Employees can only cancel their own pending leaves
+    if (userRole === 'EMPLOYEE' || userRole === 'PAYROLL_OFFICER') {
+      // Employees and Payroll Officers can only cancel their own pending leaves
       if (!requestingEmployee || requestingEmployee.id !== leave.employeeId) {
         return res.status(403).json({ error: 'You can only cancel your own leave requests' });
       }
