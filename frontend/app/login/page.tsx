@@ -164,6 +164,10 @@ export default function LoginPage() {
               <span className="font-mono text-gray-800">OIHERO20200002</span>
             </div>
             <div className="flex items-center justify-between p-2 bg-white rounded-lg hover:shadow-md transition-all duration-200">
+              <span className="font-semibold text-green-600">Payroll:</span>
+              <span className="font-mono text-gray-800">OIPAJO20210001</span>
+            </div>
+            <div className="flex items-center justify-between p-2 bg-white rounded-lg hover:shadow-md transition-all duration-200">
               <span className="font-semibold text-pink-600">Employee:</span>
               <span className="font-mono text-gray-800">OIALSM20210002</span>
             </div>
